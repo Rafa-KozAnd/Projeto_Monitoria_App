@@ -10,28 +10,66 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
+model Aluno {
+  matricula          String              @id
+  nome               String
+  senha              String //sera necessario criptografar esse dado
+  email              String
+  telefone           String
+  e_monitor          Boolean
+  AlunoMonitoria     AlunoMonitoria[]
+  VagaAlunoMonitoria VagaAlunoMonitoria?
 }
 
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  user   User    @relation(fields: [userId], references: [id])
-  userId Int     @unique
+model AlunoMonitoria {
+  id               Int       @id
+  Aluno            Aluno     @relation(fields: [matriccula_aluno], references: [matricula])
+  matriccula_aluno String
+  Monitoria        Monitoria @relation(fields: [id_monitoria], references: [id])
+  id_monitoria     Int
 }
 
-model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  posts   Post[]
-  profile Profile?
+model Colaborador {
+  cadastro String @id
+  nome     String
+  cpf      String
+  email    String
+
+  Monitoria     Monitoria[]
+  Disciplina    Disciplina[]
+  VagaMonitoria VagaMonitoria[]
+}
+
+model Monitoria {
+  id                Int         @id
+  codigo_disciplina String
+  nome_disciplina   String
+  Colaborador       Colaborador @relation(fields: [codigo_professor], references: [cadastro])
+  codigo_professor  String
+
+  AlunoMonitora AlunoMonitoria[]
+}
+
+model Disciplina {
+  codigo_disciplina    String      @id
+  Colaborador          Colaborador @relation(fields: [professor_disciplina], references: [cadastro])
+  professor_disciplina String
+  nome                 String
+}
+
+model VagaMonitoria {
+  id                     Int                  @id
+  Colaborador            Colaborador          @relation(fields: [professor_requisitante], references: [cadastro])
+  professor_requisitante String
+  monitoria              Int
+  em_aberto              Boolean
+  aprovado               Boolean // Creio que esse campo não sera necessario
+  VagaAlunoMonitoria     VagaAlunoMonitoria[]
+}
+
+model VagaAlunoMonitoria {
+  Aluno           Aluno         @relation(fields: [matricula_aluno], references: [matricula])
+  matricula_aluno String        @unique
+  VagaMonitoria   VagaMonitoria @relation(fields: [id_vaga], references: [id])
+  id_vaga         Int
 }

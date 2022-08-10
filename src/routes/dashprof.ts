@@ -1,17 +1,17 @@
 import { Router } from 'express'
 const router = Router()
 
-import { getSolicitacoes, aprovaSolicitacoes, reprovaSolicitacoes, getVagas, aprovaVaga, removeVaga, getMonitorias } from '../controllers/dashprof'
+import * as prof from '../controllers/dashprof'
 
 
-router.get('/solicitacoes', getSolicitacoes)
-router.put('/solicitacoes/aprovar', aprovaSolicitacoes)
-router.put('/solicitacoes/reprovar', reprovaSolicitacoes)
+router.get('/solicitacoes', prof.getSolicitacoes)
+router.put('/solicitacoes/aprovar', prof.aprovaSolicitacoes)
+router.put('/solicitacoes/reprovar', prof.reprovaSolicitacoes)
 
-router.get('/aberturamonitoria', getVagas)
-router.put('/aberturamonitoria/aprovar', aprovaVaga)
-router.delete('/aberturamonitoria/remover', removeVaga)
+router.get('/aberturamonitoria', prof.getVagas)
+router.put('/aberturamonitoria/aprovar', prof.aprovaVaga)
+router.delete('/aberturamonitoria/remover', prof.removeVaga)
 
-router.get('/monitorias', getMonitorias)
+router.get('/monitorias', prof.getMonitorias)
 
 export default router;

@@ -1,11 +1,13 @@
-const express = require('express');
+import alunos from './routes/alunos'
 
+
+const express = require('express');
 const app = express();
 
 const prof = require('./routes/dashprof');
 const cord = require('./routes/dashcord');
 const login = require('./routes/login');
-const alunos = require('./routes/')
+// const alunos = require('./routes/alunos')
 
 app.use('/dashboard/dashprof', prof)
 app.use('/dashboard/dashcord', cord)

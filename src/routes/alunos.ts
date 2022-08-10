@@ -3,18 +3,19 @@ const express = require('express')
 const router = express.Router()
 
 const {
-    getSolicitacoes,
-    postSolicitacoes,
-    deleteSolicitacoes,
-    getAlunos,
-    postAlunos,
-    putAlunos
-} = require('../controllers/dashcord')
+    getVagasMonitoria,
+    getMinhasMonitorias,
+    getAgendamentoMonitoria,
+    finalizarSolicitacaoAgentamento,
+    removerAgendamento,
+    getAgendamentos,
+    getPerfil
+} = require('../controllers/monitor')
 
-router.use('/aluno/vagasmonitoria',func)
-router.use('/aluno/monitor/minhasmonitorias',func)
-router.use('/aluno/monitor/agendamento/monitoria',func)
-router.use('/aluno/monitor/agendamento/solicitacao/finalizar',func) //PUT
-router.use('/aluno/monitor/agendamento/remover',func) // DELETE
-router.use('/aluno/monitor/agendamentos',func)
-router.use('/aluno/perfil',func)
+router.use('/aluno/vagasmonitoria',getVagasMonitoria)
+router.use('/aluno/monitor/minhasmonitorias',getMinhasMonitorias)
+router.use('/aluno/monitor/agendamento/monitoria',getAgendamentoMonitoria)
+router.use('/aluno/monitor/agendamento/solicitacao/finalizar',finalizarSolicitacaoAgentamento) //PUT
+router.use('/aluno/monitor/agendamento/remover',removerAgendamento) // DELETE
+router.use('/aluno/monitor/agendamentos',getAgendamentos)
+router.use('/aluno/perfil',getPerfil)

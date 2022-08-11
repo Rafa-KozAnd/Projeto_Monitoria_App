@@ -9,4 +9,4 @@ router.put('/solicitacoes/reprovar', reprovaSolicitacoes)
 router.delete("/:id", deleteSolicitacoes)
 router.get("/solicitacoes/pendentes", getSolicitacoesPendentes)
 
-module.exports = router
+export default router;

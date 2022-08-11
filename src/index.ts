@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 import prof from './routes/dashprof';
 import alunos from './routes/alunos';
 

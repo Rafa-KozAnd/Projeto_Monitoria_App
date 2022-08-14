@@ -1,6 +1,6 @@
-const { time } = require("console")
+import { RequestHandler } from "express"
 
-const getVagasMonitoria = (req, res) => {
+const getVagasMonitoria : RequestHandler = (req, res) => {
     let monitorias = [
         {
             "nome_disciplina" : "computação em nuvem",
@@ -12,7 +12,7 @@ const getVagasMonitoria = (req, res) => {
     res.status(200).send(monitorias)
 }
 
-const getMinhasMonitorias = (req, res) => {
+const getMinhasMonitorias : RequestHandler = (req, res) => {
     let monitorias = [
         {
             "nome_disciplina" : "computação em nuvem",
@@ -23,27 +23,27 @@ const getMinhasMonitorias = (req, res) => {
     res.status(201).send(monitorias)
 }
 
-const getAgendamentoMonitoria = (req, res) => {
+const getAgendamentoMonitoria : RequestHandler = (req, res) => {
     let response = {
         "nome _aluno": "hedison",
         "horario" : Date.now(),
         "matricula_aluno": "123451000",
         "status": 0
     }
-    res.statur(201).send(response)
+    res.status(201).send(response)
 }
 
-const finalizarSolicitacaoAgentamento = (req, res) => {
-    let id = req.id_solicitacao
+const finalizarSolicitacaoAgentamento : RequestHandler = (req, res) => {
+    let id = req.body.id_solicitacao
     res.status(200).send({msg:`solicitacao  ${id} finalizada`})
 }
 
-const removerAgendamento = (req, res) => {
-    let id = req.id_solicitacao
+const removerAgendamento : RequestHandler = (req, res) => {
+    let id = req.body.id_solicitacao
     res.status(200).send({msg:`solicitacao de agendamento ${id} removida`})
 }
 
-const getAgendamentos = (req, res) => {
+const getAgendamentos : RequestHandler = (req, res) => {
     let reunioes =  [ 
         {
             "horario":  Date.now(),
@@ -59,7 +59,7 @@ const getAgendamentos = (req, res) => {
     res.status(201).send(reunioes)
 }
 
-const getPerfil = (req, res) => {
+const getPerfil : RequestHandler = (req, res) => {
     let perfil = {
         "nome_aluno": "meunomeéjoao",
         "email": "joao@email.com",
@@ -69,7 +69,7 @@ const getPerfil = (req, res) => {
     res.status(201).send(perfil)
 }
 
-module.exports = {
+export {
     getVagasMonitoria,
     getMinhasMonitorias,
     getAgendamentoMonitoria,

@@ -1,17 +1,44 @@
 import express from 'express';
-import prof from './routes/dashprof';
-import alunos from './routes/alunos';
-import cord from './routes/dashcord';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import {hash, compare } from 'bcryptjs';
+//Rotas
+import authRoutes from './routes/auth.routes';
+import alunoRoutes from './routes/alunos.routes';
+import coordRoutes from './routes/dashcoord.routes';
+import profRoutes from './routes/dashprof.routes';
+import { client } from '../prisma/client';
 
+dotenv.config()
 const app = express();
-let port = 5000
+app.use(bodyParser.json());
+app.use(cors());
 
-app.use('/professor', prof);
-app.use('/aluno', alunos);
-app.use('/coordenador', cord);
+app.use('/professor', profRoutes);
+app.use('/aluno', alunoRoutes);
+app.use('/coordenador', coordRoutes);
+app.use('/auth', authRoutes);
 
+app.get('/', (req, res) => {
+  res.send('Essa é a API do Projeto Monitoria.')
+})
 
-// localhost:5000
-app.listen(port, () => {
-    console.log(` App listening on port ${port}`)
-  })
+app.post('/create', async (req, res) => {
+  const { cpf, nome, email, senha, role } = req.body;
+  const senhaHash = await hash(senha, 8);
+    await client.colaborador.create({
+      data: {
+        cpf,
+        nome,
+        email,
+        senha: senhaHash,
+        role,
+      }
+    })
+    res.send('Usuário criado com sucesso!')
+})
+
+app.listen(process.env.PORT, () => {
+  console.log(`Server running on port ${process.env.PORT}`)
+})

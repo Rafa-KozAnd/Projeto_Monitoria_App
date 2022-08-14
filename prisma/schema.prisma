@@ -13,7 +13,7 @@ datasource db {
 model Aluno {
   matricula          String              @id
   nome               String
-  senha              String //sera necessario criptografar esse dado
+  senha              String 
   email              String
   telefone           String
   e_monitor          Boolean
@@ -37,62 +37,58 @@ model AlunoMonitoria {
 }
 
 model Meeting {
-  id               Int       @id
-  agendamento      String  
-  matriculaAluno   String   // FK
-  idMonitoria     String   // FK
+  id             Int    @id
+  agendamento    String
+  matriculaAluno String // FK
+  idMonitoria    String // FK
 }
 
 model Colaborador {
-  cadastro String @id
-  nome     String
-  cpf      String
-  email    String
-
+  cpf           String          @id
+  nome          String
+  email         String
+  senha         String
+  role          Role
   Monitoria     Monitoria[]
   Disciplina    Disciplina[]
   VagaMonitoria VagaMonitoria[]
-  ColaboradorFuncao ColaboradorFuncao[] // mantendo mais de uma principalmente em casos de professores que podem ser coordenadores -- Rever
 }
 
-model ColaboradorFuncao {
-  id               String           @id
-  Colaborador      Colaborador      @relation(fields: [id_colaborador], references: [cadastro])
-  id_colaborador   String   
-  Funcao           Funcao            @relation(fields: [id_funcao], references: [id])
-  id_funcao        Int
+
+
+model colaboradorFuncao {
+  id             String @id
+  id_colaborador String //FK
+  idFuncao       String //FK
 }
 
-// Define qual a função de um colaborador
-model Funcao {
-  id              Int         @id
-  nome            String      @unique
-  ColaboradorFuncao     ColaboradorFuncao[]
+model funcao {
+  id   Int    @id
+  nome String @unique
 }
 
 model Monitoria {
-  id                Int         @id
+  id                Int              @id
   codigo_disciplina String
   nome_disciplina   String
-  Colaborador       Colaborador @relation(fields: [codigo_professor], references: [cadastro])
+  Colaborador       Colaborador      @relation(fields: [codigo_professor], references: [cpf])
   codigo_professor  String
-
-  AlunoMonitora AlunoMonitoria[]
+  AlunoMonitora     AlunoMonitoria[]
 }
 
 model Disciplina {
-  codigo_disciplina    String               @id
-  Colaborador          Colaborador          @relation(fields: [professor_disciplina], references: [cadastro])
+  codigo_disciplina    String      @id
+  Colaborador          Colaborador @relation(fields: [professor_disciplina], references: [cpf])
   professor_disciplina String
   nome                 String
 }
 
 model VagaMonitoria {
   id                     Int                  @id
-  Colaborador            Colaborador          @relation(fields: [professor_requisitante], references: [cadastro])
+  Colaborador            Colaborador          @relation(fields: [professor_requisitante], references: [cpf])
   professor_requisitante String
   monitoria              Int
-  status                 Int // 1, 2 ,3 ou 4
+  em_aberto              Boolean
   aprovado               Boolean // Creio que esse campo não sera necessario
   VagaAlunoMonitoria     VagaAlunoMonitoria[]
 }
@@ -110,4 +106,10 @@ model SolicitacaoMonitoria {
   codigo_disciplina     String
   motivo                String
   status                Int    // 1 ou 2 talvez não precise.. avaliar
+}
+
+enum Role {
+  Professor
+  Coordenador
+  ProfessorCoordenador
 }

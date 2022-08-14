@@ -52,17 +52,22 @@ model Colaborador {
   Monitoria     Monitoria[]
   Disciplina    Disciplina[]
   VagaMonitoria VagaMonitoria[]
+  ColaboradorFuncao ColaboradorFuncao[] // mantendo mais de uma principalmente em casos de professores que podem ser coordenadores -- Rever
 }
 
-model colaboradorFuncao {
-  id      String            @id
-  id_colaborador   String        //FK
-  idFuncao         String        //FK
+model ColaboradorFuncao {
+  id               String           @id
+  Colaborador      Colaborador      @relation(fields: [id_colaborador], references: [cadastro])
+  id_colaborador   String   
+  Funcao           Funcao            @relation(fields: [id_funcao], references: [id])
+  id_funcao        Int
 }
 
-model funcao {
+// Define qual a função de um colaborador
+model Funcao {
   id              Int         @id
   nome            String      @unique
+  ColaboradorFuncao     ColaboradorFuncao[]
 }
 
 model Monitoria {
@@ -76,8 +81,8 @@ model Monitoria {
 }
 
 model Disciplina {
-  codigo_disciplina    String      @id
-  Colaborador          Colaborador @relation(fields: [professor_disciplina], references: [cadastro])
+  codigo_disciplina    String               @id
+  Colaborador          Colaborador          @relation(fields: [professor_disciplina], references: [cadastro])
   professor_disciplina String
   nome                 String
 }
@@ -87,7 +92,7 @@ model VagaMonitoria {
   Colaborador            Colaborador          @relation(fields: [professor_requisitante], references: [cadastro])
   professor_requisitante String
   monitoria              Int
-  em_aberto              Boolean
+  status                 Int // 1, 2 ,3 ou 4
   aprovado               Boolean // Creio que esse campo não sera necessario
   VagaAlunoMonitoria     VagaAlunoMonitoria[]
 }
@@ -97,4 +102,12 @@ model VagaAlunoMonitoria {
   matricula_aluno String        @unique
   VagaMonitoria   VagaMonitoria @relation(fields: [id_vaga], references: [id])
   id_vaga         Int
+}
+
+model SolicitacaoMonitoria {
+  id                    Int           @id
+  Disciplina            Disciplina   @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
+  codigo_disciplina     String
+  motivo                String
+  status                Int    // 1 ou 2 talvez não precise.. avaliar
 }

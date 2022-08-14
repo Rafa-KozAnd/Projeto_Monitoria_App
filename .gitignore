@@ -3,4 +3,5 @@ node_modules
 .env
 ./postgresql-data/
 ./node_modules/
-
+*.log
+postgresql-data

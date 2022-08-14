@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Aluno {
+  matricula          String              @id
+  nome               String
+  senha              String //sera necessario criptografar esse dado
+  email              String
+  telefone           String
+  e_monitor          Boolean
+  AlunoMonitoria     AlunoMonitoria[]
+  VagaAlunoMonitoria VagaAlunoMonitoria?
+}
+
+model SolicitacaoAgendamento {
+  matriculaAluno  String   @id // FK
+  dataSolicitacao DateTime
+  agendamento     String // FK
+  id_monitoria    String // FK
+}
+
+model AlunoMonitoria {
+  id               Int       @id
+  Aluno            Aluno     @relation(fields: [matriccula_aluno], references: [matricula])
+  matriccula_aluno String
+  Monitoria        Monitoria @relation(fields: [id_monitoria], references: [id])
+  id_monitoria     Int
+}
+
+model Meeting {
+  id             Int    @id
+  agendamento    String
+  matriculaAluno String // FK
+  idMonitoria    String // FK
+}
+
+model Colaborador {
+  cpf           String          @id
+  nome          String
+  email         String
+  senha         String
+  role          String
+  Monitoria     Monitoria[]
+  Disciplina    Disciplina[]
+  VagaMonitoria VagaMonitoria[]
+}
+
+model colaboradorFuncao {
+  id             String @id
+  id_colaborador String //FK
+  idFuncao       String //FK
+}
+
+model funcao {
+  id   Int    @id
+  nome String @unique
+}
+
+model Monitoria {
+  id                Int              @id
+  codigo_disciplina String
+  nome_disciplina   String
+  Colaborador       Colaborador      @relation(fields: [codigo_professor], references: [cpf])
+  codigo_professor  String
+  AlunoMonitora     AlunoMonitoria[]
+}
+
+model Disciplina {
+  codigo_disciplina    String      @id
+  Colaborador          Colaborador @relation(fields: [professor_disciplina], references: [cpf])
+  professor_disciplina String
+  nome                 String
+}
+
+model VagaMonitoria {
+  id                     Int                  @id
+  Colaborador            Colaborador          @relation(fields: [professor_requisitante], references: [cpf])
+  professor_requisitante String
+  monitoria              Int
+  em_aberto              Boolean
+  aprovado               Boolean // Creio que esse campo não sera necessario
+  VagaAlunoMonitoria     VagaAlunoMonitoria[]
+}
+
+model VagaAlunoMonitoria {
+  Aluno           Aluno         @relation(fields: [matricula_aluno], references: [matricula])
+  matricula_aluno String        @unique
+  VagaMonitoria   VagaMonitoria @relation(fields: [id_vaga], references: [id])
+  id_vaga         Int
+}

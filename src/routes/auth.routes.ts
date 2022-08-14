@@ -3,6 +3,7 @@ import * as authController from '../controllers/authController'
 const authRoutes = Router()
 
 
-authRoutes.post('/login', authController.logIn)
+authRoutes.post('/login/aluno', authController.alunoLogin)
+authRoutes.post('/login/colaborador', authController.colaboradorLogin)
 
 export default authRoutes;

@@ -21,12 +21,26 @@ model Aluno {
   VagaAlunoMonitoria VagaAlunoMonitoria?
 }
 
+model SolicitacaoAgendamento {
+  matriculaAluno    String              @id // FK
+  dataSolicitacao   DateTime
+  agendamento       String  // FK
+  id_monitoria      String // FK
+}
+
 model AlunoMonitoria {
   id               Int       @id
   Aluno            Aluno     @relation(fields: [matriccula_aluno], references: [matricula])
   matriccula_aluno String
   Monitoria        Monitoria @relation(fields: [id_monitoria], references: [id])
   id_monitoria     Int
+}
+
+model Meeting {
+  id               Int       @id
+  agendamento      String  
+  matriculaAluno   String   // FK
+  idMonitoria     String   // FK
 }
 
 model Colaborador {
@@ -38,6 +52,17 @@ model Colaborador {
   Monitoria     Monitoria[]
   Disciplina    Disciplina[]
   VagaMonitoria VagaMonitoria[]
+}
+
+model colaboradorFuncao {
+  id      String            @id
+  id_colaborador   String        //FK
+  idFuncao         String        //FK
+}
+
+model funcao {
+  id              Int         @id
+  nome            String      @unique
 }
 
 model Monitoria {

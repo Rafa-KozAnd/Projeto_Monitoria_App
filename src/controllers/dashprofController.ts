@@ -1,10 +1,57 @@
 import { RequestHandler } from 'express';
+import { client } from '../../prisma/client'
 
-const getSolicitacoes: RequestHandler  = (req, res) => {
-    res.status(200).json({solicitacoes:[
-        {id:"fsm2vsgo1pr", matriculaAluno: "49239df", disciplinaDesejada: "Computação em nuvem", emailAluno: "joao@gmail.com"},
-        {id:"sgg1pv5e18a", matriculaAluno:  "3fjk39sd", disciplinaDesejada: "Banco de Dados", emailAluno: "manoel@gmail.com"}
-        ]})
+
+const getSolicitacoes: RequestHandler  = async (req, res) => {
+    let cpfProfessor = "07337326993" //alguma meneira de saber quem ta logado
+    
+    try {
+        const solicitacoesAlunos = await client.vagaAlunoMonitoria.findMany({
+            where: {
+                VagaMonitoria: {
+                    status: 1,
+                    professor_requisitante: cpfProfessor
+                }
+            },
+            select: {
+                matricula_aluno: true,
+                id_vaga: true,
+                Aluno: {
+                    select: {
+                        email: true
+                    }
+                },
+                VagaMonitoria: {
+                    select: {
+                        Disciplina: {
+                            select: {
+                                nome: true
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        const solicitacoesAlunosJson : any[] = []
+        
+        for (var solicitacaoAluno of solicitacoesAlunos) {
+            solicitacoesAlunosJson.push
+            ( {
+                "id": solicitacaoAluno.id_vaga,
+                "matriculaAluno": solicitacaoAluno.matricula_aluno,
+                "disciplinaDesejada": solicitacaoAluno.VagaMonitoria.Disciplina.nome,
+                "emailAluno": solicitacaoAluno.Aluno.email
+            })
+        }
+
+        var solicitacoesAlunosFormat = {"solicitacoes": solicitacoesAlunosJson}
+        
+        res.status(200).json(solicitacoesAlunosFormat)
+
+    }catch(err) {
+        res.status(500).json({message: 'Houve um erro ao tentar logar, tente novamente mais tarde.'})
+    }
 }
 
 const aprovaSolicitacoes: RequestHandler = (req, res) => {
@@ -15,10 +62,18 @@ const reprovaSolicitacoes: RequestHandler = (req, res) => {
     res.status(200).json({comentario:"aluno burro",id_solicitacao: "gf34sezvoh6"})
 }
 
-const getVagas: RequestHandler = (req, res) => {
+
+const getVagas: RequestHandler = async (req, res) => {
     res.status(200).json({solicitacoesAbertura:[
         {id: 'dksoaoasdkp', matriculaAluno:"gfressdzvoh6", disciplinaDesejada:"Probabilidade e Estatistica", monitorRecomendado:"Eu mesmo", motivoSolicitacao:"Dificuldade na materia"}
     ]})
+    client.solicitacaoMonitoria.findMany({
+        where: {
+            
+        }
+    })
+
+
 }
 
 const aprovaVaga: RequestHandler = (req, res) => {

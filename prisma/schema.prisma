@@ -19,6 +19,7 @@ model Aluno {
   e_monitor          Boolean
   AlunoMonitoria     AlunoMonitoria[]
   VagaAlunoMonitoria VagaAlunoMonitoria?
+  SolicitacaoMonitoria SolicitacaoMonitoria[]
 }
 
 model SolicitacaoAgendamento {
@@ -110,6 +111,9 @@ model SolicitacaoMonitoria {
   codigo_disciplina     String
   motivo                String
   status                Int    // 1 ou 2 talvez não precise.. avaliar
+  monitorRecomendado    String
+  AlunoSolicitante      Aluno        @relation(fields: [matricula_aluno], references: [matricula])
+  matricula_aluno       String
 }
 
 enum Role {

@@ -1,10 +1,56 @@
 import { RequestHandler } from 'express';
+import { client } from '../../prisma/client'
 
-export const getSolicitacoes: RequestHandler  = (req, res) => {
-    res.status(200).json({solicitacoes:[
-        {Id:"as7ygtd87a8", nome_aluno: "Rafael", nome_disciplina: "Aplicação Mobile", email: "rafa@rafa.com"},
-        {Id:"usahday8781", nome_aluno:  "Pedro", nome_disciplina: "Modelagem II", email: "pedrocomposto@gmail.com"}
-        ]})
+// Atualizar
+export const getSolicitacoes: RequestHandler  = async (req, res) => {
+
+    try {
+        const solicitacoesAlunos = await client.vagaAlunoMonitoria.findMany({
+            where: {
+                VagaMonitoria: {
+                    em_aberto: true
+                }
+            },
+            select: {
+                matricula_aluno: true,
+                id_vaga: true,
+                Aluno: {
+                    select: {
+                        telefone: true
+                    }
+                },
+                VagaMonitoria: {
+                    select: {
+                        Disciplina: {
+                            select: {
+                                nome: true
+                            }
+                        },
+                        professor_requisitante: true,
+                    }  
+                }
+            }
+        })
+
+        const solicitacoesAlunosJson : any[] = []
+        
+        for (let solicitacaoAluno of solicitacoesAlunos) {
+            solicitacoesAlunosJson.push
+            ( {
+                "id": solicitacaoAluno.id_vaga,
+                "matriculaAluno": solicitacaoAluno.matricula_aluno,
+                "disciplinaDesejada": solicitacaoAluno.VagaMonitoria.Disciplina.nome,
+                "emailAluno": solicitacaoAluno.Aluno.email
+            })
+        }
+
+        let solicitacoesAlunosFormat = {"solicitacoes": solicitacoesAlunosJson}
+        
+        res.status(200).json(solicitacoesAlunosFormat)
+
+    } catch(err) {
+        res.status(500).json({message: 'Ocorreu um erro.'})
+    }
 }
 
 export const aprovaSolicitacoes: RequestHandler = (req, res) => {
@@ -19,13 +65,56 @@ export const deleteSolicitacoes: RequestHandler = (req, res) => {
     res.status(200).json({id_abertura_monitoria:"usahday8781"})
 }
 
-export const getSolicitacoesPendentes: RequestHandler = (req, res) => {
-    res.status(200).json({disciplinas:[
-        {id_disciplina:"61gsa71214", nome_disciplina:"Banco de dados", monitores:[
-            {nome_aluno:"Carol", email:"carol@gmail.com"}]},
-        {id_disciplina:"f8grsd222d8", nome_disciplina:"Desenvolvimento de Software", monitores:[
-            {nome_aluno:"Bob Marlei", email:"bobmarlei@gmail.com"},{nome_aluno:"Geraldo", email:"derivia@gmail.com"}]}
-        ]})
+// Atualizar
+export const getSolicitacoesPendentes: RequestHandler = async (req, res) => {
+    
+    try {
+        const solicitacoesAlunos = await client.vagaAlunoMonitoria.findMany({
+            where: {
+                VagaMonitoria: {
+                    em_aberto: true
+                }
+            },
+            select: {
+                matricula_aluno: true,
+                id_vaga: true,
+                Aluno: {
+                    select: {
+                        telefone: true
+                    }
+                },
+                VagaMonitoria: {
+                    select: {
+                        Disciplina: {
+                            select: {
+                                nome: true
+                            }
+                        },
+                        professor_requisitante: true,
+                    }  
+                }
+            }
+        })
+
+        const solicitacoesAlunosJson : any[] = []
+        
+        for (let solicitacaoAluno of solicitacoesAlunos) {
+            solicitacoesAlunosJson.push
+            ( {
+                "id": solicitacaoAluno.id_vaga,
+                "matriculaAluno": solicitacaoAluno.matricula_aluno,
+                "disciplinaDesejada": solicitacaoAluno.VagaMonitoria.Disciplina.nome,
+                "emailAluno": solicitacaoAluno.Aluno.email
+            })
+        }
+
+        let solicitacoesAlunosFormat = {"solicitacoes": solicitacoesAlunosJson}
+        
+        res.status(200).json(solicitacoesAlunosFormat)
+
+    } catch(err) {
+        res.status(500).json({message: 'Ocorreu um erro.'})
+    }
 }
 
 module.exports = {

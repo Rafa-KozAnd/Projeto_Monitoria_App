@@ -13,19 +13,20 @@ datasource db {
 model Aluno {
   matricula          String              @id
   nome               String
-  senha              String //sera necessario criptografar esse dado
+  senha              String 
   email              String
   telefone           String
   e_monitor          Boolean
   AlunoMonitoria     AlunoMonitoria[]
   VagaAlunoMonitoria VagaAlunoMonitoria?
+  SolicitacaoMonitoria SolicitacaoMonitoria[]
 }
 
 model SolicitacaoAgendamento {
-  matriculaAluno  String   @id // FK
-  dataSolicitacao DateTime
-  agendamento     String // FK
-  id_monitoria    String // FK
+  matriculaAluno    String              @id // FK
+  dataSolicitacao   DateTime
+  agendamento       String  // FK
+  id_monitoria      String // FK
 }
 
 model AlunoMonitoria {
@@ -48,11 +49,13 @@ model Colaborador {
   nome          String
   email         String
   senha         String
-  role          String
+  role          Role
   Monitoria     Monitoria[]
   Disciplina    Disciplina[]
   VagaMonitoria VagaMonitoria[]
 }
+
+
 
 model colaboradorFuncao {
   id             String @id
@@ -71,7 +74,7 @@ model Monitoria {
   nome_disciplina   String
   Colaborador       Colaborador      @relation(fields: [codigo_professor], references: [cpf])
   codigo_professor  String
-  AlunoMonitora     AlunoMonitoria[]
+  AlunoMonitoria     AlunoMonitoria[]
 }
 
 model Disciplina {
@@ -79,14 +82,18 @@ model Disciplina {
   Colaborador          Colaborador @relation(fields: [professor_disciplina], references: [cpf])
   professor_disciplina String
   nome                 String
+  SolicitacaoMonitoria SolicitacaoMonitoria[]
+  VagaMonitoria        VagaMonitoria[]
 }
 
 model VagaMonitoria {
   id                     Int                  @id
   Colaborador            Colaborador          @relation(fields: [professor_requisitante], references: [cpf])
   professor_requisitante String
+  Disciplina             Disciplina           @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
+  codigo_disciplina      String
   monitoria              Int
-  em_aberto              Boolean
+  status                 Int
   aprovado               Boolean // Creio que esse campo não sera necessario
   VagaAlunoMonitoria     VagaAlunoMonitoria[]
 }
@@ -96,4 +103,21 @@ model VagaAlunoMonitoria {
   matricula_aluno String        @unique
   VagaMonitoria   VagaMonitoria @relation(fields: [id_vaga], references: [id])
   id_vaga         Int
+}
+
+model SolicitacaoMonitoria {
+  id                    Int           @id
+  Disciplina            Disciplina   @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
+  codigo_disciplina     String
+  motivo                String
+  status                Int    // 1 ou 2 talvez não precise.. avaliar
+  monitorRecomendado    String
+  AlunoSolicitante      Aluno        @relation(fields: [matricula_aluno], references: [matricula])
+  matricula_aluno       String
+}
+
+enum Role {
+  Professor
+  Coordenador
+  ProfessorCoordenador
 }

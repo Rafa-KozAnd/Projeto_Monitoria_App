@@ -159,13 +159,19 @@ const getMonitorias: RequestHandler = (req, res) => {
     res.status(201).send(monitoriasmap)
 }
 
-const getMonitoria: RequestHandler = (req, res) => {
-    let perfil = {
-        "nome_aluno": "meunomeéjoao",
-        "email": "joao@email.com",
-        "matricula": "12387878",
-        "e_monitor": true
-    }
+const getMonitoria: RequestHandler = async (req, res) => {
+    const { id_monitoria } = req.body;
+
+    const monitoria = await client.monitoria.findFirst({
+        where: { id: id_monitoria }
+    })
+    let perfil = { 
+            "nome_aluno": monitoria.alunoMonitoria.aluno.nome,
+            "nome_professor": monitoria.colaborador.nome,
+            "nome_disciplina": monitoria.disciplina.nome,
+            "horario_monitoria": monitoria.horario,
+            "email_contato": monitoria.alunoMonitoria.aluno.nome
+        } 
     res.status(201).send(perfil)
 }
 

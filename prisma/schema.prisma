@@ -13,7 +13,7 @@ datasource db {
 model Aluno {
   matricula          String              @id
   nome               String
-  senha              String //sera necessario criptografar esse dado
+  senha              String 
   email              String
   telefone           String
   e_monitor          Boolean
@@ -22,10 +22,10 @@ model Aluno {
 }
 
 model SolicitacaoAgendamento {
-  matriculaAluno  String   @id // FK
-  dataSolicitacao DateTime
-  agendamento     String // FK
-  id_monitoria    String // FK
+  matriculaAluno    String              @id // FK
+  dataSolicitacao   DateTime
+  agendamento       String  // FK
+  id_monitoria      String // FK
 }
 
 model AlunoMonitoria {
@@ -48,11 +48,13 @@ model Colaborador {
   nome          String
   email         String
   senha         String
-  role          String
+  role          Role
   Monitoria     Monitoria[]
   Disciplina    Disciplina[]
   VagaMonitoria VagaMonitoria[]
 }
+
+
 
 model colaboradorFuncao {
   id             String @id
@@ -103,4 +105,18 @@ model VagaAlunoMonitoria {
   matricula_aluno String        @unique
   VagaMonitoria   VagaMonitoria @relation(fields: [id_vaga], references: [id])
   id_vaga         Int
+}
+
+model SolicitacaoMonitoria {
+  id                    Int           @id
+  Disciplina            Disciplina   @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
+  codigo_disciplina     String
+  motivo                String
+  status                Int    // 1 ou 2 talvez não precise.. avaliar
+}
+
+enum Role {
+  Professor
+  Coordenador
+  ProfessorCoordenador
 }

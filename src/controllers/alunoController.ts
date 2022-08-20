@@ -1,17 +1,32 @@
 import { RequestHandler } from 'express';
-
+import { client } from '../../prisma/client'
 const { time } = require("console")
 
-const getVagasMonitoria: RequestHandler = (req, res) => {
-    let monitorias = [
-        {
-            "nome_disciplina" : "computação em nuvem",
-            "nome_professor": "vasco",
-            "codigo_disciplina" : "123451000",
-            "pre_requisito": "ser aluno inteligente comprometido com a verdade"
-        }
-    ]
-    res.status(200).send(monitorias)
+const getVagasMonitoria: RequestHandler = async (req, res) => {
+    const {matricula} = req.body;
+    const monitorias = await client.VagaMonitoria.findMany({
+        // where: {matricula : matricula}
+    })
+    const mon = await client
+    let userFullnames = monitorias.map(function(element){
+        return `${element.nome_disciplina} ${element.nome_professor}`;
+    })
+
+    var monitoriasmap : any[] = []
+    for  ( let monitoria of monitorias){
+        monitoriasmap.push(
+            {
+                "nome_disciplina" : monitoria.nome_disciplina,
+                "nome_professor": monitoria.nome_professor,
+                "codigo_disciplina" : monitoria.codigo_disciplina,
+                "pre_requisito": monitoria.pre_requisito
+            }
+        )
+    }
+
+    let monitoriasJson = {"vagas_monitorias": monitoriasmap}
+
+    res.status(200).send(monitoriasJson)
 }
 
 const getMinhasMonitorias: RequestHandler  = (req, res) => {

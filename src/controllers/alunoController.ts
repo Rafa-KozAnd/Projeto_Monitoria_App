@@ -3,23 +3,31 @@ import { client } from '../../prisma/client'
 const { time } = require("console")
 
 const getVagasMonitoria: RequestHandler = async (req, res) => {
-    const {matricula} = req.body;
-    const monitorias = await client.VagaMonitoria.findMany({
-        // where: {matricula : matricula}
-    })
-    const mon = await client
-    let userFullnames = monitorias.map(function(element){
-        return `${element.nome_disciplina} ${element.nome_professor}`;
+    // const {monitoria} = req.body;
+    const vagasMonitorias = await client.vagaMonitoria.findMany({
+        select: {
+            id:true,
+            monitoria: {
+                disciplina: {
+                    nome: true,
+                    codigo_disciplina: true,
+                    pre_requisito: true,
+                    colaborador: {
+                        nome:true,
+                    }
+                }
+            }
+        }
     })
 
     var monitoriasmap : any[] = []
-    for  ( let monitoria of monitorias){
+    for  ( let vagaMonitoria of vagasMonitorias){
         monitoriasmap.push(
             {
-                "nome_disciplina" : monitoria.nome_disciplina,
-                "nome_professor": monitoria.nome_professor,
-                "codigo_disciplina" : monitoria.codigo_disciplina,
-                "pre_requisito": monitoria.pre_requisito
+                "nome_disciplina" : vagaMonitoria.monitoria.nome_disciplina,
+                "nome_professor": vagaMonitoria.monitoria.disciplina.colaborador.nome,
+                "codigo_disciplina" : vagaMonitoria.disciplina.codigo_disciplina,
+                "pre_requisito": vagaMonitoria.pre_requisito
             }
         )
     }
@@ -29,17 +37,34 @@ const getVagasMonitoria: RequestHandler = async (req, res) => {
     res.status(200).send(monitoriasJson)
 }
 
-const getMinhasMonitorias: RequestHandler  = (req, res) => {
-    let monitorias = [
-        {
-            "nome_disciplina" : "computação em nuvem",
-            "nome_professor": "vasco",
-            "codigo_disciplina" : "123451000",
+const getMinhasMonitorias: RequestHandler  = async (req, res) => {
+    const monitorias = await client.monitoria.findMany({
+        select: {
+            id: true,
+            disciplina:{
+                nome:true,
+                colaborador: {
+                    nome:true
+                }
+            }
         }
-    ]
+    })
+
+    var monitoriasmap : any[] = []
+    for (let monitoria of monitorias){
+        monitoriasmap.push(
+            {
+                "nome_disciplina" : monitoria.disciplina.nome,
+                "nome_professor": monitoria.disciplina.colaborador.nome,
+                "codigo_disciplina" : monitoria.disciplina.codigo_disciplina,
+            }
+        )
+    }
+
     res.status(201).send(monitorias)
 }
 
+//TODO: Faltou algo aqui
 const getAgendamentoMonitoria: RequestHandler  = (req, res) => {
     let response = {
         "nome _aluno": "hedison",

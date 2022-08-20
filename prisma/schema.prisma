@@ -67,11 +67,13 @@ model funcao {
 
 model Monitoria {
   id                Int              @id
+  Disciplina        Disciplina       @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
   codigo_disciplina String
   nome_disciplina   String
   Colaborador       Colaborador      @relation(fields: [codigo_professor], references: [cpf])
   codigo_professor  String
   AlunoMonitora     AlunoMonitoria[]
+  VagaMonitoria     VagaMonitoria[]
 }
 
 model Disciplina {
@@ -79,17 +81,21 @@ model Disciplina {
   Colaborador          Colaborador @relation(fields: [professor_disciplina], references: [cpf])
   professor_disciplina String
   nome                 String
+  Monitoria            Monitoria[]
 }
 
 model VagaMonitoria {
   id                     Int                  @id
   Colaborador            Colaborador          @relation(fields: [professor_requisitante], references: [cpf])
   professor_requisitante String
-  monitoria              Int
+  Monitoria              Monitoria            @relation(fields: [id_monitoria], references: [id])
+  id_monitoria           Int                                    
   em_aberto              Boolean
   aprovado               Boolean // Creio que esse campo não sera necessario
   VagaAlunoMonitoria     VagaAlunoMonitoria[]
   pre_requisito          String
+  disciplina             Disciplina           @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
+  codigo_disciplina      String
 }
 
 model VagaAlunoMonitoria {

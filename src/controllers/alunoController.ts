@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
 import { client } from '../../prisma/client'
+import { AlunoMonitoriaScalarFieldEnum } from '@prisma/client';
 const { time } = require("console")
 
 const getVagasMonitoria: RequestHandler = async (req, res) => {
@@ -37,7 +38,9 @@ const getVagasMonitoria: RequestHandler = async (req, res) => {
     res.status(200).send(monitoriasJson)
 }
 
+// TODO: Arrumar esse endpoint foi feito para receber as monitorias de um monitor
 const getMinhasMonitorias: RequestHandler  = async (req, res) => {
+    const {matricula} = req.body;
     const monitorias = await client.monitoria.findMany({
         select: {
             id: true,
@@ -48,7 +51,7 @@ const getMinhasMonitorias: RequestHandler  = async (req, res) => {
                 }
             }
         }
-    })
+    });
 
     var monitoriasmap : any[] = []
     for (let monitoria of monitorias){
@@ -59,9 +62,9 @@ const getMinhasMonitorias: RequestHandler  = async (req, res) => {
                 "codigo_disciplina" : monitoria.disciplina.codigo_disciplina,
             }
         )
-    }
+    };
 
-    res.status(201).send(monitorias)
+    res.status(201).send(monitorias);
 }
 
 //TODO: Faltou algo aqui
@@ -85,53 +88,75 @@ const removerAgendamento: RequestHandler  = (req, res) => {
     res.status(200).send({msg:`solicitacao de agendamento ${id} removida`})
 }
 
-const getAgendamentos: RequestHandler = (req, res) => {
-    let reunioes =  [ 
-        {
-            "horario":  Date.now(),
-            "nome_aluno": "Hedis1" ,
-            "nome_disciplina": "strindisciplina1" 
-        },
-        {
-            "horario":  Date.now() ,
-            "nome_aluno": "Hedis2" ,
-            "nome_disciplina": "strindisciplina2g2" 
-        },
-            ] 
-    res.status(201).send(reunioes)
+const getAgendamentos: RequestHandler = async (req, res) => {
+    const { matricula_aluno } = req.body;
+
+    const agendamentos = await client.agendamento.findMany({
+        where: { matricula_aluno: matricula_aluno}
+            
+    })
+
+    var agendamentosMap : any[] = []
+    for  ( let agendamento of agendamentos){
+        agendamentosMap.push(
+            {
+                "horario" : agendamento.horario,
+                "nome_aluno": agendamento.aluno.nome,
+                "nome_disciplina" : agendamento.monitoria.disciplina.nome_disciplina           }
+        )
+    }
+
+    let monitoriasJson = {"vagas_monitorias": agendamentosMap}
+
+    res.status(201).send(monitoriasJson)
 }
 
-const getPerfil: RequestHandler = (req, res) => {
+const getPerfil: RequestHandler = async (req, res) => {
+    const { matricula_aluno } = req.body;
+
+    const aluno = await client.aluno.findFirst({
+        where:  {matricula : matricula_aluno }
+    })
+
     let perfil = {
-        "nome_aluno": "meunomeéjoao",
-        "email": "joao@email.com",
-        "matricula": "12387878",
-        "e_monitor": true
+        "nome_aluno": aluno.nome,
+        "email": aluno.email,
+        "matricula": aluno.matricula,
+        "e_monitor": aluno.e_monitor
     }
     res.status(201).send(perfil)
 }
 
 const getMonitorias: RequestHandler = (req, res) => {
-    let response = {
-        monitorias : [
+    const {matricula} = req.body;
+    const monitorias = await client.monitoria.findMany({
+        select: {
+            id: true,
+            disciplina:{
+                nome:true,
+                monitoria: {
+                    alunoMonitoria : {
+                        aluno:{
+                            nome:true
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    var monitoriasmap : any[] = []
+    for (let monitoria of monitorias){
+        monitoriasmap.push(
             {
-                "nome_disciplina" : "inteligencia aritficial",
-                "nome_monitor": "hedison1",
-                "codigo_disciplina" :"10002323"
-            },
-            {
-                "nome_disciplina" : "javascript ",
-                "nome_monitor": "hedison12",
-                "codigo_disciplina" :"10003323"
-            },
-            {
-                "nome_disciplina" : "inteligencia orientada a objetos",
-                "nome_monitor": "hedison13",
-                "codigo_disciplina" :"34234234"
-            },
-        ]
-    }
-    res.status(201).send(response)
+                "nome_disciplina" : monitoria.disciplina.nome,
+                "nome_monitor": monitoria.disciplina.alunoMonitoria.aluno.nome,
+                "codigo_disciplina" : monitoria.disciplina.codigo_disciplina,
+            }
+        )
+
+    
+    res.status(201).send(monitoriasmap)
 }
 
 const getMonitoria: RequestHandler = (req, res) => {

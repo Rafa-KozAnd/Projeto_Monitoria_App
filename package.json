@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "start": "nodemon src/index.ts"
+    "start": "ts-node src/index.ts"
   },
   "dependencies": {
     "@prisma/client": "4.2.1",
@@ -16,9 +16,11 @@
     "dotenv": "^16.0.1",
     "dto-mapper": "^0.2.3",
     "express": "^4.18.1",
+    "nodemon": "^2.0.18",
     "reflect-metadata": "^0.1.13",
-    "uuid": "^8.3.2",
-    "nodemon": "^2.0.18"
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",

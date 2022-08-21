@@ -96,6 +96,7 @@ model VagaMonitoria {
   status                 Int
   aprovado               Boolean // Creio que esse campo não sera necessario
   VagaAlunoMonitoria     VagaAlunoMonitoria[]
+  pre_requisito          String
 }
 
 model VagaAlunoMonitoria {

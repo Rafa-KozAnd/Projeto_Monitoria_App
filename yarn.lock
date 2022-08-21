@@ -7,7 +7,7 @@
   "resolved" "https://registry.npmjs.org/@prisma/client/-/client-4.2.1.tgz"
   "version" "4.2.1"
   dependencies:
-    "@prisma/engines-version" "4.2.0-33.2920a97877e12e055c1333079b8d19cee7f33826"
+    "@prisma/engines-version" "4.1.0-48.8d8414deb360336e4698a65aa45a1fbaf1ce13d8"
 
 "@prisma/engines-version@4.2.0-33.2920a97877e12e055c1333079b8d19cee7f33826":
   "integrity" "sha512-tktkqdiwqE4QhmE088boPt+FwPj1Jub/zk+5F6sEfcRHzO5yz9jyMD5HFVtiwxZPLx/8Xg9ElnuTi8E5lWVQFQ=="
@@ -939,7 +939,7 @@
   "resolved" "https://registry.npmjs.org/prisma/-/prisma-4.2.1.tgz"
   "version" "4.2.1"
   dependencies:
-    "@prisma/engines" "4.2.1"
+    "@prisma/engines" "4.1.0"
 
 "proxy-addr@~2.0.7":
   "integrity" "sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg=="

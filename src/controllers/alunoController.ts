@@ -3,23 +3,38 @@ import { client } from '../../prisma/client'
 const { time } = require("console")
 
 const getVagasMonitoria: RequestHandler = async (req, res) => {
-    const {matricula} = req.body;
-    const monitorias = await client.VagaMonitoria.findMany({
-        // where: {matricula : matricula}
-    })
-    const mon = await client
-    let userFullnames = monitorias.map(function(element){
-        return `${element.nome_disciplina} ${element.nome_professor}`;
+    // const {monitoria} = req.body;
+    const vagasMonitorias = await client.vagaMonitoria.findMany({
+        select: {
+            id:true,
+            pre_requisito: true,
+            Monitoria: {
+                select: {
+                    Disciplina: {
+                        select: {
+                            nome: true,
+                            codigo_disciplina: true,
+                            Colaborador: {
+                                select: {
+                                    nome:true
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+            }
+        }
     })
 
     var monitoriasmap : any[] = []
-    for  ( let monitoria of monitorias){
+    for  ( let vagaMonitoria of vagasMonitorias){
         monitoriasmap.push(
             {
-                "nome_disciplina" : monitoria.nome_disciplina,
-                "nome_professor": monitoria.nome_professor,
-                "codigo_disciplina" : monitoria.codigo_disciplina,
-                "pre_requisito": monitoria.pre_requisito
+                "nome_disciplina" : vagaMonitoria.Monitoria.Disciplina.nome,
+                "nome_professor": vagaMonitoria.Monitoria.Disciplina.Colaborador.nome,
+                "codigo_disciplina" : vagaMonitoria.Monitoria.Disciplina.codigo_disciplina,
+                "pre_requisito": vagaMonitoria.pre_requisito
             }
         )
     }
@@ -29,17 +44,41 @@ const getVagasMonitoria: RequestHandler = async (req, res) => {
     res.status(200).send(monitoriasJson)
 }
 
-const getMinhasMonitorias: RequestHandler  = (req, res) => {
-    let monitorias = [
-        {
-            "nome_disciplina" : "computação em nuvem",
-            "nome_professor": "vasco",
-            "codigo_disciplina" : "123451000",
+// TODO: Arrumar esse endpoint foi feito para receber as monitorias de um monitor
+const getMinhasMonitorias: RequestHandler  = async (req, res) => {
+    const {matricula} = req.body;
+    const monitorias = await client.monitoria.findMany({
+        select: {
+            id: true,
+            Disciplina:{
+                select:{
+                    nome:true,
+                    codigo_disciplina: true,
+                    Colaborador: {
+                        select: {
+                            nome:true
+                        }
+                    }
+                }
+            }
         }
-    ]
-    res.status(201).send(monitorias)
+    });
+
+    var monitoriasmap : any[] = []
+    for (let monitoria of monitorias){
+        monitoriasmap.push(
+            {
+                "nome_disciplina" : monitoria.Disciplina.nome,
+                "nome_professor": monitoria.Disciplina.Colaborador.nome,
+                "codigo_disciplina" : monitoria.Disciplina.codigo_disciplina,
+            }
+        )
+    };
+
+    res.status(201).send(monitorias);
 }
 
+//TODO: Faltou algo aqui
 const getAgendamentoMonitoria: RequestHandler  = (req, res) => {
     let response = {
         "nome _aluno": "hedison",
@@ -60,62 +99,145 @@ const removerAgendamento: RequestHandler  = (req, res) => {
     res.status(200).send({msg:`solicitacao de agendamento ${id} removida`})
 }
 
-const getAgendamentos: RequestHandler = (req, res) => {
-    let reunioes =  [ 
-        {
-            "horario":  Date.now(),
-            "nome_aluno": "Hedis1" ,
-            "nome_disciplina": "strindisciplina1" 
-        },
-        {
-            "horario":  Date.now() ,
-            "nome_aluno": "Hedis2" ,
-            "nome_disciplina": "strindisciplina2g2" 
-        },
-            ] 
-    res.status(201).send(reunioes)
+const getAgendamentos: RequestHandler = async (req, res) => {
+    const { matricula_aluno } = req.body;
+
+    const agendamentos = await client.agendamento.findMany({
+        where: { matricula_aluno: matricula_aluno},
+        select: {
+            horario:true,
+            Aluno: {
+                select:{
+                    nome: true
+                }
+            },
+            Monitoria:{
+                select: {
+                    Disciplina:{
+                        select: {
+                            nome: true
+                        }
+                    }
+                }
+            }
+            
+        }   
+    })
+
+    var agendamentosMap : any[] = []
+    for  ( let agendamento of agendamentos){
+        agendamentosMap.push(
+            {
+                "horario" : agendamento.horario,
+                "nome_aluno": agendamento.Aluno.nome,
+                "nome_disciplina" : agendamento.Monitoria.Disciplina.nome           }
+        )
+    }
+
+    let monitoriasJson = {"vagas_monitorias": agendamentosMap}
+
+    res.status(201).send(monitoriasJson)
 }
 
-const getPerfil: RequestHandler = (req, res) => {
+const getPerfil: RequestHandler = async (req, res) => {
+    const { matricula_aluno } = req.body;
+
+    const aluno = await client.aluno.findFirst({
+        where:  {matricula : matricula_aluno }
+    });
+    if (aluno == null ){
+        res.status(404);
+    };
     let perfil = {
-        "nome_aluno": "meunomeéjoao",
-        "email": "joao@email.com",
-        "matricula": "12387878",
-        "e_monitor": true
-    }
-    res.status(201).send(perfil)
+        "nome_aluno": aluno?.nome,
+        "email": aluno?.email,
+        "matricula": aluno?.matricula,
+        "e_monitor": aluno?.e_monitor
+    };
+    res.status(201).send(perfil);
 }
 
-const getMonitorias: RequestHandler = (req, res) => {
-    let response = {
-        monitorias : [
-            {
-                "nome_disciplina" : "inteligencia aritficial",
-                "nome_monitor": "hedison1",
-                "codigo_disciplina" :"10002323"
+const getMonitorias: RequestHandler = async (req, res) => {
+    const {matricula} = req.body;
+    const monitorias = await client.monitoria.findMany({
+        select: {
+            id: true,
+            Disciplina: {
+                select: {
+                    nome: true,
+                    codigo_disciplina: true
+                }
             },
-            {
-                "nome_disciplina" : "javascript ",
-                "nome_monitor": "hedison12",
-                "codigo_disciplina" :"10003323"
-            },
-            {
-                "nome_disciplina" : "inteligencia orientada a objetos",
-                "nome_monitor": "hedison13",
-                "codigo_disciplina" :"34234234"
-            },
-        ]
-    }
-    res.status(201).send(response)
+            AlunoMonitoria : {
+                select : {
+                    id: true,
+                    Aluno: {
+                        select: {
+                            nome: true
+                        }
+                    }
+                
+                }
+            } 
+        }
+    });
+
+    var monitoriasmap : any[] = []
+    for (let monitoria of monitorias){
+        monitoriasmap.push(
+                {
+                    "nome_disciplina" : monitoria.Disciplina.nome,
+                    "nome_monitor": monitoria.AlunoMonitoria[0].Aluno.nome,
+                    "codigo_disciplina" : monitoria.Disciplina.codigo_disciplina,
+                }
+            )
+        }
+
+    
+    res.status(201).send(monitoriasmap)
 }
 
-const getMonitoria: RequestHandler = (req, res) => {
-    let perfil = {
-        "nome_aluno": "meunomeéjoao",
-        "email": "joao@email.com",
-        "matricula": "12387878",
-        "e_monitor": true
-    }
+const getMonitoria: RequestHandler = async (req, res) => {
+    const { id_monitoria } = req.body;
+
+    const monitoria = await client.monitoria.findFirst({
+        where: {
+            id: id_monitoria
+        },
+        select: {
+            id: true,
+            horario: true,
+            Disciplina: {
+                select: {
+                    nome: true,
+                    codigo_disciplina: true
+                } 
+            },
+            AlunoMonitoria : {
+                select : {
+                    id: true,
+                    Aluno: {
+                        select: {
+                            nome: true
+                        }
+                    }
+                
+                } 
+            },
+            Colaborador: { 
+                select: {
+                    nome: true
+                }
+            }
+        }
+    });
+    let perfil = { 
+            "nome_aluno": monitoria?.AlunoMonitoria[0].Aluno.nome,
+            "nome_professor": monitoria?.Colaborador.nome,
+            "nome_disciplina": monitoria?.Disciplina.nome,
+            "horario_monitoria": monitoria?.horario,
+            "email_contato": monitoria?.AlunoMonitoria[0].Aluno.nome
+        } 
     res.status(201).send(perfil)
 }
 

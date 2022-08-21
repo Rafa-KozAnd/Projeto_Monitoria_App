@@ -1,6 +1,20 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+
+    // const monitorias = await client.$queryRaw`
+    //                     SELECT 
+    //                         * 
+    //                     FROM 
+    //                         "Monitoria" m
+    //                     JOIN
+    //                         "Disciplina" d ON d."" == m.codigo_disciplina
+    //                     JOIN
+    //                         "AlunoMonitoria am ON am."id_monitoria" == m."id"
+    //                     WHERE 
+    //                         matricula = ${matricula}`
+
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -19,6 +33,7 @@ model Aluno {
   e_monitor          Boolean
   AlunoMonitoria     AlunoMonitoria[]
   VagaAlunoMonitoria VagaAlunoMonitoria?
+  Agendamento        Agendamento[]
   SolicitacaoMonitoria SolicitacaoMonitoria[]
 }
 
@@ -29,19 +44,21 @@ model SolicitacaoAgendamento {
   id_monitoria      String // FK
 }
 
+model Agendamento {
+  id              Int    @id
+  agendamento     String
+  Aluno           Aluno    @relation(fields:[matricula_aluno], references:[matricula])
+  matricula_aluno String
+  Monitoria       Monitoria @relation(fields:[id_monitoria], references:[id])
+  id_monitoria    Int // FK
+  horario         DateTime
+}
 model AlunoMonitoria {
   id               Int       @id
-  Aluno            Aluno     @relation(fields: [matriccula_aluno], references: [matricula])
-  matriccula_aluno String
+  Aluno            Aluno     @relation(fields: [matricula_aluno], references: [matricula])
+  matricula_aluno String
   Monitoria        Monitoria @relation(fields: [id_monitoria], references: [id])
   id_monitoria     Int
-}
-
-model Meeting {
-  id             Int    @id
-  agendamento    String
-  matriculaAluno String // FK
-  idMonitoria    String // FK
 }
 
 model Colaborador {
@@ -70,11 +87,15 @@ model funcao {
 
 model Monitoria {
   id                Int              @id
+  Disciplina        Disciplina       @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
   codigo_disciplina String
   nome_disciplina   String
   Colaborador       Colaborador      @relation(fields: [codigo_professor], references: [cpf])
   codigo_professor  String
+  horario           DateTime
   AlunoMonitoria     AlunoMonitoria[]
+  VagaMonitoria     VagaMonitoria[]
+  Agendamento       Agendamento[]
 }
 
 model Disciplina {
@@ -82,7 +103,7 @@ model Disciplina {
   Colaborador          Colaborador @relation(fields: [professor_disciplina], references: [cpf])
   professor_disciplina String
   nome                 String
-  SolicitacaoMonitoria SolicitacaoMonitoria[]
+  Monitoria            Monitoria[]
   VagaMonitoria        VagaMonitoria[]
 }
 
@@ -90,6 +111,9 @@ model VagaMonitoria {
   id                     Int                  @id
   Colaborador            Colaborador          @relation(fields: [professor_requisitante], references: [cpf])
   professor_requisitante String
+  Monitoria              Monitoria            @relation(fields: [id_monitoria], references: [id])
+  id_monitoria           Int                                    
+  em_aberto              Boolean
   Disciplina             Disciplina           @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
   codigo_disciplina      String
   monitoria              Int

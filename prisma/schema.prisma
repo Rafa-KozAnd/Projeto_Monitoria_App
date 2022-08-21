@@ -1,6 +1,20 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+
+    // const monitorias = await client.$queryRaw`
+    //                     SELECT 
+    //                         * 
+    //                     FROM 
+    //                         "Monitoria" m
+    //                     JOIN
+    //                         "Disciplina" d ON d."" == m.codigo_disciplina
+    //                     JOIN
+    //                         "AlunoMonitoria am ON am."id_monitoria" == m."id"
+    //                     WHERE 
+    //                         matricula = ${matricula}`
+
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -40,8 +54,8 @@ model Agendamento {
 }
 model AlunoMonitoria {
   id               Int       @id
-  Aluno            Aluno     @relation(fields: [matriccula_aluno], references: [matricula])
-  matriccula_aluno String
+  Aluno            Aluno     @relation(fields: [matricula_aluno], references: [matricula])
+  matricula_aluno String
   Monitoria        Monitoria @relation(fields: [id_monitoria], references: [id])
   id_monitoria     Int
 }

@@ -50,10 +50,15 @@ const getMinhasMonitorias: RequestHandler  = async (req, res) => {
     const monitorias = await client.monitoria.findMany({
         select: {
             id: true,
-            disciplina:{
-                nome:true,
-                colaborador: {
-                    nome:true
+            Disciplina:{
+                select:{
+                    nome:true,
+                    codigo_disciplina: true,
+                    Colaborador: {
+                        select: {
+                            nome:true
+                        }
+                    }
                 }
             }
         }
@@ -63,9 +68,9 @@ const getMinhasMonitorias: RequestHandler  = async (req, res) => {
     for (let monitoria of monitorias){
         monitoriasmap.push(
             {
-                "nome_disciplina" : monitoria.disciplina.nome,
-                "nome_professor": monitoria.disciplina.colaborador.nome,
-                "codigo_disciplina" : monitoria.disciplina.codigo_disciplina,
+                "nome_disciplina" : monitoria.Disciplina.nome,
+                "nome_professor": monitoria.Disciplina.Colaborador.nome,
+                "codigo_disciplina" : monitoria.Disciplina.codigo_disciplina,
             }
         )
     };
@@ -98,8 +103,25 @@ const getAgendamentos: RequestHandler = async (req, res) => {
     const { matricula_aluno } = req.body;
 
     const agendamentos = await client.agendamento.findMany({
-        where: { matricula_aluno: matricula_aluno}
+        where: { matricula_aluno: matricula_aluno},
+        select: {
+            horario:true,
+            Aluno: {
+                select:{
+                    nome: true
+                }
+            },
+            Monitoria:{
+                select: {
+                    Disciplina:{
+                        select: {
+                            nome: true
+                        }
+                    }
+                }
+            }
             
+        }   
     })
 
     var agendamentosMap : any[] = []
@@ -107,8 +129,8 @@ const getAgendamentos: RequestHandler = async (req, res) => {
         agendamentosMap.push(
             {
                 "horario" : agendamento.horario,
-                "nome_aluno": agendamento.aluno.nome,
-                "nome_disciplina" : agendamento.monitoria.disciplina.nome_disciplina           }
+                "nome_aluno": agendamento.Aluno.nome,
+                "nome_disciplina" : agendamento.Monitoria.Disciplina.nome           }
         )
     }
 
@@ -122,44 +144,54 @@ const getPerfil: RequestHandler = async (req, res) => {
 
     const aluno = await client.aluno.findFirst({
         where:  {matricula : matricula_aluno }
-    })
-
+    });
+    if (aluno == null ){
+        res.status(404);
+    };
     let perfil = {
-        "nome_aluno": aluno.nome,
-        "email": aluno.email,
-        "matricula": aluno.matricula,
-        "e_monitor": aluno.e_monitor
-    }
-    res.status(201).send(perfil)
+        "nome_aluno": aluno?.nome,
+        "email": aluno?.email,
+        "matricula": aluno?.matricula,
+        "e_monitor": aluno?.e_monitor
+    };
+    res.status(201).send(perfil);
 }
 
-const getMonitorias: RequestHandler = (req, res) => {
+const getMonitorias: RequestHandler = async (req, res) => {
     const {matricula} = req.body;
     const monitorias = await client.monitoria.findMany({
         select: {
             id: true,
-            disciplina:{
-                nome:true,
-                monitoria: {
-                    alunoMonitoria : {
-                        aluno:{
-                            nome:true
+            Disciplina: {
+                select: {
+                    nome: true,
+                    codigo_disciplina: true
+                }
+            },
+            AlunoMonitoria : {
+                select : {
+                    id: true,
+                    Aluno: {
+                        select: {
+                            nome: true
                         }
                     }
+                
                 }
-            }
+            } 
         }
     });
 
     var monitoriasmap : any[] = []
     for (let monitoria of monitorias){
         monitoriasmap.push(
-            {
-                "nome_disciplina" : monitoria.disciplina.nome,
-                "nome_monitor": monitoria.disciplina.alunoMonitoria.aluno.nome,
-                "codigo_disciplina" : monitoria.disciplina.codigo_disciplina,
-            }
-        )
+                {
+                    "nome_disciplina" : monitoria.Disciplina.nome,
+                    "nome_monitor": monitoria.AlunoMonitoria[0].Aluno.nome,
+                    "codigo_disciplina" : monitoria.Disciplina.codigo_disciplina,
+                }
+            )
+        }
 
     
     res.status(201).send(monitoriasmap)
@@ -169,14 +201,42 @@ const getMonitoria: RequestHandler = async (req, res) => {
     const { id_monitoria } = req.body;
 
     const monitoria = await client.monitoria.findFirst({
-        where: { id: id_monitoria }
-    })
+        where: {
+            id: id_monitoria
+        },
+        select: {
+            id: true,
+            horario: true,
+            Disciplina: {
+                select: {
+                    nome: true,
+                    codigo_disciplina: true
+                } 
+            },
+            AlunoMonitoria : {
+                select : {
+                    id: true,
+                    Aluno: {
+                        select: {
+                            nome: true
+                        }
+                    }
+                
+                } 
+            },
+            Colaborador: { 
+                select: {
+                    nome: true
+                }
+            }
+        }
+    });
     let perfil = { 
-            "nome_aluno": monitoria.alunoMonitoria.aluno.nome,
-            "nome_professor": monitoria.colaborador.nome,
-            "nome_disciplina": monitoria.disciplina.nome,
-            "horario_monitoria": monitoria.horario,
-            "email_contato": monitoria.alunoMonitoria.aluno.nome
+            "nome_aluno": monitoria?.AlunoMonitoria[0].Aluno.nome,
+            "nome_professor": monitoria?.Colaborador.nome,
+            "nome_disciplina": monitoria?.Disciplina.nome,
+            "horario_monitoria": monitoria?.horario,
+            "email_contato": monitoria?.AlunoMonitoria[0].Aluno.nome
         } 
     res.status(201).send(perfil)
 }

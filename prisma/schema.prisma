@@ -34,6 +34,7 @@ model Aluno {
   AlunoMonitoria     AlunoMonitoria[]
   VagaAlunoMonitoria VagaAlunoMonitoria?
   Agendamento        Agendamento[]
+  SolicitacaoMonitoria SolicitacaoMonitoria[]
 }
 
 model SolicitacaoAgendamento {
@@ -103,8 +104,7 @@ model Disciplina {
   professor_disciplina String
   nome                 String
   Monitoria            Monitoria[]
-  SolicitacaoMonitoria SolicitacaoMonitoria[]
-  
+  VagaMonitoria        VagaMonitoria[]
 }
 
 model VagaMonitoria {
@@ -114,6 +114,10 @@ model VagaMonitoria {
   Monitoria              Monitoria            @relation(fields: [id_monitoria], references: [id])
   id_monitoria           Int                                    
   em_aberto              Boolean
+  Disciplina             Disciplina           @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
+  codigo_disciplina      String
+  monitoria              Int
+  status                 Int
   aprovado               Boolean // Creio que esse campo não sera necessario
   VagaAlunoMonitoria     VagaAlunoMonitoria[]
   pre_requisito          String
@@ -132,6 +136,9 @@ model SolicitacaoMonitoria {
   codigo_disciplina     String
   motivo                String
   status                Int    // 1 ou 2 talvez não precise.. avaliar
+  monitorRecomendado    String
+  AlunoSolicitante      Aluno        @relation(fields: [matricula_aluno], references: [matricula])
+  matricula_aluno       String
 }
 
 enum Role {

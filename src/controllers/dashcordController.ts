@@ -8,7 +8,7 @@ export const getSolicitacoes: RequestHandler  = async (req, res) => {
         const solicitacoesAlunos = await client.vagaAlunoMonitoria.findMany({
             where: {
                 VagaMonitoria: {
-                    em_aberto: true
+                    status: 0
                 }
             },
             select: {
@@ -16,7 +16,7 @@ export const getSolicitacoes: RequestHandler  = async (req, res) => {
                 id_vaga: true,
                 Aluno: {
                     select: {
-                        telefone: true
+                        email: true
                     }
                 },
                 VagaMonitoria: {
@@ -72,7 +72,7 @@ export const getSolicitacoesPendentes: RequestHandler = async (req, res) => {
         const solicitacoesAlunos = await client.vagaAlunoMonitoria.findMany({
             where: {
                 VagaMonitoria: {
-                    em_aberto: true
+                    status: 0
                 }
             },
             select: {
@@ -80,7 +80,7 @@ export const getSolicitacoesPendentes: RequestHandler = async (req, res) => {
                 id_vaga: true,
                 Aluno: {
                     select: {
-                        telefone: true
+                        email: true
                     }
                 },
                 VagaMonitoria: {

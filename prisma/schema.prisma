@@ -105,6 +105,7 @@ model Disciplina {
   nome                 String
   Monitoria            Monitoria[]
   VagaMonitoria        VagaMonitoria[]
+  SolicitacaoMonitoria SolicitacaoMonitoria[]
 }
 
 model VagaMonitoria {
@@ -112,8 +113,7 @@ model VagaMonitoria {
   Colaborador            Colaborador          @relation(fields: [professor_requisitante], references: [cpf])
   professor_requisitante String
   Monitoria              Monitoria            @relation(fields: [id_monitoria], references: [id])
-  id_monitoria           Int                                    
-  em_aberto              Boolean
+  id_monitoria           Int             
   Disciplina             Disciplina           @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
   codigo_disciplina      String
   monitoria              Int

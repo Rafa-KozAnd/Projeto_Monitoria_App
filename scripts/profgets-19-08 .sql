@@ -25,23 +25,23 @@ INSERT INTO public."Disciplina"
 (codigo_disciplina, professor_disciplina, nome)
 VALUES('654168', '03521651685', 'Progamacao');
 
-INSERT INTO public."VagaMonitoria"
-(id, professor_requisitante, monitoria, aprovado, codigo_disciplina, status)
-VALUES(1, '07337326993', 0, false, '485135', 1);
-
 INSERT INTO public."Monitoria"
-(id, codigo_disciplina, nome_disciplina, codigo_professor)
-VALUES(123456, '654168', 'Progamacao', '03521651685');
+(id, codigo_disciplina, nome_disciplina, codigo_professor, horario)
+VALUES(123456, '654168', 'Progamacao', '03521651685', '2022-08-21 13:54:15.134369');
+
+INSERT INTO public."VagaMonitoria"
+(id, professor_requisitante, monitoria, id_monitoria, aprovado, codigo_disciplina, status, pre_requisito)
+VALUES(1, '07337326993', 0, 123456, false, '485135', 1, 'Bom');
 
 INSERT INTO public."SolicitacaoMonitoria"
 (id, codigo_disciplina, motivo, status, matricula_aluno, "monitorRecomendado")
 VALUES(1, '485135', 'Quero criptografar tudo', 0, '13058843', 'O motorista do onibus');
 
 INSERT INTO public."AlunoMonitoria"
-(id, matriccula_aluno, id_monitoria)
+(id, matricula_aluno, id_monitoria)
 VALUES(1, '5615165165', 123456);
 INSERT INTO public."AlunoMonitoria"
-(id, matriccula_aluno, id_monitoria)
+(id, matricula_aluno, id_monitoria)
 VALUES(2, '651651651', 123456);
 
 INSERT INTO public."VagaAlunoMonitoria"

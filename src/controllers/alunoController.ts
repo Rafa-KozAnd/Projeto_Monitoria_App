@@ -1,6 +1,5 @@
 import { RequestHandler } from 'express';
 import { client } from '../../prisma/client'
-import { AlunoMonitoriaScalarFieldEnum } from '@prisma/client';
 const { time } = require("console")
 
 const getVagasMonitoria: RequestHandler = async (req, res) => {
@@ -8,13 +7,20 @@ const getVagasMonitoria: RequestHandler = async (req, res) => {
     const vagasMonitorias = await client.vagaMonitoria.findMany({
         select: {
             id:true,
-            monitoria: {
-                disciplina: {
-                    nome: true,
-                    codigo_disciplina: true,
-                    pre_requisito: true,
-                    colaborador: {
-                        nome:true,
+            pre_requisito: true,
+            Monitoria: {
+                select: {
+                    Disciplina: {
+                        select: {
+                            nome: true,
+                            codigo_disciplina: true,
+                            Colaborador: {
+                                select: {
+                                    nome:true
+                                }
+                            }
+                            
+                        }
                     }
                 }
             }
@@ -25,9 +31,9 @@ const getVagasMonitoria: RequestHandler = async (req, res) => {
     for  ( let vagaMonitoria of vagasMonitorias){
         monitoriasmap.push(
             {
-                "nome_disciplina" : vagaMonitoria.monitoria.nome_disciplina,
-                "nome_professor": vagaMonitoria.monitoria.disciplina.colaborador.nome,
-                "codigo_disciplina" : vagaMonitoria.disciplina.codigo_disciplina,
+                "nome_disciplina" : vagaMonitoria.Monitoria.Disciplina.nome,
+                "nome_professor": vagaMonitoria.Monitoria.Disciplina.Colaborador.nome,
+                "codigo_disciplina" : vagaMonitoria.Monitoria.Disciplina.codigo_disciplina,
                 "pre_requisito": vagaMonitoria.pre_requisito
             }
         )

@@ -7,9 +7,7 @@ export const getSolicitacoes: RequestHandler  = async (req, res) => {
     try {
         const solicitacoesAlunos = await client.vagaAlunoMonitoria.findMany({
             where: {
-                VagaMonitoria: {
-                    status: 0
-                }
+                status: 0
             },
             select: {
                 matricula_aluno: true,
@@ -71,9 +69,7 @@ export const getSolicitacoesPendentes: RequestHandler = async (req, res) => {
     try {
         const solicitacoesAlunos = await client.vagaAlunoMonitoria.findMany({
             where: {
-                VagaMonitoria: {
-                    status: 0
-                }
+                status: 0
             },
             select: {
                 matricula_aluno: true,

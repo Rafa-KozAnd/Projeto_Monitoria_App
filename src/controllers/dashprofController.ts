@@ -8,8 +8,8 @@ const getSolicitacoes: RequestHandler  = async (req, res) => {
     try {
         const solicitacoesAlunos = await client.vagaAlunoMonitoria.findMany({
             where: {
+                status: 1,
                 VagaMonitoria: {
-                    status: 1,
                     professor_requisitante: cpfProfessor
                 }
             },

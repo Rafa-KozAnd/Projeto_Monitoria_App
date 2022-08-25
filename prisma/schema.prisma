@@ -32,7 +32,7 @@ model Aluno {
   telefone           String
   e_monitor          Boolean
   AlunoMonitoria     AlunoMonitoria[]
-  VagaAlunoMonitoria VagaAlunoMonitoria?
+  VagaAlunoMonitoria VagaAlunoMonitoria[]
   Agendamento        Agendamento[]
   SolicitacaoMonitoria SolicitacaoMonitoria[]
 }
@@ -117,7 +117,6 @@ model VagaMonitoria {
   Disciplina             Disciplina           @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
   codigo_disciplina      String
   monitoria              Int
-  status                 Int
   aprovado               Boolean // Creio que esse campo não sera necessario
   VagaAlunoMonitoria     VagaAlunoMonitoria[]
   pre_requisito          String
@@ -125,9 +124,11 @@ model VagaMonitoria {
 
 model VagaAlunoMonitoria {
   Aluno           Aluno         @relation(fields: [matricula_aluno], references: [matricula])
-  matricula_aluno String        @unique
+  matricula_aluno String        
   VagaMonitoria   VagaMonitoria @relation(fields: [id_vaga], references: [id])
-  id_vaga         Int
+  id_vaga         Int           
+  status          Int           @default(0)
+  @@unique([matricula_aluno,id_vaga])
 }
 
 model SolicitacaoMonitoria {

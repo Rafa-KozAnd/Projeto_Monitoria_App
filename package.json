@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "engines": {
+    "yarn": "1.x"
+  },
   "scripts": {
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "start": "ts-node src/index.ts"
   },
   "dependencies": {
     "@prisma/client": "4.2.1",
@@ -15,7 +19,10 @@
     "dotenv": "^16.0.1",
     "dto-mapper": "^0.2.3",
     "express": "^4.18.1",
+    "nodemon": "^2.0.18",
     "reflect-metadata": "^0.1.13",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -23,7 +30,6 @@
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/node": "^18.6.5",
-    "nodemon": "^2.0.18",
     "prisma": "^4.2.1"
   }
 }

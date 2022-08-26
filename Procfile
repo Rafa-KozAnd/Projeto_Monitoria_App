@@ -1,1 +1,2 @@
-web: npm run start
+web: yarn i
+web: yarn start

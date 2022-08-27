@@ -128,6 +128,7 @@ model VagaAlunoMonitoria {
   VagaMonitoria   VagaMonitoria @relation(fields: [id_vaga], references: [id])
   id_vaga         Int           
   status          Int           @default(0)
+  motivo          String?        
   @@unique([matricula_aluno,id_vaga])
 }
 

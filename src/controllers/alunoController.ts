@@ -251,14 +251,30 @@ const agendarMonitoria: RequestHandler = (req, res) => {
     res.status(201).send(perfil)
 }
 
-const solicitarVagaMonitoria: RequestHandler = (req, res) => {
+const solicitarVagaMonitoria: RequestHandler = async (req, res) => {
+    const {
+        matricula_aluno, 
+        codigo_disciplina, 
+        motivo,
+        monitor_recomendado
+         } = req.body;
+
+    await client.solicitacaoMonitoria.create({
+        data:{
+            matricula_aluno: matricula_aluno,
+            codigo_disciplina: codigo_disciplina,
+            motivo: motivo,
+            monitor_recomendado: monitor_recomendado
+        }
+            
+    })
     let perfil = {
         "nome_aluno": "meunomeéjoao",
         "email": "joao@email.com",
         "matricula": "12387878",
         "e_monitor": true
     }
-    res.status(201).send(perfil)
+    res.status(201).send("ok")
 }
 
 export {

@@ -264,7 +264,7 @@ const solicitarVagaMonitoria: RequestHandler = async (req, res) => {
             matricula_aluno: matricula_aluno,
             codigo_disciplina: codigo_disciplina,
             motivo: motivo,
-            monitor_recomendado: monitor_recomendado
+            monitorRecomendado: monitor_recomendado
         }
             
     })

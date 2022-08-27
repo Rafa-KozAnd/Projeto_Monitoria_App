@@ -21,6 +21,14 @@ model Aluno {
   VagaAlunoMonitoria VagaAlunoMonitoria?
 }
 
+model Solicitacao {
+  id                 String   @id
+  matriculaAluno     String
+  disciplinaDesejada DateTime
+  emailAluno         String
+  status             Int
+}
+
 model SolicitacaoAgendamento {
   matriculaAluno  String   @id // FK
   dataSolicitacao DateTime

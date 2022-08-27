@@ -5,7 +5,7 @@ const getSolicitacoes: RequestHandler  = (req, res) => {
         {id:"fsm2vsgo1pr", matriculaAluno: "49239df", disciplinaDesejada: "Computação em nuvem", emailAluno: "joao@gmail.com"},
         {id:"sgg1pv5e18a", matriculaAluno:  "3fjk39sd", disciplinaDesejada: "Banco de Dados", emailAluno: "manoel@gmail.com"}
         ]})
-}
+    }
 
 const aprovaSolicitacoes: RequestHandler = (req, res) => {
     res.status(200).json({id_solicitacao:"gf34sezvoh6"})

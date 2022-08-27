@@ -8,6 +8,7 @@ import authRoutes from './routes/auth.routes';
 import alunoRoutes from './routes/alunos.routes';
 import coordRoutes from './routes/dashcoord.routes';
 import profRoutes from './routes/dashprof.routes';
+import facrotyRoutes from './routes/factory.routes';
 import { client } from '../prisma/client';
 
 dotenv.config()
@@ -19,6 +20,7 @@ app.use('/professor', profRoutes);
 app.use('/aluno', alunoRoutes);
 app.use('/coordenador', coordRoutes);
 app.use('/auth', authRoutes);
+app.use('/factory', facrotyRoutes);
 
 app.get('/', (req, res) => {
   res.send('Essa é a API do Projeto Monitoria.')
@@ -26,7 +28,8 @@ app.get('/', (req, res) => {
 
 app.post('/create', async (req, res) => {
   const { cpf, nome, email, senha, role } = req.body;
-  const senhaHash = await hash(senha, 8);
+  try {
+    const senhaHash = await hash(senha, 8);
     await client.colaborador.create({
       data: {
         cpf,
@@ -35,8 +38,15 @@ app.post('/create', async (req, res) => {
         senha: senhaHash,
         role,
       }
-    })
-    res.send('Usuário criado com sucesso!')
+    });
+    console.log(`Usuario ${cpf} criado com sucesso`);
+    res.send('Usuário criado com sucesso!');
+
+  } catch (error) {
+    console.log("blubluyeyeyeyeye")
+    console.log(error); 
+    res.send("error")
+  }
 })
 
 app.listen(process.env.PORT, () => {

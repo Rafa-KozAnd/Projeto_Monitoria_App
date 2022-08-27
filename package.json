@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "engines": { "node": "14.17" },
+  "engines": { "node": "14.19.3" },
   "scripts": {
     "start": "node dist/index.js",
     "postinstall": "tsc",

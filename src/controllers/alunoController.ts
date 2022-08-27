@@ -252,28 +252,28 @@ const agendarMonitoria: RequestHandler = (req, res) => {
 }
 
 const solicitarVagaMonitoria: RequestHandler = async (req, res) => {
-    const {
-        matricula_aluno, 
-        codigo_disciplina, 
-        motivo,
-        monitor_recomendado
-         } = req.body;
+    // const {
+    //     matricula_aluno, 
+    //     codigo_disciplina, 
+    //     motivo,
+    //     monitor_recomendado
+    //      } = req.body;
 
-    await client.solicitacaoMonitoria.create({
-        data:{
-            matricula_aluno: matricula_aluno,
-            codigo_disciplina: codigo_disciplina,
-            motivo: motivo,
-            monitorRecomendado: monitor_recomendado
-        }
+    // await client.solicitacaoMonitoria.create({
+    //     data:{
+    //         matricula_aluno: matricula_aluno,
+    //         codigo_disciplina: codigo_disciplina,
+    //         motivo: motivo,
+    //         monitorRecomendado: monitor_recomendado
+    //     }
             
-    })
-    let perfil = {
-        "nome_aluno": "meunomeéjoao",
-        "email": "joao@email.com",
-        "matricula": "12387878",
-        "e_monitor": true
-    }
+    // })
+    // let perfil = {
+    //     "nome_aluno": "meunomeéjoao",
+    //     "email": "joao@email.com",
+    //     "matricula": "12387878",
+    //     "e_monitor": true
+    // }
     res.status(201).send("ok")
 }
 

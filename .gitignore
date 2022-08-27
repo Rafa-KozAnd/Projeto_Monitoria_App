@@ -5,4 +5,4 @@ postgresql-data
 ./postgresql-data/
 ./node_modules/
 *.log
-
+dist

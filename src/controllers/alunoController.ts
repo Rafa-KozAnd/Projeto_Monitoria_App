@@ -252,22 +252,23 @@ const agendarMonitoria: RequestHandler = (req, res) => {
 }
 
 const solicitarVagaMonitoria: RequestHandler = async (req, res) => {
-    // const {
-    //     matricula_aluno, 
-    //     codigo_disciplina, 
-    //     motivo,
-    //     monitor_recomendado
-    //      } = req.body;
+    const {
+        matricula_aluno, 
+        codigo_disciplina, 
+        motivo,
+        monitor_recomendado
+         } = req.body;
 
-    // await client.solicitacaoMonitoria.create({
-    //     data:{
-    //         matricula_aluno: matricula_aluno,
-    //         codigo_disciplina: codigo_disciplina,
-    //         motivo: motivo,
-    //         monitorRecomendado: monitor_recomendado
-    //     }
+        const solicitacaoMonitoria = await client.solicitacaoMonitoria.create({
+        data:{
+            matricula_aluno: matricula_aluno,
+            codigo_disciplina: codigo_disciplina,
+            motivo: motivo,
+            monitorRecomendado: monitor_recomendado,
+            status: 1
+        }
             
-    // })
+    })
     // let perfil = {
     //     "nome_aluno": "meunomeéjoao",
     //     "email": "joao@email.com",

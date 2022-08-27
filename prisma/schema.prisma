@@ -109,7 +109,7 @@ model Disciplina {
 }
 
 model VagaMonitoria {
-  id                     Int                  @id
+  id                     Int                  @id @default(autoincrement())
   Colaborador            Colaborador          @relation(fields: [professor_requisitante], references: [cpf])
   professor_requisitante String
   Monitoria              Monitoria            @relation(fields: [id_monitoria], references: [id])
@@ -132,7 +132,7 @@ model VagaAlunoMonitoria {
 }
 
 model SolicitacaoMonitoria {
-  id                    Int           @id
+  id                    Int           @id @default(autoincrement())
   Disciplina            Disciplina   @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
   codigo_disciplina     String
   motivo                String

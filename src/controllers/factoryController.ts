@@ -10,10 +10,11 @@ const createAluno : RequestHandler = async (req, res) => {
         email,
         telefone,
     } = req.body;
-
+    const senhaHash = await hash(senha, 8);
+    console.log("senha: ", senhaHash);
     const aluno = {
         matricula: matricula,
-        senha: await hash(senha, 8),
+        senha: senhaHash,
         nome: nome,
         email: email,
         telefone: telefone,
@@ -21,7 +22,6 @@ const createAluno : RequestHandler = async (req, res) => {
     }
 
     try {
-        const senhaHash = await hash(senha, 8);
         await client.aluno.create({
             data:aluno
         })

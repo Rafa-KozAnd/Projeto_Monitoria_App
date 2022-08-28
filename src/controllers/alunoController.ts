@@ -1,9 +1,19 @@
 import { RequestHandler } from 'express';
 import { client } from '../../prisma/client'
+import {Aluno, User} from '../services/Aluno'
+import {Authenticator} from '../services/Authenticator'
 const { time } = require("console")
 
 const getVagasMonitoria: RequestHandler = async (req, res) => {
-    // const {monitoria} = req.body;
+    const {matricula, senha} = req.body;
+    const aluno = new Aluno(matricula, senha)
+    // TODO: nao sei se isso aqui funciona esse cast aqui
+    const validate = (Boolean)(await Authenticator.authenticateAluno(aluno))
+    if (validate != true)
+    {
+        res.status(403).send("não autorizado");
+        return false
+    }
     const vagasMonitorias = await client.vagaMonitoria.findMany({
         select: {
             id:true,

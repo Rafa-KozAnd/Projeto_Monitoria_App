@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
       "outDir": "dist",
-      "esModuleInterop": true
+      "esModuleInterop": true,
+      "target": "ES5",
+      "experimentalDecorators": true
     }
   }

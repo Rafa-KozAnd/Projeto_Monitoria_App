@@ -7,10 +7,10 @@
     "node": "14.19.3"
   },
   "scripts": {
+    "dev": "nodemon src/index.ts",
     "start": "node dist/src/index.js",
-    "postinstall": "tsc",
-    "watch-node": "nodemon dist/index.js",
-    "watch-ts": "tsc -w"
+    "build": "tsc",
+    "postinstall": "tsc"
   },
   "dependencies": {
     "@prisma/client": "4.2.1",
@@ -21,6 +21,7 @@
     "dotenv": "^16.0.1",
     "dto-mapper": "^0.2.3",
     "express": "^4.18.1",
+    "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.18",
     "reflect-metadata": "^0.1.13",
     "ts-node": "^10.9.1",

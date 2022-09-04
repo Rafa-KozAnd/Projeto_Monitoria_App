@@ -32,7 +32,6 @@ const createAluno : RequestHandler = async (req, res) => {
         console.log(error); 
         res.send("error")
       }
-
 }
 
 export {

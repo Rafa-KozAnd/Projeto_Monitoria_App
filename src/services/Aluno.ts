@@ -3,14 +3,15 @@ import { alunoLogin } from '../controllers/authController';
 import {hash, compare } from 'bcryptjs';
 
 export class User{
-    id: string
+    public id: string
     senha: string
     constructor(_id, _senha){
         this.id = _id;
         this.senha = _senha;
     }
     
-    login(){
+    public async login(): Promise<Boolean>{
+        return false;
     }
 }
 
@@ -22,8 +23,8 @@ export class Aluno extends User {
         super(_matricula, _senhaHash);
     }
     
-    public async login(){
-
+    public async login(): Promise<Boolean>{
+        console.log(this.senha)
         try {
             const aluno = (await client.aluno.findFirst({
                 where:{matricula: this.id}
@@ -34,18 +35,19 @@ export class Aluno extends User {
                 return true;
             }
             else{
-                return false
+                return false;
             }
         } catch (error) {
             console.log("Erro ao efetuar login")
             return false
         }
     }
+
 }
 
 export class Colaborador extends User{
 
-    public async login(){
+    public async login(): Promise<Boolean>{
         try {
             const _senha = (await client.colaborador.findFirst({
                 where:{cpf: this.id}

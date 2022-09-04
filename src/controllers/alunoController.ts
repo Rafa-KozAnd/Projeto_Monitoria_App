@@ -150,10 +150,18 @@ const getAgendamentos: RequestHandler = async (req, res) => {
 }
 
 const getPerfil: RequestHandler = async (req, res) => {
-    const { matricula_aluno } = req.body;
+    const { matricula, senha} = req.body;
+    const _aluno = new Aluno(matricula, senha)
+    // TODO: nao sei se isso aqui funciona esse cast aqui
+    const validate = (Boolean)(await Authenticator.authenticateAluno(_aluno));
+    if (validate != true)
+    {
+        res.status(403).send("não autorizado");
+        return false
+    }
 
     const aluno = await client.aluno.findFirst({
-        where:  {matricula : matricula_aluno }
+        where:  {matricula : matricula }
     });
     if (aluno == null ){
         res.status(404);
@@ -288,6 +296,30 @@ const solicitarVagaMonitoria: RequestHandler = async (req, res) => {
     res.status(201).send("ok")
 }
 
+
+const autenticar: RequestHandler = async (req, res) => {
+    const {
+        matricula,
+        senha
+    } = req.body;
+    console.log("entuenticando");
+
+    const aluno = new Aluno(matricula, senha)
+    // TODO: nao sei se isso aqui funciona esse cast aqui
+    const validate = await Authenticator.authenticateAluno(aluno)
+    if (validate["valid"] != true )
+    {
+        console.log(validate)
+        res.status(403).send(validate);
+        return false
+    }
+    else{
+        console.log("2");
+        console.log(validate);
+        res.status(200).send(validate)
+        return true;
+    }
+}
 export {
     getVagasMonitoria,
     getMinhasMonitorias,
@@ -299,5 +331,6 @@ export {
     getMonitorias,
     getMonitoria,
     agendarMonitoria,
-    solicitarVagaMonitoria
+    solicitarVagaMonitoria,
+    autenticar
 }

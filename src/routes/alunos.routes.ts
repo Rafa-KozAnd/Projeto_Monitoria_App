@@ -14,5 +14,7 @@ alunoRoutes.get('/monitorias', alunos.getMonitorias)
 alunoRoutes.get('/monitoria', alunos.getMonitoria)
 alunoRoutes.post('/agendar/monitoria', alunos.agendarMonitoria) //post
 alunoRoutes.post('/solicitar/vaga/monitoria', alunos.solicitarVagaMonitoria) //post
+alunoRoutes.post('/autenticar', alunos.autenticar) //post
+
 
 export default alunoRoutes;

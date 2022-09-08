@@ -1,7 +1,6 @@
 import { compare } from "bcryptjs";
 import { RequestHandler } from "express"
 import { v4 as uuidv4 } from 'uuid';
-import { client } from "../../prisma/client";
 import {Authenticator} from "../services/Authenticator"
 import {Aluno, Colaborador} from "../services/Aluno"
 

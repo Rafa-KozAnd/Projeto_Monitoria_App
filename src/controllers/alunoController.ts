@@ -297,29 +297,6 @@ const solicitarVagaMonitoria: RequestHandler = async (req, res) => {
 }
 
 
-const autenticar: RequestHandler = async (req, res) => {
-    const {
-        matricula,
-        senha
-    } = req.body;
-    console.log("entuenticando");
-
-    const aluno = new Aluno(matricula, senha)
-    // TODO: nao sei se isso aqui funciona esse cast aqui
-    const validate = await Authenticator.authenticateAluno(aluno)
-    if (validate["valid"] != true )
-    {
-        console.log(validate)
-        res.status(403).send(validate);
-        return false
-    }
-    else{
-        console.log("2");
-        console.log(validate);
-        res.status(200).send(validate)
-        return true;
-    }
-}
 export {
     getVagasMonitoria,
     getMinhasMonitorias,
@@ -332,5 +309,4 @@ export {
     getMonitoria,
     agendarMonitoria,
     solicitarVagaMonitoria,
-    autenticar
 }

@@ -6,7 +6,7 @@ import {Authenticator} from "../services/Authenticator"
 import {Aluno, Colaborador} from "../services/Aluno"
 
 
-const alunoLogin: RequestHandler = async (req, res) => {
+export const alunoLogin: RequestHandler = async (req, res) => {
   const {
       matricula,
       senha

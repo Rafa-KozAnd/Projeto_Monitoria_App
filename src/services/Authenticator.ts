@@ -16,12 +16,6 @@ export class Authenticator{
             const token = await sign({ user_id, secret_key }, process.env.SECRETTOKEN, {
                 expiresIn: 300 // expires in 5min
             });
-            // const token = new Promise((resolve, reject) => {
-            //     Jwt.sign({ user_id, secret_key }, process.env.SECRETTOKEN, function(err, token2) {
-            //       if (err) reject(err);
-            //       else resolve(token2)
-            //     });
-            // });
             
             console.log(token);
 

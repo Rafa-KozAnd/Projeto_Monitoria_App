@@ -4,13 +4,15 @@ import { verify } from "jsonwebtoken";
 
 
 export const authenticate: RequestHandler = async (req, res, next) => {
-  const { authorization } = req.headers;
+  const { authorization } = await req.headers;
+  console.log(authorization);
   if (!authorization) {
     return res.status(401).json({ message: "Não autorizado" });
   }
-  const [, token] = authorization.split(" ");
+  const [, token] = await authorization.split(".");
+  console.log(token);
   try {
-    verify(token, `${process.env.SECRET_TOKEN}`)
+    verify(authorization, `${process.env.SECRETTOKEN}`)
     return next();
   } catch(err) {
     return res.status(401).json({ message: "Sessão expirada, realize login novamente na plataforma." });

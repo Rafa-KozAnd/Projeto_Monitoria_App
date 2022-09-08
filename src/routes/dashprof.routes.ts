@@ -1,16 +1,17 @@
 import { Router } from 'express'
 import * as profController from '../controllers/dashprofController'
+import {authenticate} from '../middlewares/authentication'
 
 const profRoutes = Router();
 
-profRoutes.get('/solicitacoes', profController.getSolicitacoes)
-profRoutes.put('/solicitacoes/aprovar', profController.aprovaSolicitacoes)
-profRoutes.put('/solicitacoes/reprovar', profController.reprovaSolicitacoes)
+profRoutes.get('/solicitacoes',authenticate, profController.getSolicitacoes)
+profRoutes.put('/solicitacoes/aprovar',authenticate, profController.aprovaSolicitacoes)
+profRoutes.put('/solicitacoes/reprovar',authenticate, profController.reprovaSolicitacoes)
 
-profRoutes.get('/aberturamonitoria', profController.getVagas)
-profRoutes.put('/aberturamonitoria/aprovar', profController.aprovaVaga)
-profRoutes.delete('/aberturamonitoria/remover', profController.removeVaga)
+profRoutes.get('/aberturamonitoria',authenticate, profController.getVagas)
+profRoutes.put('/aberturamonitoria/aprovar',authenticate, profController.aprovaVaga)
+profRoutes.delete('/aberturamonitoria/remover',authenticate, profController.removeVaga)
 
-profRoutes.get('/monitorias', profController.getMonitorias)
+profRoutes.get('/monitorias',authenticate, profController.getMonitorias)
 
 export default profRoutes;

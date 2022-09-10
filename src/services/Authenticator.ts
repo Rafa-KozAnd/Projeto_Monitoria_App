@@ -10,7 +10,7 @@ export class Authenticator{
         const secret_key = await process.env.SECRETTOKEN;
         console.log(secret_key);
         console.log("outside")
-        if (login){
+        if (login["valid"] == true){
             console.log("generating token")
             console.log();
             const token = await sign({ user_id, secret_key }, process.env.SECRETTOKEN, {
@@ -21,7 +21,8 @@ export class Authenticator{
 
             return {
                 "valid": true,
-                "token": token
+                "token": token,
+                "login": login["role"]
             }
         }
         else{

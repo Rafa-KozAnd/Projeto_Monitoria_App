@@ -10,8 +10,8 @@ export class User{
         this.senha = _senha;
     }
     
-    public async login(): Promise<Boolean>{
-        return false;
+    public async login(): Promise<{}>{
+        return {};
     }
 }
 
@@ -23,7 +23,7 @@ export class Aluno extends User {
         super(_matricula, _senhaHash);
     }
     
-    public async login(): Promise<Boolean>{
+    public async login(): Promise<{}>{
         console.log(this.senha)
         try {
             const aluno = (await client.aluno.findFirst({
@@ -32,7 +32,9 @@ export class Aluno extends User {
             const _senha = aluno.senha;
   
             if (await compare(this.senha, _senha)){
-                return true;
+                return {
+                        "valid":true,
+                        "eh_monitor": aluno.e_monitor};
             }
             else{
                 return false;
@@ -47,18 +49,21 @@ export class Aluno extends User {
 
 export class Colaborador extends User{
 
-    public async login(): Promise<Boolean>{
+    public async login(): Promise<{}>{
         try {
-            const _senha = (await client.colaborador.findFirst({
+            const colaborador = (await client.colaborador.findFirst({
                 where:{cpf: this.id}
             })).senha
-
+            const _senha = colaborador.senha;
             // const senhaHash = await hash(_senha, 8);
             if (await compare(this.senha, _senha)){
                 return true;
             }
             else{
-                return false
+                return {
+                    "valid":false,
+                    "role": colaborador.role
+                }
             }
         } catch (error) {
             console.log("Erro ao efetuar login")

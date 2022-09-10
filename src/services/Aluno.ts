@@ -53,8 +53,8 @@ export class Colaborador extends User{
                 where:{cpf: this.id}
             })).senha
 
-            const senhaHash = await hash(_senha, 8);
-            if (this.senha == senhaHash){
+            // const senhaHash = await hash(_senha, 8);
+            if (await compare(this.senha, _senha)){
                 return true;
             }
             else{

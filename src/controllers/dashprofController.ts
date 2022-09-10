@@ -59,7 +59,7 @@ const aprovaSolicitacoes: RequestHandler = async (req, res) => {
     const { id_vaga, matricula_aluno, } = req.body;
 
     try {
-        const aprovaalunosolicit = await client.vagaAlunoMonitoria.updateMany({
+        const aprovaalunosolicit = await client.vaga_aluno_monitoria.updateMany({
             where: {
                 id_vaga: id_vaga,
                 matricula_aluno: matricula_aluno,
@@ -71,7 +71,7 @@ const aprovaSolicitacoes: RequestHandler = async (req, res) => {
         })
         if(aprovaalunosolicit.count == 1) {
 
-            await client.vagaMonitoria.update({
+            await client.vaga_monitoria.update({
                 where: {
                     id: id_vaga
                 },
@@ -94,7 +94,7 @@ const reprovaSolicitacoes: RequestHandler = async (req, res) => {
     const { id_vaga, matricula_aluno, motivo} = req.body;
 
     try {
-        const recusaalunosolicit = await client.vagaAlunoMonitoria.updateMany({
+        const recusaalunosolicit = await client.vaga_aluno_monitoria.updateMany({
             where: {
                 id_vaga: id_vaga,
                 matricula_aluno: matricula_aluno,
@@ -170,7 +170,7 @@ const aprovaVaga: RequestHandler = async (req, res) => {
     const { id_vaga, cpf_professor, nome_disciplina } = req.body;
 
     try {
-        const aprovaealunovaga = await client.solicitacaoMonitoria.update({
+        const aprovaealunovaga = await client.solicitacao_monitoria.update({
             where: {
                 id: id_vaga
             },
@@ -193,8 +193,6 @@ const aprovaVaga: RequestHandler = async (req, res) => {
 
             const criamonitoria = await client.monitoria.create({
                 data: {
-                    id:55555, //autoincrement
-                    nome_disciplina:"testeeeeeee", //possivelmente apagar isto da tabela
                     codigo_disciplina: achadisciplina.codigo_disciplina,
                     codigo_professor: cpf_professor,
                     horario: dateTime
@@ -217,7 +215,7 @@ const removeVaga: RequestHandler = async (req, res) => {
     const { id_vaga } = req.body;
 
     try {
-        const removealunovaga = await client.solicitacaoMonitoria.delete({
+        const removealunovaga = await client.solicitacao_monitoria.delete({
             where: {
                 id: id_vaga
             }
@@ -245,7 +243,11 @@ const getMonitorias: RequestHandler = async (req, res) => {
             },
             select: {
                 id: true,
-                nome_disciplina: true,
+                disciplina: {
+                    select: {
+                        nome: true
+                    }
+                },
                 aluno_monitoria: {
                     select: {
                         aluno:{
@@ -274,7 +276,7 @@ const getMonitorias: RequestHandler = async (req, res) => {
             monitoriaJson.push
             ({
                 "idDisciplina": monitoria.id,
-                "nomeDisciplina": monitoria.nome_disciplina,
+                "nomeDisciplina": monitoria.disciplina.nome,
                 "monitores": monitorJson,
             })
         }

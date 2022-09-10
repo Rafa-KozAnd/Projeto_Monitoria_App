@@ -45,7 +45,7 @@ model solicitacao_agendamento {
 }
 
 model agendamento {
-  id              Int    @id
+  id              Int    @id @default(autoincrement())
   agendamento     String
   aluno           aluno    @relation(fields:[matricula_aluno], references:[matricula])
   matricula_aluno String
@@ -54,7 +54,7 @@ model agendamento {
   horario         DateTime
 }
 model aluno_monitoria {
-  id               Int       @id
+  id               Int       @id @default(autoincrement())
   aluno            aluno     @relation(fields: [matricula_aluno], references: [matricula])
   matricula_aluno String
   monitoria        monitoria @relation(fields: [id_monitoria], references: [id])
@@ -86,10 +86,9 @@ model funcao {
 }
 
 model monitoria {
-  id                Int              @id
+  id                Int              @id @default(autoincrement())
   disciplina        disciplina       @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
   codigo_disciplina String
-  nome_disciplina   String
   colaborador       colaborador      @relation(fields: [codigo_professor], references: [cpf])
   codigo_professor  String
   horario           DateTime
@@ -118,7 +117,7 @@ model vaga_monitoria {
   codigo_disciplina      String
   aprovado               Boolean // Creio que esse campo não sera necessario
   vaga_aluno_monitoria  vaga_aluno_monitoria[]
-  pre_requisito          String
+  pre_requisito          String?
 }
 
 model vaga_aluno_monitoria {
@@ -127,7 +126,7 @@ model vaga_aluno_monitoria {
   vaga_monitoria   vaga_monitoria @relation(fields: [id_vaga], references: [id])
   id_vaga         Int           
   status          Int           @default(0)
-  motivo          String?        
+  motivo          String?
   @@unique([matricula_aluno,id_vaga])
 }
 
@@ -135,9 +134,9 @@ model solicitacao_monitoria {
   id                    Int           @id @default(autoincrement())
   disciplina            disciplina   @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
   codigo_disciplina     String
-  motivo                String
+  motivo                String?
   status                Int    // 1 ou 2 talvez não precise.. avaliar
-  monitorRecomendado    String
+  monitorRecomendado    String?
   AlunoSolicitante      aluno        @relation(fields: [matricula_aluno], references: [matricula])
   matricula_aluno       String
 }

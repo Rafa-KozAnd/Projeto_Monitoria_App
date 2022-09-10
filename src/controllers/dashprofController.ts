@@ -3,19 +3,20 @@ import { client } from '../../prisma/client'
 
 
 const getSolicitacoes: RequestHandler  = async (req, res) => {
-    const { cpfProfessor } = req.body;
+    const { cpf_professor } = req.body;
     
     try {
         const solicitacoesAlunos = await client.vaga_aluno_monitoria.findMany({
             where: {
                 status: 1,
-               vaga_monitoria: {
-                    professor_requisitante: cpfProfessor
+                vaga_monitoria: {
+                    professor_requisitante: cpf_professor,
+                    aprovado: false
                 }
             },
             select: {
                 matricula_aluno: true,
-                id_vaga: true,
+                id: true,
                 aluno: {
                     select: {
                         email: true
@@ -38,7 +39,7 @@ const getSolicitacoes: RequestHandler  = async (req, res) => {
         for (let solicitacaoAluno of solicitacoesAlunos) {
             solicitacoesAlunosJson.push
             ( {
-                "id": solicitacaoAluno.id_vaga,
+                "id": solicitacaoAluno.id,
                 "matriculaAluno": solicitacaoAluno.matricula_aluno,
                 "disciplinaDesejada": solicitacaoAluno.vaga_monitoria.disciplina.nome,
                 "emailAluno": solicitacaoAluno.aluno.email
@@ -47,24 +48,79 @@ const getSolicitacoes: RequestHandler  = async (req, res) => {
 
         let solicitacoesAlunosFormat = {"solicitacoes": solicitacoesAlunosJson}
         
-        res.status(200).json(solicitacoesAlunosFormat)
+        return res.status(200).json(solicitacoesAlunosFormat)
 
     }catch(err) {
-        res.status(500).json({message: 'Houve um erro ao tentar pegar os dados, tente novamente mais tarde.'})
+        return res.status(500).json({message: 'Houve um erro ao tentar pegar os dados, tente novamente mais tarde.'})
     }
 }
 
-const aprovaSolicitacoes: RequestHandler = (req, res) => {
-    res.status(200).json({id_solicitacao:"gf34sezvoh6"})
+const aprovaSolicitacoes: RequestHandler = async (req, res) => {
+    const { solicitacao_id } = req.body;
+
+    try {
+        const aprovaalunosolicit = await client.vaga_aluno_monitoria.update({
+            where: {
+                id: solicitacao_id
+            },
+            data: {
+                status:2
+            }
+        })
+        if(aprovaalunosolicit) {
+
+            const atualiza_vaga = await client.vaga_monitoria.update({
+                where: {
+                    id: aprovaalunosolicit.id_vaga
+                },
+                data: {
+                    aprovado: true
+                }
+            })
+            await client.aluno_monitoria.create({
+                data: {
+                    id_monitoria: atualiza_vaga.id_monitoria,
+                    matricula_aluno: aprovaalunosolicit.matricula_aluno
+                }
+            })
+
+            return res.status(200).json({message:"Alterado com sucesso"})
+        }
+        return res.status(500).json({message:"Solicitação não encontrada"})
+        
+
+    } catch(err) {
+        return res.status(500).json({message: 'Houve um erro ao alterar os dados, tente novamente mais tarde.'})
+    }
+    
 }
 
-const reprovaSolicitacoes: RequestHandler = (req, res) => {
-    res.status(200).json({comentario:"aluno burro",id_solicitacao: "gf34sezvoh6"})
+const reprovaSolicitacoes: RequestHandler = async (req, res) => {
+    const { solicitacao_id, motivo} = req.body;
+
+    try {
+        const recusaalunosolicit = await client.vaga_aluno_monitoria.update({
+            where: {
+                id: solicitacao_id
+            },
+            data: {
+                status:3,
+                motivo: motivo
+            }
+        })
+        if(recusaalunosolicit) {
+            return res.status(200).json({message:"Recusado com sucesso"})
+        }
+        return res.status(500).json({message:"Solicitação não encontrada"})
+
+    } catch(err) {
+        return res.status(500).json({message: 'Houve um erro ao alterar os dados, tente novamente mais tarde.'})
+    }
 }
 
 
 const getVagas: RequestHandler = async (req, res) => {
-    const { cpfProfessor } = req.body;
+    const { cpf_professor } = req.body;
 
     try {
         const solicitacoesMonitorias = await client.solicitacao_monitoria.findMany({
@@ -72,7 +128,7 @@ const getVagas: RequestHandler = async (req, res) => {
                 status: 0,// verificar significado dos status
                 disciplina: {
                     colaborador:{
-                        cpf: cpfProfessor
+                        cpf: cpf_professor
                     }
                 }
             },
@@ -101,7 +157,6 @@ const getVagas: RequestHandler = async (req, res) => {
                 "monitorRecomendado": solicitacao_monitoria.monitorRecomendado,
                 "motivoSolicitacao": solicitacao_monitoria.motivo
             })
-            break
         }
     
         let solicitacoesMonitoriaFormat = {"solicitacoesAbertura": solicitacoesMonitoriaJson}
@@ -113,27 +168,78 @@ const getVagas: RequestHandler = async (req, res) => {
     }
 }
 
-const aprovaVaga: RequestHandler = (req, res) => {
-    res.status(200).json({id_abertura_monitoria:"zvoresgo2v"})
+const aprovaVaga: RequestHandler = async (req, res) => {
+    const { id_vaga, cpf_professor} = req.body;
+
+    try {
+        const aprovaalunovaga = await client.solicitacao_monitoria.update({
+            where: {
+                id: id_vaga
+            },
+            data: {
+                status: 1
+            }
+        })
+        if(aprovaalunovaga) {
+            let dateTime = new Date()
+
+            const criamonitoria = await client.monitoria.create({
+                data: {
+                    codigo_disciplina: aprovaalunovaga.codigo_disciplina,
+                    codigo_professor: cpf_professor,
+                    horario: dateTime
+                }
+
+            })
+            if(criamonitoria) {
+                return res.status(201).json({message:"Aprovado e monitoria criada com sucesso."})
+            }
+            return res.status(500).json({message:"Erro ao criar monitoria"})
+        }
+        return res.status(500).json({message:"Vaga não encontrada"})
+    } catch(err) {
+        return res.status(500).json({message: 'Houve um erro ao alterar os dados, tente novamente mais tarde.'})
+    }
+
 }
 
-const removeVaga: RequestHandler = (req, res) => {
-    res.status(200).json({id_abertura_monitoria:"zvoresgo2v"})
+const removeVaga: RequestHandler = async (req, res) => {
+    const { id_vaga } = req.body;
+
+    try {
+        const removealunovaga = await client.solicitacao_monitoria.delete({
+            where: {
+                id: id_vaga
+            }
+        })
+        if(removealunovaga) {
+            return res.status(200).json({message:"Excluido com sucesso"})
+        }
+        return res.status(500).json({message:"Vaga não encontrada"})
+        
+
+    } catch(err) {
+        return res.status(500).json({message: 'Houve um erro ao alterar os dados, tente novamente mais tarde.'})
+    }
 }
 
 const getMonitorias: RequestHandler = async (req, res) => {
-    const { cpfProfessor } = req.body;
+    const { cpf_professor } = req.body;
 
     try {
         const monitorias = await client.monitoria.findMany({
             where: {
                 colaborador: {
-                    cpf: cpfProfessor
+                    cpf: cpf_professor
                 }
             },
             select: {
                 id: true,
-                nome_disciplina: true,
+                disciplina: {
+                    select: {
+                        nome: true
+                    }
+                },
                 aluno_monitoria: {
                     select: {
                         aluno:{
@@ -162,10 +268,9 @@ const getMonitorias: RequestHandler = async (req, res) => {
             monitoriaJson.push
             ({
                 "idDisciplina": monitoria.id,
-                "nomeDisciplina": monitoria.nome_disciplina,
+                "nomeDisciplina": monitoria.disciplina.nome,
                 "monitores": monitorJson,
             })
-            break
         }
         
         let monitoriasFormat = {"disciplinas": monitoriaJson}

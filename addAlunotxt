@@ -1,3 +1,0 @@
-curl -X POST localhost:3000/factory/aluno \
-    -H "Content-Type: application/json" \
-    -d '{"matricula":"1234566", "senha":"blabla", "nome":"haissam", "email": "haissam@haissam.com", "telefone":"9999gold"}'

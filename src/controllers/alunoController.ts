@@ -14,17 +14,17 @@ const getVagasMonitoria: RequestHandler = async (req, res) => {
         res.status(403).send("não autorizado");
         return false
     }
-    const vagasMonitorias = await client.vagaMonitoria.findMany({
+    const vagasMonitorias = await client.vaga_monitoria.findMany({
         select: {
             id:true,
             pre_requisito: true,
-            Monitoria: {
+            monitoria: {
                 select: {
-                    Disciplina: {
+                    disciplina: {
                         select: {
                             nome: true,
                             codigo_disciplina: true,
-                            Colaborador: {
+                            colaborador: {
                                 select: {
                                     nome:true
                                 }
@@ -38,13 +38,13 @@ const getVagasMonitoria: RequestHandler = async (req, res) => {
     })
 
     var monitoriasmap : any[] = []
-    for  ( let vagaMonitoria of vagasMonitorias){
+    for  ( let vaga_monitoria of vagasMonitorias){
         monitoriasmap.push(
             {
-                "nome_disciplina" : vagaMonitoria.Monitoria.Disciplina.nome,
-                "nome_professor": vagaMonitoria.Monitoria.Disciplina.Colaborador.nome,
-                "codigo_disciplina" : vagaMonitoria.Monitoria.Disciplina.codigo_disciplina,
-                "pre_requisito": vagaMonitoria.pre_requisito
+                "nome_disciplina" : vaga_monitoria.monitoria.disciplina.nome,
+                "nome_professor": vaga_monitoria.monitoria.disciplina.colaborador.nome,
+                "codigo_disciplina" : vaga_monitoria.monitoria.disciplina.codigo_disciplina,
+                "pre_requisito": vaga_monitoria.pre_requisito
             }
         )
     }
@@ -60,11 +60,11 @@ const getMinhasMonitorias: RequestHandler  = async (req, res) => {
     const monitorias = await client.monitoria.findMany({
         select: {
             id: true,
-            Disciplina:{
+            disciplina:{
                 select:{
                     nome:true,
                     codigo_disciplina: true,
-                    Colaborador: {
+                    colaborador: {
                         select: {
                             nome:true
                         }
@@ -78,9 +78,9 @@ const getMinhasMonitorias: RequestHandler  = async (req, res) => {
     for (let monitoria of monitorias){
         monitoriasmap.push(
             {
-                "nome_disciplina" : monitoria.Disciplina.nome,
-                "nome_professor": monitoria.Disciplina.Colaborador.nome,
-                "codigo_disciplina" : monitoria.Disciplina.codigo_disciplina,
+                "nome_disciplina" : monitoria.disciplina.nome,
+                "nome_professor": monitoria.disciplina.colaborador.nome,
+                "codigo_disciplina" : monitoria.disciplina.codigo_disciplina,
             }
         )
     };
@@ -116,14 +116,14 @@ const getAgendamentos: RequestHandler = async (req, res) => {
         where: { matricula_aluno: matricula_aluno},
         select: {
             horario:true,
-            Aluno: {
+            aluno: {
                 select:{
                     nome: true
                 }
             },
-            Monitoria:{
+            monitoria:{
                 select: {
-                    Disciplina:{
+                    disciplina:{
                         select: {
                             nome: true
                         }
@@ -139,8 +139,8 @@ const getAgendamentos: RequestHandler = async (req, res) => {
         agendamentosMap.push(
             {
                 "horario" : agendamento.horario,
-                "nome_aluno": agendamento.Aluno.nome,
-                "nome_disciplina" : agendamento.Monitoria.Disciplina.nome           }
+                "nome_aluno": agendamento.aluno.nome,
+                "nome_disciplina" : agendamento.monitoria.disciplina.nome           }
         )
     }
 
@@ -180,16 +180,16 @@ const getMonitorias: RequestHandler = async (req, res) => {
     const monitorias = await client.monitoria.findMany({
         select: {
             id: true,
-            Disciplina: {
+            disciplina: {
                 select: {
                     nome: true,
                     codigo_disciplina: true
                 }
             },
-            AlunoMonitoria : {
+            aluno_monitoria : {
                 select : {
                     id: true,
-                    Aluno: {
+                    aluno: {
                         select: {
                             nome: true
                         }
@@ -204,9 +204,9 @@ const getMonitorias: RequestHandler = async (req, res) => {
     for (let monitoria of monitorias){
         monitoriasmap.push(
                 {
-                    "nome_disciplina" : monitoria.Disciplina.nome,
-                    "nome_monitor": monitoria.AlunoMonitoria[0].Aluno.nome,
-                    "codigo_disciplina" : monitoria.Disciplina.codigo_disciplina,
+                    "nome_disciplina" : monitoria.disciplina.nome,
+                    "nome_monitor": monitoria.aluno_monitoria[0].aluno.nome,
+                    "codigo_disciplina" : monitoria.disciplina.codigo_disciplina,
                 }
             )
         }
@@ -225,16 +225,16 @@ const getMonitoria: RequestHandler = async (req, res) => {
         select: {
             id: true,
             horario: true,
-            Disciplina: {
+            disciplina: {
                 select: {
                     nome: true,
                     codigo_disciplina: true
                 } 
             },
-            AlunoMonitoria : {
+            aluno_monitoria : {
                 select : {
                     id: true,
-                    Aluno: {
+                    aluno: {
                         select: {
                             nome: true
                         }
@@ -242,7 +242,7 @@ const getMonitoria: RequestHandler = async (req, res) => {
                 
                 } 
             },
-            Colaborador: { 
+            colaborador: { 
                 select: {
                     nome: true
                 }
@@ -250,11 +250,11 @@ const getMonitoria: RequestHandler = async (req, res) => {
         }
     });
     let perfil = { 
-            "nome_aluno": monitoria?.AlunoMonitoria[0].Aluno.nome,
-            "nome_professor": monitoria?.Colaborador.nome,
-            "nome_disciplina": monitoria?.Disciplina.nome,
+            "nome_aluno": monitoria?.aluno_monitoria[0].aluno.nome,
+            "nome_professor": monitoria?.colaborador.nome,
+            "nome_disciplina": monitoria?.disciplina.nome,
             "horario_monitoria": monitoria?.horario,
-            "email_contato": monitoria?.AlunoMonitoria[0].Aluno.nome
+            "email_contato": monitoria?.aluno_monitoria[0].aluno.nome
         } 
     res.status(201).send(perfil)
 }
@@ -277,7 +277,7 @@ const solicitarVagaMonitoria: RequestHandler = async (req, res) => {
         monitor_recomendado
          } = req.body;
 
-        const solicitacaoMonitoria = await client.solicitacaoMonitoria.create({
+        const solicitacao_monitoria = await client.solicitacao_monitoria.create({
         data:{
             matricula_aluno: matricula_aluno,
             codigo_disciplina: codigo_disciplina,

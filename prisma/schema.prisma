@@ -117,7 +117,7 @@ model vaga_monitoria {
   disciplina             disciplina           @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
   codigo_disciplina      String
   aprovado               Boolean // Creio que esse campo não sera necessario
-  vaga_aluno_monitoria    vaga_aluno_monitoria[]
+  vaga_aluno_monitoria  vaga_aluno_monitoria[]
   pre_requisito          String
 }
 

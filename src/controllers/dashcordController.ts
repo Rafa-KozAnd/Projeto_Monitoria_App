@@ -5,21 +5,21 @@ import { client } from '../../prisma/client'
 export const getSolicitacoes: RequestHandler  = async (req, res) => {
 
     try {
-        const solicitacoesAlunos = await client.vagaAlunoMonitoria.findMany({
+        const solicitacoesAlunos = await client.vaga_aluno_monitoria.findMany({
             where: {
                 status: 0
             },
             select: {
                 matricula_aluno: true,
                 id_vaga: true,
-                Aluno: {
+                aluno: {
                     select: {
                         email: true
                     }
                 },
-                VagaMonitoria: {
+                vaga_monitoria: {
                     select: {
-                        Disciplina: {
+                        disciplina: {
                             select: {
                                 nome: true
                             }
@@ -37,8 +37,8 @@ export const getSolicitacoes: RequestHandler  = async (req, res) => {
             ( {
                 "id": solicitacaoAluno.id_vaga,
                 "matriculaAluno": solicitacaoAluno.matricula_aluno,
-                "disciplinaDesejada": solicitacaoAluno.VagaMonitoria.Disciplina.nome,
-                "emailAluno": solicitacaoAluno.Aluno.email
+                "disciplinaDesejada": solicitacaoAluno.vaga_monitoria.disciplina.nome,
+                "emailAluno": solicitacaoAluno.aluno.email
             })
         }
 
@@ -67,21 +67,21 @@ export const deleteSolicitacoes: RequestHandler = (req, res) => {
 export const getSolicitacoesPendentes: RequestHandler = async (req, res) => {
     
     try {
-        const solicitacoesAlunos = await client.vagaAlunoMonitoria.findMany({
+        const solicitacoesAlunos = await client.vaga_aluno_monitoria.findMany({
             where: {
                 status: 0
             },
             select: {
                 matricula_aluno: true,
                 id_vaga: true,
-                Aluno: {
+                aluno: {
                     select: {
                         email: true
                     }
                 },
-                VagaMonitoria: {
+                vaga_monitoria: {
                     select: {
-                        Disciplina: {
+                        disciplina: {
                             select: {
                                 nome: true
                             }
@@ -99,8 +99,8 @@ export const getSolicitacoesPendentes: RequestHandler = async (req, res) => {
             ( {
                 "id": solicitacaoAluno.id_vaga,
                 "matriculaAluno": solicitacaoAluno.matricula_aluno,
-                "disciplinaDesejada": solicitacaoAluno.VagaMonitoria.Disciplina.nome,
-                "emailAluno": solicitacaoAluno.Aluno.email
+                "disciplinaDesejada": solicitacaoAluno.vaga_monitoria.disciplina.nome,
+                "emailAluno": solicitacaoAluno.aluno.email
             })
         }
 

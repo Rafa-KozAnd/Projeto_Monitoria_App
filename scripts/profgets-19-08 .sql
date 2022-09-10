@@ -37,16 +37,16 @@ INSERT INTO public."SolicitacaoMonitoria"
 (id, codigo_disciplina, motivo, status, matricula_aluno, "monitorRecomendado")
 VALUES(1, '485135', 'Quero criptografar tudo', 0, '13058843', 'O motorista do onibus');
 
-INSERT INTO public."AlunoMonitoria"
+INSERT INTO public."aluno_monitoria"
 (id, matricula_aluno, id_monitoria)
 VALUES(1, '5615165165', 123456);
-INSERT INTO public."AlunoMonitoria"
+INSERT INTO public."aluno_monitoria"
 (id, matricula_aluno, id_monitoria)
 VALUES(2, '651651651', 123456);
 
-INSERT INTO public."VagaAlunoMonitoria"
+INSERT INTO public."Vagaaluno_monitoria"
 (matricula_aluno, id_vaga)
 VALUES('13058843', 1);
-INSERT INTO public."VagaAlunoMonitoria"
+INSERT INTO public."Vagaaluno_monitoria"
 (matricula_aluno, id_vaga)
 VALUES('5615165165', 1);

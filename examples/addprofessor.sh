@@ -1,3 +1,3 @@
-curl -X POST localhost:3000/create \
+curl -X POST https://projeto-monitoria-api.herokuapp.com/create \
     -H "Content-Type: application/json" \
-    -d '{"cpf":"06502862945", "senha":"blabla", "nome":"haissam", "role":"Professor", "email": "haissam@haissam.com"}'
+    -d '{"cpf":"03434343434", "senha":"blablaaa", "nome":"haissam", "role":"Professor", "email": "haissam@haissam.com"}'

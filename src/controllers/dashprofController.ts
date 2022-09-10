@@ -9,14 +9,14 @@ const getSolicitacoes: RequestHandler  = async (req, res) => {
         const solicitacoesAlunos = await client.vaga_aluno_monitoria.findMany({
             where: {
                 status: 1,
-               vaga_monitoria: {
+                vaga_monitoria: {
                     professor_requisitante: cpf_professor,
                     aprovado: false
                 }
             },
             select: {
                 matricula_aluno: true,
-                id_vaga: true,
+                id: true,
                 aluno: {
                     select: {
                         email: true
@@ -39,7 +39,7 @@ const getSolicitacoes: RequestHandler  = async (req, res) => {
         for (let solicitacaoAluno of solicitacoesAlunos) {
             solicitacoesAlunosJson.push
             ( {
-                "id": solicitacaoAluno.id_vaga,
+                "id": solicitacaoAluno.id,
                 "matriculaAluno": solicitacaoAluno.matricula_aluno,
                 "disciplinaDesejada": solicitacaoAluno.vaga_monitoria.disciplina.nome,
                 "emailAluno": solicitacaoAluno.aluno.email
@@ -56,32 +56,37 @@ const getSolicitacoes: RequestHandler  = async (req, res) => {
 }
 
 const aprovaSolicitacoes: RequestHandler = async (req, res) => {
-    const { id_vaga, matricula_aluno, } = req.body;
+    const { solicitacao_id } = req.body;
 
     try {
-        const aprovaalunosolicit = await client.vaga_aluno_monitoria.updateMany({
+        const aprovaalunosolicit = await client.vaga_aluno_monitoria.update({
             where: {
-                id_vaga: id_vaga,
-                matricula_aluno: matricula_aluno,
-                status:1
+                id: solicitacao_id
             },
             data: {
-                status:2,
+                status:2
             }
         })
-        if(aprovaalunosolicit.count == 1) {
+        if(aprovaalunosolicit) {
 
-            await client.vaga_monitoria.update({
+            const atualiza_vaga = await client.vaga_monitoria.update({
                 where: {
-                    id: id_vaga
+                    id: aprovaalunosolicit.id_vaga
                 },
                 data: {
                     aprovado: true
                 }
             })
+            await client.aluno_monitoria.create({
+                data: {
+                    id_monitoria: atualiza_vaga.id_monitoria,
+                    matricula_aluno: aprovaalunosolicit.matricula_aluno
+                }
+            })
+
             return res.status(200).json({message:"Alterado com sucesso"})
         }
-        return res.status(200).json({message:"Solicitação não encontrada"})
+        return res.status(500).json({message:"Solicitação não encontrada"})
         
 
     } catch(err) {
@@ -91,25 +96,22 @@ const aprovaSolicitacoes: RequestHandler = async (req, res) => {
 }
 
 const reprovaSolicitacoes: RequestHandler = async (req, res) => {
-    const { id_vaga, matricula_aluno, motivo} = req.body;
+    const { solicitacao_id, motivo} = req.body;
 
     try {
-        const recusaalunosolicit = await client.vaga_aluno_monitoria.updateMany({
+        const recusaalunosolicit = await client.vaga_aluno_monitoria.update({
             where: {
-                id_vaga: id_vaga,
-                matricula_aluno: matricula_aluno,
-                status: 1
+                id: solicitacao_id
             },
             data: {
                 status:3,
                 motivo: motivo
             }
         })
-        if(recusaalunosolicit.count == 1) {
-            return res.status(200).json({"msg":"Recusado com sucesso"})
+        if(recusaalunosolicit) {
+            return res.status(200).json({message:"Recusado com sucesso"})
         }
-        return res.status(200).json({"msg":"Solicitação não encontrada"})
-        
+        return res.status(500).json({message:"Solicitação não encontrada"})
 
     } catch(err) {
         return res.status(500).json({message: 'Houve um erro ao alterar os dados, tente novamente mais tarde.'})
@@ -167,10 +169,10 @@ const getVagas: RequestHandler = async (req, res) => {
 }
 
 const aprovaVaga: RequestHandler = async (req, res) => {
-    const { id_vaga, cpf_professor, nome_disciplina } = req.body;
+    const { id_vaga, cpf_professor} = req.body;
 
     try {
-        const aprovaealunovaga = await client.solicitacao_monitoria.update({
+        const aprovaalunovaga = await client.solicitacao_monitoria.update({
             where: {
                 id: id_vaga
             },
@@ -178,29 +180,19 @@ const aprovaVaga: RequestHandler = async (req, res) => {
                 status: 1
             }
         })
-        if(aprovaealunovaga) {
+        if(aprovaalunovaga) {
             let dateTime = new Date()
-
-            const achadisciplina = await client.disciplina.findFirst({
-                where: {
-                    professor_disciplina: cpf_professor,
-                    nome: nome_disciplina
-                },
-                select: {
-                    codigo_disciplina: true
-                }
-            })
 
             const criamonitoria = await client.monitoria.create({
                 data: {
-                    codigo_disciplina: achadisciplina.codigo_disciplina,
+                    codigo_disciplina: aprovaalunovaga.codigo_disciplina,
                     codigo_professor: cpf_professor,
                     horario: dateTime
                 }
 
             })
             if(criamonitoria) {
-                return res.status(200).json({message:"Aprovado com sucesso"})
+                return res.status(201).json({message:"Aprovado e monitoria criada com sucesso."})
             }
             return res.status(500).json({message:"Erro ao criar monitoria"})
         }
@@ -221,9 +213,9 @@ const removeVaga: RequestHandler = async (req, res) => {
             }
         })
         if(removealunovaga) {
-            return res.status(200).json({"msg":"Excluido com sucesso"})
+            return res.status(200).json({message:"Excluido com sucesso"})
         }
-        return res.status(200).json({"msg":"Vaga não encontrada"})
+        return res.status(500).json({message:"Vaga não encontrada"})
         
 
     } catch(err) {
@@ -232,13 +224,13 @@ const removeVaga: RequestHandler = async (req, res) => {
 }
 
 const getMonitorias: RequestHandler = async (req, res) => {
-    const { cpfProfessor } = req.body;
+    const { cpf_professor } = req.body;
 
     try {
         const monitorias = await client.monitoria.findMany({
             where: {
                 colaborador: {
-                    cpf: cpfProfessor
+                    cpf: cpf_professor
                 }
             },
             select: {

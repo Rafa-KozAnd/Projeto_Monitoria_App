@@ -121,11 +121,12 @@ model vaga_monitoria {
 }
 
 model vaga_aluno_monitoria {
-  aluno           aluno         @relation(fields: [matricula_aluno], references: [matricula])
+  id              Int             @id @default(autoincrement())
+  aluno           aluno           @relation(fields: [matricula_aluno], references: [matricula])
   matricula_aluno String        
-  vaga_monitoria   vaga_monitoria @relation(fields: [id_vaga], references: [id])
+  vaga_monitoria  vaga_monitoria  @relation(fields: [id_vaga], references: [id])
   id_vaga         Int           
-  status          Int           @default(0)
+  status          Int             @default(0)
   motivo          String?
   @@unique([matricula_aluno,id_vaga])
 }

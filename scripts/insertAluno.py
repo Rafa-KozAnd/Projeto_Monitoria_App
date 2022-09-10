@@ -3,7 +3,7 @@ from faker import Faker
 from random import randint
 import unidecode
 
-QUANTIDADE_INSERTS = 1
+QUANTIDADE_INSERTS = 10
 SENHAALUNO = "$2a$08$5EaDiHONXtRoOrt.BVhrz.ovxPwAVDcafBebypgQy5p0tFe3Gd8QC" # 123
 MONITOR = True
 

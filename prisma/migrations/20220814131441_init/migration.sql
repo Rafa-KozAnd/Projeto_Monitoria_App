@@ -21,12 +21,12 @@ CREATE TABLE "SolicitacaoAgendamento" (
 );
 
 -- CreateTable
-CREATE TABLE "AlunoMonitoria" (
+CREATE TABLE "aluno_monitoria" (
     "id" INTEGER NOT NULL,
     "matriccula_aluno" TEXT NOT NULL,
     "id_monitoria" INTEGER NOT NULL,
 
-    CONSTRAINT "AlunoMonitoria_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "aluno_monitoria_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -97,7 +97,7 @@ CREATE TABLE "VagaMonitoria" (
 );
 
 -- CreateTable
-CREATE TABLE "VagaAlunoMonitoria" (
+CREATE TABLE "Vagaaluno_monitoria" (
     "matricula_aluno" TEXT NOT NULL,
     "id_vaga" INTEGER NOT NULL
 );
@@ -106,13 +106,13 @@ CREATE TABLE "VagaAlunoMonitoria" (
 CREATE UNIQUE INDEX "funcao_nome_key" ON "funcao"("nome");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "VagaAlunoMonitoria_matricula_aluno_key" ON "VagaAlunoMonitoria"("matricula_aluno");
+CREATE UNIQUE INDEX "Vagaaluno_monitoria_matricula_aluno_key" ON "Vagaaluno_monitoria"("matricula_aluno");
 
 -- AddForeignKey
-ALTER TABLE "AlunoMonitoria" ADD CONSTRAINT "AlunoMonitoria_matriccula_aluno_fkey" FOREIGN KEY ("matriccula_aluno") REFERENCES "Aluno"("matricula") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "aluno_monitoria" ADD CONSTRAINT "aluno_monitoria_matriccula_aluno_fkey" FOREIGN KEY ("matriccula_aluno") REFERENCES "Aluno"("matricula") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "AlunoMonitoria" ADD CONSTRAINT "AlunoMonitoria_id_monitoria_fkey" FOREIGN KEY ("id_monitoria") REFERENCES "Monitoria"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "aluno_monitoria" ADD CONSTRAINT "aluno_monitoria_id_monitoria_fkey" FOREIGN KEY ("id_monitoria") REFERENCES "Monitoria"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Monitoria" ADD CONSTRAINT "Monitoria_codigo_professor_fkey" FOREIGN KEY ("codigo_professor") REFERENCES "Colaborador"("cadastro") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -124,7 +124,7 @@ ALTER TABLE "Disciplina" ADD CONSTRAINT "Disciplina_professor_disciplina_fkey" F
 ALTER TABLE "VagaMonitoria" ADD CONSTRAINT "VagaMonitoria_professor_requisitante_fkey" FOREIGN KEY ("professor_requisitante") REFERENCES "Colaborador"("cadastro") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "VagaAlunoMonitoria" ADD CONSTRAINT "VagaAlunoMonitoria_matricula_aluno_fkey" FOREIGN KEY ("matricula_aluno") REFERENCES "Aluno"("matricula") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Vagaaluno_monitoria" ADD CONSTRAINT "Vagaaluno_monitoria_matricula_aluno_fkey" FOREIGN KEY ("matricula_aluno") REFERENCES "Aluno"("matricula") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "VagaAlunoMonitoria" ADD CONSTRAINT "VagaAlunoMonitoria_id_vaga_fkey" FOREIGN KEY ("id_vaga") REFERENCES "VagaMonitoria"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Vagaaluno_monitoria" ADD CONSTRAINT "Vagaaluno_monitoria_id_vaga_fkey" FOREIGN KEY ("id_vaga") REFERENCES "VagaMonitoria"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

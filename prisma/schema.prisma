@@ -6,11 +6,11 @@
     //                     SELECT 
     //                         * 
     //                     FROM 
-    //                         "Monitoria" m
+    //                         "monitoria" m
     //                     JOIN
-    //                         "Disciplina" d ON d."" == m.codigo_disciplina
+    //                         "disciplina" d ON d."" == m.codigo_disciplina
     //                     JOIN
-    //                         "AlunoMonitoria am ON am."id_monitoria" == m."id"
+    //                         "aluno_monitoria am ON am."id_monitoria" == m."id"
     //                     WHERE 
     //                         matricula = ${matricula}`
 
@@ -24,52 +24,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Aluno {
+model aluno {
   matricula          String              @id
   nome               String
   senha              String 
   email              String
   telefone           String
   e_monitor          Boolean
-  AlunoMonitoria     AlunoMonitoria[]
-  VagaAlunoMonitoria VagaAlunoMonitoria[]
-  Agendamento        Agendamento[]
-  SolicitacaoMonitoria SolicitacaoMonitoria[]
+  aluno_monitoria     aluno_monitoria[]
+  vaga_aluno_monitoria vaga_aluno_monitoria[]
+  agendamento        agendamento[]
+  solicitacao_monitoria solicitacao_monitoria[]
 }
 
-model SolicitacaoAgendamento {
+model solicitacao_agendamento {
   matriculaAluno    String              @id // FK
   dataSolicitacao   DateTime
   agendamento       String  // FK
   id_monitoria      String // FK
 }
 
-model Agendamento {
+model agendamento {
   id              Int    @id
   agendamento     String
-  Aluno           Aluno    @relation(fields:[matricula_aluno], references:[matricula])
+  aluno           aluno    @relation(fields:[matricula_aluno], references:[matricula])
   matricula_aluno String
-  Monitoria       Monitoria @relation(fields:[id_monitoria], references:[id])
+  monitoria       monitoria @relation(fields:[id_monitoria], references:[id])
   id_monitoria    Int // FK
   horario         DateTime
 }
-model AlunoMonitoria {
+model aluno_monitoria {
   id               Int       @id
-  Aluno            Aluno     @relation(fields: [matricula_aluno], references: [matricula])
+  aluno            aluno     @relation(fields: [matricula_aluno], references: [matricula])
   matricula_aluno String
-  Monitoria        Monitoria @relation(fields: [id_monitoria], references: [id])
+  monitoria        monitoria @relation(fields: [id_monitoria], references: [id])
   id_monitoria     Int
 }
 
-model Colaborador {
+model colaborador {
   cpf           String          @id
   nome          String
   email         String
   senha         String
   role          Role
-  Monitoria     Monitoria[]
-  Disciplina    Disciplina[]
-  VagaMonitoria VagaMonitoria[]
+  monitoria     monitoria[]
+  disciplina    disciplina[]
+  vaga_monitoria vaga_monitoria[]
 }
 
 
@@ -85,61 +85,60 @@ model funcao {
   nome String @unique
 }
 
-model Monitoria {
+model monitoria {
   id                Int              @id
-  Disciplina        Disciplina       @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
+  disciplina        disciplina       @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
   codigo_disciplina String
   nome_disciplina   String
-  Colaborador       Colaborador      @relation(fields: [codigo_professor], references: [cpf])
+  colaborador       colaborador      @relation(fields: [codigo_professor], references: [cpf])
   codigo_professor  String
   horario           DateTime
-  AlunoMonitoria     AlunoMonitoria[]
-  VagaMonitoria     VagaMonitoria[]
-  Agendamento       Agendamento[]
+  aluno_monitoria     aluno_monitoria[]
+  vaga_monitoria     vaga_monitoria[]
+  agendamento       agendamento[]
 }
 
-model Disciplina {
+model disciplina {
   codigo_disciplina    String      @id
-  Colaborador          Colaborador @relation(fields: [professor_disciplina], references: [cpf])
+  colaborador          colaborador @relation(fields: [professor_disciplina], references: [cpf])
   professor_disciplina String
   nome                 String
-  Monitoria            Monitoria[]
-  VagaMonitoria        VagaMonitoria[]
-  SolicitacaoMonitoria SolicitacaoMonitoria[]
+  monitoria            monitoria[]
+  vaga_monitoria        vaga_monitoria[]
+  solicitacao_monitoria solicitacao_monitoria[]
 }
 
-model VagaMonitoria {
+model vaga_monitoria {
   id                     Int                  @id @default(autoincrement())
-  Colaborador            Colaborador          @relation(fields: [professor_requisitante], references: [cpf])
+  colaborador            colaborador          @relation(fields: [professor_requisitante], references: [cpf])
   professor_requisitante String
-  Monitoria              Monitoria            @relation(fields: [id_monitoria], references: [id])
+  monitoria              monitoria            @relation(fields: [id_monitoria], references: [id])
   id_monitoria           Int             
-  Disciplina             Disciplina           @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
+  disciplina             disciplina           @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
   codigo_disciplina      String
-  monitoria              Int
   aprovado               Boolean // Creio que esse campo não sera necessario
-  VagaAlunoMonitoria     VagaAlunoMonitoria[]
+  vaga_aluno_monitoria    vaga_aluno_monitoria[]
   pre_requisito          String
 }
 
-model VagaAlunoMonitoria {
-  Aluno           Aluno         @relation(fields: [matricula_aluno], references: [matricula])
+model vaga_aluno_monitoria {
+  aluno           aluno         @relation(fields: [matricula_aluno], references: [matricula])
   matricula_aluno String        
-  VagaMonitoria   VagaMonitoria @relation(fields: [id_vaga], references: [id])
+  vaga_monitoria   vaga_monitoria @relation(fields: [id_vaga], references: [id])
   id_vaga         Int           
   status          Int           @default(0)
   motivo          String?        
   @@unique([matricula_aluno,id_vaga])
 }
 
-model SolicitacaoMonitoria {
+model solicitacao_monitoria {
   id                    Int           @id @default(autoincrement())
-  Disciplina            Disciplina   @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
+  disciplina            disciplina   @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
   codigo_disciplina     String
   motivo                String
   status                Int    // 1 ou 2 talvez não precise.. avaliar
   monitorRecomendado    String
-  AlunoSolicitante      Aluno        @relation(fields: [matricula_aluno], references: [matricula])
+  AlunoSolicitante      aluno        @relation(fields: [matricula_aluno], references: [matricula])
   matricula_aluno       String
 }
 

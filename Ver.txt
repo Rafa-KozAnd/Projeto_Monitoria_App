@@ -1,3 +1,0 @@
-Olhar esse artigo para usar next na aplicação
-
-https://nextjs.org/docs/api-routes/introduction

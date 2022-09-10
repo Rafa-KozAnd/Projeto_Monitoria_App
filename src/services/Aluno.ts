@@ -57,7 +57,10 @@ export class Colaborador extends User{
             const _senha = colaborador.senha;
             // const senhaHash = await hash(_senha, 8);
             if (await compare(this.senha, _senha)){
-                return true;
+                return {
+                    "valid":true,
+                    "role": colaborador.role
+                }
             }
             else{
                 return {

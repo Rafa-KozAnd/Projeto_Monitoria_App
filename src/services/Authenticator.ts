@@ -22,7 +22,7 @@ export class Authenticator{
             return {
                 "valid": true,
                 "token": token,
-                "login": login["role"]
+                "role": login["role"]
             }
         }
         else{

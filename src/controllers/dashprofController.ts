@@ -6,24 +6,24 @@ const getSolicitacoes: RequestHandler  = async (req, res) => {
     const { cpfProfessor } = req.body;
     
     try {
-        const solicitacoesAlunos = await client.vagaAlunoMonitoria.findMany({
+        const solicitacoesAlunos = await client.vaga_aluno_monitoria.findMany({
             where: {
                 status: 1,
-                VagaMonitoria: {
+               vaga_monitoria: {
                     professor_requisitante: cpfProfessor
                 }
             },
             select: {
                 matricula_aluno: true,
                 id_vaga: true,
-                Aluno: {
+                aluno: {
                     select: {
                         email: true
                     }
                 },
-                VagaMonitoria: {
+               vaga_monitoria: {
                     select: {
-                        Disciplina: {
+                        disciplina: {
                             select: {
                                 nome: true
                             }
@@ -40,8 +40,8 @@ const getSolicitacoes: RequestHandler  = async (req, res) => {
             ( {
                 "id": solicitacaoAluno.id_vaga,
                 "matriculaAluno": solicitacaoAluno.matricula_aluno,
-                "disciplinaDesejada": solicitacaoAluno.VagaMonitoria.Disciplina.nome,
-                "emailAluno": solicitacaoAluno.Aluno.email
+                "disciplinaDesejada": solicitacaoAluno.vaga_monitoria.disciplina.nome,
+                "emailAluno": solicitacaoAluno.aluno.email
             })
         }
 
@@ -67,11 +67,11 @@ const getVagas: RequestHandler = async (req, res) => {
     const { cpfProfessor } = req.body;
 
     try {
-        const solicitacoesMonitorias = await client.solicitacaoMonitoria.findMany({
+        const solicitacoesMonitorias = await client.solicitacao_monitoria.findMany({
             where: {
                 status: 0,// verificar significado dos status
-                Disciplina: {
-                    Colaborador:{
+                disciplina: {
+                    colaborador:{
                         cpf: cpfProfessor
                     }
                 }
@@ -80,7 +80,7 @@ const getVagas: RequestHandler = async (req, res) => {
                 id: true,
                 matricula_aluno: true,
                 codigo_disciplina: true,
-                Disciplina: {
+                disciplina: {
                     select: {
                         nome: true
                     }
@@ -92,14 +92,14 @@ const getVagas: RequestHandler = async (req, res) => {
     
         var solicitacoesMonitoriaJson : any[] = []
             
-        for (let solicitacaoMonitoria of solicitacoesMonitorias) {
+        for (let solicitacao_monitoria of solicitacoesMonitorias) {
             solicitacoesMonitoriaJson.push
             ({
-                "id": solicitacaoMonitoria.id,
-                "matriculaAluno": solicitacaoMonitoria.matricula_aluno,
-                "disciplinaDesejada": solicitacaoMonitoria.Disciplina.nome,
-                "monitorRecomendado": solicitacaoMonitoria.monitorRecomendado,
-                "motivoSolicitacao": solicitacaoMonitoria.motivo
+                "id": solicitacao_monitoria.id,
+                "matriculaAluno": solicitacao_monitoria.matricula_aluno,
+                "disciplinaDesejada": solicitacao_monitoria.disciplina.nome,
+                "monitorRecomendado": solicitacao_monitoria.monitorRecomendado,
+                "motivoSolicitacao": solicitacao_monitoria.motivo
             })
             break
         }
@@ -127,16 +127,16 @@ const getMonitorias: RequestHandler = async (req, res) => {
     try {
         const monitorias = await client.monitoria.findMany({
             where: {
-                Colaborador: {
+                colaborador: {
                     cpf: cpfProfessor
                 }
             },
             select: {
                 id: true,
                 nome_disciplina: true,
-                AlunoMonitoria: {
+                aluno_monitoria: {
                     select: {
-                        Aluno:{
+                        aluno:{
                             select:{
                                 nome: true,
                                 email: true
@@ -152,11 +152,11 @@ const getMonitorias: RequestHandler = async (req, res) => {
             
         for (let monitoria of monitorias) {
             var monitorJson : any[] = []
-            for(let monitor of monitoria.AlunoMonitoria) {
+            for(let monitor of monitoria.aluno_monitoria) {
                 monitorJson.push
                 ({
-                    "nomeAluno": monitor.Aluno.nome,
-                    "email": monitor.Aluno.email
+                    "nomeAluno": monitor.aluno.nome,
+                    "email": monitor.aluno.email
                 })
             }
             monitoriaJson.push

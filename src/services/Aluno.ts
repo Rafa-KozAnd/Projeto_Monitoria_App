@@ -53,7 +53,7 @@ export class Colaborador extends User{
         try {
             const colaborador = (await client.colaborador.findFirst({
                 where:{cpf: this.id}
-            })).senha
+            }))
             const _senha = colaborador.senha;
             // const senhaHash = await hash(_senha, 8);
             if (await compare(this.senha, _senha)){

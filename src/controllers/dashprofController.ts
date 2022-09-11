@@ -123,6 +123,7 @@ const getVagas: RequestHandler = async (req, res) => {
     const { cpf_professor } = req.body;
 
     try {
+        console.log("getting solicitacoes")
         const solicitacoesMonitorias = await client.solicitacao_monitoria.findMany({
             where: {
                 status: 0,// verificar significado dos status
@@ -145,7 +146,7 @@ const getVagas: RequestHandler = async (req, res) => {
                 motivo: true
             }
         })
-    
+        console.log("aluno buscado com sucesso")
         var solicitacoesMonitoriaJson : any[] = []
             
         for (let solicitacao_monitoria of solicitacoesMonitorias) {
@@ -158,7 +159,7 @@ const getVagas: RequestHandler = async (req, res) => {
                 "motivoSolicitacao": solicitacao_monitoria.motivo
             })
         }
-    
+        console.log("json criaDO")
         let solicitacoesMonitoriaFormat = {"solicitacoesAbertura": solicitacoesMonitoriaJson}
 
         res.status(200).json(solicitacoesMonitoriaFormat)

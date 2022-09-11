@@ -123,6 +123,8 @@ const reprovaSolicitacoes: RequestHandler = async (req, res) => {
 
 const getVagas: RequestHandler = async (req, res) => {
     const { cpf_professor } = req.body;
+    console.log(req.body);
+    console.log(cpf_professor);
 
     try {
         console.log("getting solicitacoes")

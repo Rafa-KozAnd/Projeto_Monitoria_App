@@ -164,6 +164,7 @@ const getVagas: RequestHandler = async (req, res) => {
         res.status(200).json(solicitacoesMonitoriaFormat)
 
     } catch (error) {
+        console.log(error)
         res.status(500).json({message: 'Houve um erro ao tentar pegar os dados, tente novamente mais tarde.'})
     }
 }

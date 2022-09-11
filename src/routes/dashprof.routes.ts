@@ -4,11 +4,11 @@ import {authenticate} from '../middlewares/authentication'
 
 const profRoutes = Router();
 
-profRoutes.get('/solicitacoes',authenticate, profController.getSolicitacoes)
+profRoutes.post('/solicitacoes',authenticate, profController.getSolicitacoes)
 profRoutes.put('/solicitacoes/aprovar',authenticate, profController.aprovaSolicitacoes)
 profRoutes.put('/solicitacoes/reprovar',authenticate, profController.reprovaSolicitacoes)
 
-profRoutes.get('/aberturamonitoria',authenticate, profController.getVagas)
+profRoutes.post('/aberturamonitoria',authenticate, profController.getVagas)
 profRoutes.put('/aberturamonitoria/aprovar',authenticate, profController.aprovaVaga)
 profRoutes.delete('/aberturamonitoria/remover',authenticate, profController.removeVaga)
 

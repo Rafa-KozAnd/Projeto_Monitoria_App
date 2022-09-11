@@ -22,7 +22,8 @@ export class Authenticator{
             return {
                 "valid": true,
                 "token": token,
-                "role": login["role"]
+                "role": login["role"],
+                "nome": login["nome"]
             }
         }
         else{

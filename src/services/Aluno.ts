@@ -34,7 +34,9 @@ export class Aluno extends User {
             if (await compare(this.senha, _senha)){
                 return {
                         "valid":true,
-                        "eh_monitor": aluno.e_monitor};
+                        "eh_monitor": aluno.e_monitor,
+                        "nome": aluno.nome
+                    };
             }
             else{
                 return false;
@@ -59,7 +61,8 @@ export class Colaborador extends User{
             if (await compare(this.senha, _senha)){
                 return {
                     "valid":true,
-                    "role": colaborador.role
+                    "role": colaborador.role,
+                    "nome": colaborador.nome
                 }
             }
             else{

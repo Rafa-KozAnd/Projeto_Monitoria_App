@@ -12,6 +12,6 @@ profRoutes.post('/aberturamonitoria',authenticate, profController.getVagas)
 profRoutes.put('/aberturamonitoria/aprovar',authenticate, profController.aprovaVaga)
 profRoutes.delete('/aberturamonitoria/remover',authenticate, profController.removeVaga)
 
-profRoutes.get('/monitorias',authenticate, profController.getMonitorias)
+profRoutes.post('/monitorias',authenticate, profController.getMonitorias)
 
 export default profRoutes;

@@ -4,6 +4,8 @@ import { client } from '../../prisma/client'
 
 const getSolicitacoes: RequestHandler  = async (req, res) => {
     const { cpf_professor } = req.body;
+    console.log(req.body);
+    console.log(cpf_professor);
     
     try {
         const solicitacoesAlunos = await client.vaga_aluno_monitoria.findMany({

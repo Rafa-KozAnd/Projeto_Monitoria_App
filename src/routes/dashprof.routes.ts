@@ -1,17 +1,17 @@
 import { Router } from 'express'
 import * as profController from '../controllers/dashprofController'
-import {authenticate} from '../middlewares/authentication'
+import {authenticateProfessor} from '../middlewares/authentication'
 
 const profRoutes = Router();
 
-profRoutes.post('/solicitacoes',authenticate, profController.getSolicitacoes)
-profRoutes.put('/solicitacoes/aprovar',authenticate, profController.aprovaSolicitacoes)
-profRoutes.put('/solicitacoes/reprovar',authenticate, profController.reprovaSolicitacoes)
+profRoutes.post('/solicitacoes',authenticateProfessor, profController.getSolicitacoes)
+profRoutes.put('/solicitacoes/aprovar',authenticateProfessor, profController.aprovaSolicitacoes)
+profRoutes.put('/solicitacoes/reprovar',authenticateProfessor, profController.reprovaSolicitacoes)
 
-profRoutes.post('/aberturamonitoria',authenticate, profController.getVagas)
-profRoutes.put('/aberturamonitoria/aprovar',authenticate, profController.aprovaVaga)
-profRoutes.delete('/aberturamonitoria/remover',authenticate, profController.removeVaga)
+profRoutes.post('/aberturamonitoria',authenticateProfessor, profController.getVagas)
+profRoutes.put('/aberturamonitoria/aprovar',authenticateProfessor, profController.aprovaVaga)
+profRoutes.delete('/aberturamonitoria/remover',authenticateProfessor, profController.removeVaga)
 
-profRoutes.post('/monitorias',authenticate, profController.getMonitorias)
+profRoutes.post('/monitorias',authenticateProfessor, profController.getMonitorias)
 
 export default profRoutes;

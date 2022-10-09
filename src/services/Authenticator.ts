@@ -14,7 +14,7 @@ export class Authenticator{
             console.log("generating token")
             console.log();
             const token = await sign({ user_id, secret_key }, process.env.SECRETTOKEN, {
-                expiresIn: 300 // expires in 5min
+                expiresIn: 300000 // expires in 5min
             });
             
             console.log(token);

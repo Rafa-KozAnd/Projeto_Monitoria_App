@@ -47,9 +47,14 @@ export const authenticateProfessor: RequestHandler = async (req, res, next, ROLE
       where:  {cpf : user_id }
     });
 
+    if (!colaborador)
+    {
+      return res.status(401).json({ message: "Não autorizado" });
+    }
+
     if (colaborador.cpf == req.body.user_id )
     {
-      return;
+      return next();
     }
 
     return next();

@@ -29,7 +29,7 @@ export const authenticateAluno: RequestHandler = async (req, res, next) => {
 }
 
 
-export const authenticateProfessor: RequestHandler = async (req, res, next, ROLE="professor") => {
+export const authenticaColaborador: RequestHandler = async (req, res, next, ROLE="professor") => {
   const { authorization } = await req.headers;
   const { user_id } = await req.body;
   console.log(authorization);

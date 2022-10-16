@@ -2,6 +2,7 @@ import { RequestHandler } from "express"
 import { client } from '../../prisma/client';
 import {hash, compare } from 'bcryptjs';
 
+//TODO: Remover esse controller depóis de ser usado
 const createAluno : RequestHandler = async (req, res) => {
     const {
         matricula,

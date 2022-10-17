@@ -1,6 +1,5 @@
 import { client } from '../../prisma/client'
-import { alunoLogin } from '../controllers/authController';
-import {hash, compare } from 'bcryptjs';
+import { compare } from 'bcryptjs';
 
 export class User{
     public id: string
@@ -35,7 +34,8 @@ export class Aluno extends User {
                 return {
                         "valid":true,
                         "eh_monitor": aluno.e_monitor,
-                        "nome": aluno.nome
+                        "nome": aluno.nome,
+                        "role": 'aluno'
                     };
             }
             else{

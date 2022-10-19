@@ -93,7 +93,7 @@ model monitoria {
   codigo_disciplina String
   colaborador       colaborador       @relation(fields: [codigo_professor], references: [cpf])
   codigo_professor  String
-  horario           DateTime
+  horario           DateTime?
   aluno_monitoria   aluno_monitoria[]
   vaga_monitoria    vaga_monitoria[]
   agendamento       agendamento[]

@@ -9,6 +9,7 @@ profRoutes.put('/solicitacoes/aprovar',authenticate, profController.aprovaSolici
 profRoutes.put('/solicitacoes/reprovar',authenticate, profController.reprovaSolicitacoes)
 
 profRoutes.post('/aberturamonitoria',authenticate, profController.getVagas)
+profRoutes.post('/abrirmonitoria',authenticate, profController.abrirVaga)
 profRoutes.put('/aberturamonitoria/aprovar',authenticate, profController.aprovaVaga)
 profRoutes.delete('/aberturamonitoria/remover',authenticate, profController.removeVaga)
 

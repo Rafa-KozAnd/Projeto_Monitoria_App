@@ -1,11 +1,10 @@
 import { RequestHandler } from 'express';
+import { decode } from 'jsonwebtoken';
 import { client } from '../../prisma/client'
 
 
 const getSolicitacoes: RequestHandler  = async (req, res) => {
     const { cpf_professor } = req.body;
-    console.log(req.body);
-    console.log(cpf_professor);
     
     try {
         const solicitacoesAlunos = await client.vaga_aluno_monitoria.findMany({
@@ -70,7 +69,6 @@ const aprovaSolicitacoes: RequestHandler = async (req, res) => {
             }
         })
         if(aprovaalunosolicit) {
-
             const atualiza_vaga = await client.vaga_monitoria.update({
                 where: {
                     id: aprovaalunosolicit.id_vaga
@@ -86,7 +84,7 @@ const aprovaSolicitacoes: RequestHandler = async (req, res) => {
                 }
             })
 
-            return res.status(200).json({message:"Alterado com sucesso"})
+            return res.status(200).json({message:"Solicitação aprovada com sucesso!"})
         }
         return res.status(500).json({message:"Solicitação não encontrada"})
         
@@ -99,7 +97,7 @@ const aprovaSolicitacoes: RequestHandler = async (req, res) => {
 
 const reprovaSolicitacoes: RequestHandler = async (req, res) => {
     const { solicitacao_id, motivo} = req.body;
-
+    console.log('solicitacao_id', motivo);
     try {
         const recusaalunosolicit = await client.vaga_aluno_monitoria.update({
             where: {
@@ -120,14 +118,10 @@ const reprovaSolicitacoes: RequestHandler = async (req, res) => {
     }
 }
 
-
 const getVagas: RequestHandler = async (req, res) => {
     const { cpf_professor } = req.body;
-    console.log(req.body);
-    console.log(cpf_professor);
 
     try {
-        console.log("getting solicitacoes")
         const solicitacoesMonitorias = await client.solicitacao_monitoria.findMany({
             where: {
                 status: 0,// verificar significado dos status
@@ -150,7 +144,6 @@ const getVagas: RequestHandler = async (req, res) => {
                 motivo: true
             }
         })
-        console.log("aluno buscado com sucesso")
         var solicitacoesMonitoriaJson : any[] = []
             
         for (let solicitacao_monitoria of solicitacoesMonitorias) {
@@ -163,7 +156,6 @@ const getVagas: RequestHandler = async (req, res) => {
                 "motivoSolicitacao": solicitacao_monitoria.motivo
             })
         }
-        console.log("json criaDO")
         let solicitacoesMonitoriaFormat = {"solicitacoesAbertura": solicitacoesMonitoriaJson}
 
         res.status(200).json(solicitacoesMonitoriaFormat)
@@ -193,7 +185,7 @@ const aprovaVaga: RequestHandler = async (req, res) => {
                 data: {
                     codigo_disciplina: aprovaalunovaga.codigo_disciplina,
                     codigo_professor: cpf_professor,
-                    horario: dateTime
+                    horario: new Date(),
                 }
 
             })
@@ -288,6 +280,36 @@ const getMonitorias: RequestHandler = async (req, res) => {
     }
 }
 
+const abrirVaga : RequestHandler = async (req, res) => {
+    const { authorization : token } = req.headers;
+    const { vaga } = req.body;
+    try {
+        const result = decode(token);
+        const nova_monitoria = await client.monitoria.create({
+            data: {
+                horario: new Date(),
+                codigo_professor: result["user_id"],
+                codigo_disciplina: vaga.codigo_disciplina,
+            }
+        })
+        const abrir_vaga = await client.vaga_monitoria.create({
+            data: {
+                aprovado: false,
+                codigo_disciplina: nova_monitoria.codigo_disciplina,
+                professor_requisitante: nova_monitoria.codigo_professor,
+                id_monitoria: nova_monitoria.id,
+                pre_requisito: vaga.pre_requisitos[0],
+            }
+        })
+        if(abrir_vaga) {
+            res.status(200).json({message: 'Vaga aberta com sucesso.'})
+        }
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({message: 'Houve um erro ao tentar abrir a vaga, tente novamente mais tarde.'})
+    }
+}
+
 export {
     getSolicitacoes,
     aprovaSolicitacoes,
@@ -295,5 +317,6 @@ export {
     getVagas,
     aprovaVaga,
     removeVaga,
-    getMonitorias
+    getMonitorias,
+    abrirVaga
 }

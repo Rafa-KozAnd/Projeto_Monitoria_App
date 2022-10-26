@@ -269,30 +269,42 @@ const agendarMonitoria: RequestHandler = (req, res) => {
     res.status(201).send(perfil)
 }
 
-const solicitarVagaMonitoria: RequestHandler = async (req, res) => {
+const sugerirMonitoria: RequestHandler = async (req, res) => {
     const {
         matricula_aluno, 
         codigo_disciplina, 
         motivo,
         monitor_recomendado
          } = req.body;
-
-        const solicitacao_monitoria = await client.solicitacao_monitoria.create({
-        data:{
-            matricula_aluno: matricula_aluno,
-            codigo_disciplina: codigo_disciplina,
-            motivo: motivo,
-            monitorRecomendado: monitor_recomendado,
-            status: 1
+        
+        if (!matricula_aluno){
+            throw new Error("Matricula não foi inserida");
         }
+        try {
+            const disciplina = await client.disciplina.findFirst({
+                where: {
+                    codigo_disciplina: codigo_disciplina
+                }
+            });
+        } catch (error) {
+            res.status(400).send("Codigo da disciplina não existente");
+            throw new Error("Codigo da disciplina não existente");
+        }
+        try {
+            const sugestao_monitoria = await client.sugestao_monitoria.create({
+                data:{
+                    matricula_aluno: matricula_aluno,
+                    codigo_disciplina: codigo_disciplina,
+                    motivo: motivo,
+                    monitorRecomendado: monitor_recomendado,
+                    status: 1
+                }
+            })
             
-    })
-    // let perfil = {
-    //     "nome_aluno": "meunomeéjoao",
-    //     "email": "joao@email.com",
-    //     "matricula": "12387878",
-    //     "e_monitor": true
-    // }
+            res.status(201).send("sugestão foi criada com sucesso")
+        } catch (error) {
+            res.status(404).send(error);
+        }
     res.status(201).send("ok")
 }
 
@@ -308,5 +320,5 @@ export {
     getMonitorias,
     getMonitoria,
     agendarMonitoria,
-    solicitarVagaMonitoria,
+    sugerirMonitoria,
 }

@@ -122,7 +122,7 @@ const getVagas: RequestHandler = async (req, res) => {
     const { cpf_professor } = req.body;
 
     try {
-        const solicitacoesMonitorias = await client.solicitacao_monitoria.findMany({
+        const solicitacoesMonitorias = await client.sugestao_monitoria.findMany({
             where: {
                 status: 0,// verificar significado dos status
                 disciplina: {
@@ -146,14 +146,14 @@ const getVagas: RequestHandler = async (req, res) => {
         })
         var solicitacoesMonitoriaJson : any[] = []
             
-        for (let solicitacao_monitoria of solicitacoesMonitorias) {
+        for (let sugestao_monitoria of solicitacoesMonitorias) {
             solicitacoesMonitoriaJson.push
             ({
-                "id": solicitacao_monitoria.id,
-                "matriculaAluno": solicitacao_monitoria.matricula_aluno,
-                "disciplinaDesejada": solicitacao_monitoria.disciplina.nome,
-                "monitorRecomendado": solicitacao_monitoria.monitorRecomendado,
-                "motivoSolicitacao": solicitacao_monitoria.motivo
+                "id": sugestao_monitoria.id,
+                "matriculaAluno": sugestao_monitoria.matricula_aluno,
+                "disciplinaDesejada": sugestao_monitoria.disciplina.nome,
+                "monitorRecomendado": sugestao_monitoria.monitorRecomendado,
+                "motivoSolicitacao": sugestao_monitoria.motivo
             })
         }
         let solicitacoesMonitoriaFormat = {"solicitacoesAbertura": solicitacoesMonitoriaJson}
@@ -170,7 +170,7 @@ const aprovaVaga: RequestHandler = async (req, res) => {
     const { id_vaga, cpf_professor} = req.body;
 
     try {
-        const aprovaalunovaga = await client.solicitacao_monitoria.update({
+        const aprovaalunovaga = await client.sugestao_monitoria.update({
             where: {
                 id: id_vaga
             },
@@ -205,7 +205,7 @@ const removeVaga: RequestHandler = async (req, res) => {
     const { id_vaga } = req.body;
 
     try {
-        const removealunovaga = await client.solicitacao_monitoria.delete({
+        const removealunovaga = await client.sugestao_monitoria.delete({
             where: {
                 id: id_vaga
             }

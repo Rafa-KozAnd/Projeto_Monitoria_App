@@ -27,7 +27,7 @@ try:
         cursor.execute(postgreSQL_select_Query)
         codigo_disciplina = cursor.fetchone()
 
-        postgres_insert_query = """ INSERT INTO "solicitacao_monitoria"(codigo_disciplina, status, matricula_aluno) VALUES (%s,%s,%s)"""
+        postgres_insert_query = """ INSERT INTO "sugestao_monitoria"(codigo_disciplina, status, matricula_aluno) VALUES (%s,%s,%s)"""
         record_to_insert = (codigo_disciplina[0], STATUS, matricula_aluno[0])
         cursor.execute(postgres_insert_query, record_to_insert)
 

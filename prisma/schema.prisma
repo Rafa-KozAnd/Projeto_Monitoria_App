@@ -37,7 +37,7 @@ model aluno {
   aluno_monitoria       aluno_monitoria[]
   vaga_aluno_monitoria  vaga_aluno_monitoria[]
   agendamento           agendamento[]
-  solicitacao_monitoria solicitacao_monitoria[]
+  sugestao_monitoria sugestao_monitoria[]
 }
 
 model solicitacao_agendamento {
@@ -106,7 +106,7 @@ model disciplina {
   nome                  String
   monitoria             monitoria[]
   vaga_monitoria        vaga_monitoria[]
-  solicitacao_monitoria solicitacao_monitoria[]
+  sugestao_monitoria sugestao_monitoria[]
 }
 
 model vaga_monitoria {
@@ -134,7 +134,7 @@ model vaga_aluno_monitoria {
   @@unique([matricula_aluno, id_vaga])
 }
 
-model solicitacao_monitoria {
+model sugestao_monitoria {
   id                 Int        @id @default(autoincrement())
   disciplina         disciplina @relation(fields: [codigo_disciplina], references: [codigo_disciplina])
   codigo_disciplina  String

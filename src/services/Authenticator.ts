@@ -8,8 +8,10 @@ export class Authenticator{
         const secret_key = process.env.SECRETTOKEN;
         const user_role = login["role"]
         if (login["valid"] == true){
-            const token = sign({ user_id, user_role, secret_key }, process.env.SECRETTOKEN, {
-                expiresIn: 60 * 60 * 24 // expires in 5min
+            console.log("generating token")
+            console.log();
+            const token = await sign({ user_id, secret_key }, process.env.SECRETTOKEN, {
+                expiresIn: 300000 // expires in 5min
             });
             const {token : refreshToken} = await client.refresh_token.findFirst({where: {user_id}})
             return {

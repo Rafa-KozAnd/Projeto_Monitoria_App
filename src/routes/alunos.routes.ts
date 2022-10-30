@@ -13,6 +13,6 @@ alunoRoutes.get('/perfil', authenticateAluno, alunos.getPerfil)
 alunoRoutes.get('/monitorias',authenticateAluno, alunos.getMonitorias)
 alunoRoutes.get('/monitoria',authenticateAluno, alunos.getMonitoria)
 alunoRoutes.post('/agendar/monitoria',authenticateAluno, alunos.agendarMonitoria) //post
-alunoRoutes.post('/solicitar/vaga/monitoria',authenticateAluno, alunos.solicitarVagaMonitoria) //post
+alunoRoutes.post('/solicitar/vaga/monitoria',authenticateAluno, alunos.sugerirMonitoria) //post
 
 export default alunoRoutes;

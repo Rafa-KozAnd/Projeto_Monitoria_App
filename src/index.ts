@@ -39,11 +39,9 @@ app.post('/create', async (req, res) => {
         role,
       }
     });
-    console.log(`Usuario ${cpf} criado com sucesso`);
     res.send('Usuário criado com sucesso!');
 
   } catch (error) {
-    console.log("blubluyeyeyeyeye")
     console.log(error); 
     res.send("error")
   }

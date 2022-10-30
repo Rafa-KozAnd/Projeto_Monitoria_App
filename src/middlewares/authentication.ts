@@ -37,7 +37,6 @@ export const authenticaColaborador: RequestHandler = async (req, res, next, ROLE
     return res.status(401).json({ message: "Não autorizado" });
   }
   const [, token] = await authorization.split(".");
-  console.log(token);
   try {
     const decoded = verify(authorization, `${process.env.SECRETTOKEN}`)
     console.log(decoded.user_id);
@@ -59,6 +58,6 @@ export const authenticaColaborador: RequestHandler = async (req, res, next, ROLE
 
     return next();
   } catch(err) {
-    return res.status(401).json({ message: "Sessão expirada, realize login novamente na plataforma." });
+    return res.status(401).json({ message: "Sessão expirada, realize login novamente na plataforma.", code: "token.expired" });
   }
 }

@@ -1,6 +1,5 @@
 import { client } from '../../prisma/client'
-import { alunoLogin } from '../controllers/authController';
-import {hash, compare } from 'bcryptjs';
+import { compare } from 'bcryptjs';
 
 export class User{
     public id: string
@@ -24,7 +23,6 @@ export class Aluno extends User {
     }
     
     public async login(): Promise<{}>{
-        console.log(this.senha)
         try {
             const aluno = (await client.aluno.findFirst({
                 where:{matricula: this.id}
@@ -35,13 +33,15 @@ export class Aluno extends User {
                 return {
                         "valid":true,
                         "eh_monitor": aluno.e_monitor,
-                        "nome": aluno.nome
+                        "nome": aluno.nome,
+                        "role": 'aluno'
                     };
             }
             else{
                 return false;
             }
         } catch (error) {
+            console.log(error);
             console.log("Erro ao efetuar login")
             return false
         }
@@ -72,6 +72,7 @@ export class Colaborador extends User{
                 }
             }
         } catch (error) {
+            console.log(error);
             console.log("Erro ao efetuar login")
             return false
         }

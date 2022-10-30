@@ -3,6 +3,11 @@ import { RequestHandler } from "express";
 import { verify } from "jsonwebtoken";
 import { client } from '../../prisma/client'
 
+
+interface JwtPayload {
+  my: string
+}
+
 export const authenticateAluno: RequestHandler = async (req, res, next) => {
   const { authorization } = await req.headers;
   const { user_id } = await req.body;
@@ -13,9 +18,9 @@ export const authenticateAluno: RequestHandler = async (req, res, next) => {
   const [, token] = await authorization.split(".");
   console.log(token);
   try {
-    const decoded = verify(authorization, `${process.env.SECRETTOKEN}`)
-    console.log(decoded.user_id);
-    req.body.user_id = decoded.user_id;
+    const decoded = verify(authorization, `${process.env.SECRETTOKEN}`) as JwtPayload
+    console.log(decoded.my);
+    req.body.user_id = decoded.my;
     console.log(req.body.user_id );
    // TODO :  Verificar como iremos separar os professores dos alunos
     // const aluno = await client.aluno.findFirst({
@@ -38,9 +43,9 @@ export const authenticaColaborador: RequestHandler = async (req, res, next, ROLE
   }
   const [, token] = await authorization.split(".");
   try {
-    const decoded = verify(authorization, `${process.env.SECRETTOKEN}`)
-    console.log(decoded.user_id);
-    req.body.user_id = decoded.user_id;
+    const decoded = verify(authorization, `${process.env.SECRETTOKEN}`) as JwtPayload
+    console.log(decoded.my);
+    req.body.user_id = decoded.my;
  
     const colaborador = await client.colaborador.findFirst({
       where:  {cpf : user_id }

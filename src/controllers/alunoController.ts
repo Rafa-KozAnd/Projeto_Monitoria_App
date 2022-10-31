@@ -308,6 +308,26 @@ const sugerirMonitoria: RequestHandler = async (req, res) => {
     res.status(201).send("ok")
 }
 
+const postVagaCandidatar : RequestHandler = async (req, res) => {
+    const { authorization : token } = req.headers;
+    const { vaga } = req.body;
+    try {
+        const result = decode(token);
+        const nova_candidatura = await client.vaga_aluno_monitoria.create({
+            data: {
+                id_vaga: vaga,
+                matricula_aluno: result["user_id"],
+                status: 0,
+            }
+        })
+        if(nova_candidatura) {
+            res.status(200).json({message: 'Candidatura realizada com sucesso.'})
+        }
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({message: 'Houve um erro ao tentar realizar a candidatura, tente novamente mais tarde.'})
+    }
+}
 
 export {
     getVagasMonitoria,
@@ -321,4 +341,5 @@ export {
     getMonitoria,
     agendarMonitoria,
     sugerirMonitoria,
+    postVagaCandidatar,
 }

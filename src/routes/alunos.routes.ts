@@ -9,9 +9,9 @@ alunoRoutes.get('/monitor/agendamento/monitoria',authenticateAluno, alunos.getAg
 alunoRoutes.put('/monitor/agendamento/solicitacao/finalizar',authenticateAluno, alunos.finalizarSolicitacaoAgentamento) //PUT
 alunoRoutes.delete('/monitor/agendamento/remover',authenticateAluno, alunos.removerAgendamento) // DELETE
 alunoRoutes.get('/monitor/agendamentos',authenticateAluno, alunos.getAgendamentos)
-alunoRoutes.get('/perfil', authenticateAluno, alunos.getPerfil)
+alunoRoutes.post('/perfil', authenticateAluno, alunos.getPerfil)
 alunoRoutes.get('/monitorias',authenticateAluno, alunos.getMonitorias)
-alunoRoutes.get('/monitoria',authenticateAluno, alunos.getMonitoria)
+alunoRoutes.post('/monitoria',authenticateAluno, alunos.getMonitoria)
 alunoRoutes.post('/agendar/monitoria',authenticateAluno, alunos.agendarMonitoria) //post
 alunoRoutes.post('/solicitar/vaga/monitoria',authenticateAluno, alunos.sugerirMonitoria) //post
 

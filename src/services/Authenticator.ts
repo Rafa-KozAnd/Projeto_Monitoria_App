@@ -8,8 +8,6 @@ export class Authenticator{
         const secret_key = process.env.SECRETTOKEN;
         const user_role = login["role"]
         if (login["valid"] == true){
-            console.log("generating token")
-            console.log();
             const token = await sign({ user_id, secret_key }, process.env.SECRETTOKEN, {
                 expiresIn: 300000 // expires in 5min
             });

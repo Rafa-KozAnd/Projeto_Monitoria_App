@@ -97,7 +97,6 @@ const aprovaSolicitacoes: RequestHandler = async (req, res) => {
 
 const reprovaSolicitacoes: RequestHandler = async (req, res) => {
     const { solicitacao_id, motivo} = req.body;
-    console.log('solicitacao_id', motivo);
     try {
         const recusaalunosolicit = await client.vaga_aluno_monitoria.update({
             where: {

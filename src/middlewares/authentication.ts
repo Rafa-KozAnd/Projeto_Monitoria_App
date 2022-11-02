@@ -11,17 +11,13 @@ interface JwtPayload {
 export const authenticateAluno: RequestHandler = async (req, res, next) => {
   const { authorization } = await req.headers;
   const { user_id } = await req.body;
-  console.log(authorization);
   if (!authorization) {
     return res.status(401).json({ message: "Não autorizado" });
   }
   const [, token] = await authorization.split(".");
-  console.log(token);
   try {
     const decoded = verify(authorization, `${process.env.SECRETTOKEN}`) as JwtPayload
-    console.log(decoded.my);
     req.body.user_id = decoded.my;
-    console.log(req.body.user_id );
    // TODO :  Verificar como iremos separar os professores dos alunos
     // const aluno = await client.aluno.findFirst({
     //   where:  {matricula : user_id }
@@ -37,14 +33,12 @@ export const authenticateAluno: RequestHandler = async (req, res, next) => {
 export const authenticaColaborador: RequestHandler = async (req, res, next, ROLE="professor") => {
   const { authorization } = await req.headers;
   const { user_id } = await req.body;
-  console.log(authorization);
   if (!authorization) {
     return res.status(401).json({ message: "Não autorizado" });
   }
   const [, token] = await authorization.split(".");
   try {
     const decoded = verify(authorization, `${process.env.SECRETTOKEN}`) as JwtPayload
-    console.log(decoded.my);
     req.body.user_id = decoded.my;
  
     const colaborador = await client.colaborador.findFirst({

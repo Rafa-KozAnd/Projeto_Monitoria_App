@@ -3,6 +3,7 @@ import  * as alunos from '../controllers/alunoController'
 import {authenticateAluno} from '../middlewares/authentication'
 const alunoRoutes = Router()
 
+alunoRoutes.post('/monitor/prerequisitos', alunos.getPreRequisitos)
 alunoRoutes.get('/vagasmonitoria', authenticateAluno ,alunos.getVagasMonitoria)
 alunoRoutes.get('/monitor/minhasmonitorias',authenticateAluno, alunos.getMinhasMonitorias)
 alunoRoutes.get('/monitor/agendamento/monitoria',authenticateAluno, alunos.getAgendamentoMonitoria)

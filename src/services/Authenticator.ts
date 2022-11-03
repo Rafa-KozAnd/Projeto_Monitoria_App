@@ -15,6 +15,7 @@ export class Authenticator{
             return {
                 "valid": true,
                 "token": token,
+                "eh_monitor": login["eh_monitor"],
                 "refreshToken": refreshToken,
                 "role": login["role"],
                 "nome": login["nome"]

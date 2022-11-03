@@ -5,6 +5,24 @@ import {Aluno, User} from '../services/Aluno'
 import {Authenticator} from '../services/Authenticator'
 const { time } = require("console")
 
+const getPreRequisitos : RequestHandler = async (req, res) => {
+    const { id_solicitacao } = req.body;
+    try {
+        const pre_requisito = await client.vaga_monitoria.findFirst({
+            where: {
+                id: id_solicitacao
+            },
+            select: {
+                pre_requisito: true
+            }
+        })
+        console.log(pre_requisito)
+        res.status(200).json({pre_requisito})
+    }catch(err) {
+        res.status(403).json({message: err.message})
+    }
+}
+
 const getVagasMonitoria: RequestHandler = async (req, res) => {
     const {matricula, senha} = req.body;
     const aluno = new Aluno(matricula, senha)
@@ -42,6 +60,7 @@ const getVagasMonitoria: RequestHandler = async (req, res) => {
     for  ( let vaga_monitoria of vagasMonitorias){
         monitoriasmap.push(
             {
+                "id": vaga_monitoria.id,
                 "nome_disciplina" : vaga_monitoria.monitoria.disciplina.nome,
                 "nome_professor": vaga_monitoria.monitoria.disciplina.colaborador.nome,
                 "codigo_disciplina" : vaga_monitoria.monitoria.disciplina.codigo_disciplina,
@@ -323,4 +342,5 @@ export {
     getMonitoria,
     agendarMonitoria,
     sugerirMonitoria,
+    getPreRequisitos
 }

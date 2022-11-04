@@ -24,15 +24,8 @@ const getPreRequisitos : RequestHandler = async (req, res) => {
 }
 
 const getVagasMonitoria: RequestHandler = async (req, res) => {
-    const {matricula, senha} = req.body;
-    const aluno = new Aluno(matricula, senha)
-    // TODO: nao sei se isso aqui funciona esse cast aqui
-    const validate = (Boolean)(await Authenticator.authenticateAluno(aluno))
-    if (validate != true)
-    {
-        res.status(403).send("não autorizado");
-        return false
-    }
+    const {matricula} = req.body;
+
     const vagasMonitorias = await client.vaga_monitoria.findMany({
         select: {
             id:true,
@@ -170,15 +163,7 @@ const getAgendamentos: RequestHandler = async (req, res) => {
 }
 
 const getPerfil: RequestHandler = async (req, res) => {
-    const { matricula, senha} = req.body;
-    //const _aluno = new Aluno(matricula, senha)
-    // TODO: nao sei se isso aqui funciona esse cast aqui
-    //const validate = (Boolean)(await Authenticator.authenticateAluno(_aluno));
-    //if (validate != true)
-    //{
-        //res.status(403).send("não autorizado");
-        //return false
-    //}
+    const { matricula} = req.body;
 
     const aluno = await client.aluno.findFirst({
         where:  {matricula : matricula }

@@ -1,18 +1,19 @@
 import { Router } from 'express'
 import  * as alunos from '../controllers/alunoController'
-
+import {authenticateAluno} from '../middlewares/authentication'
 const alunoRoutes = Router()
 
-alunoRoutes.get('/vagasmonitoria', alunos.getVagasMonitoria)
-alunoRoutes.get('/monitor/minhasmonitorias', alunos.getMinhasMonitorias)
-alunoRoutes.get('/monitor/agendamento/monitoria', alunos.getAgendamentoMonitoria)
-alunoRoutes.put('/monitor/agendamento/solicitacao/finalizar', alunos.finalizarSolicitacaoAgentamento) //PUT
-alunoRoutes.delete('/monitor/agendamento/remover', alunos.removerAgendamento) // DELETE
-alunoRoutes.get('/monitor/agendamentos', alunos.getAgendamentos)
-alunoRoutes.get('/perfil', alunos.getPerfil)
-alunoRoutes.get('/monitorias', alunos.getMonitorias)
-alunoRoutes.get('/monitoria', alunos.getMonitoria)
-alunoRoutes.post('/agendar/monitoria', alunos.agendarMonitoria) //post
-alunoRoutes.post('/solicitar/vaga/monitoria', alunos.solicitarVagaMonitoria) //post
+alunoRoutes.post('/monitor/prerequisitos', alunos.getPreRequisitos)
+alunoRoutes.get('/vagasmonitoria', authenticateAluno ,alunos.getVagasMonitoria)
+alunoRoutes.get('/monitor/minhasmonitorias',authenticateAluno, alunos.getMinhasMonitorias)
+alunoRoutes.get('/monitor/agendamento/monitoria',authenticateAluno, alunos.getAgendamentoMonitoria)
+alunoRoutes.put('/monitor/agendamento/solicitacao/finalizar',authenticateAluno, alunos.finalizarSolicitacaoAgentamento) //PUT
+alunoRoutes.delete('/monitor/agendamento/remover',authenticateAluno, alunos.removerAgendamento) // DELETE
+alunoRoutes.get('/monitor/agendamentos',authenticateAluno, alunos.getAgendamentos)
+alunoRoutes.post('/perfil', authenticateAluno, alunos.getPerfil)
+alunoRoutes.get('/monitorias',authenticateAluno, alunos.getMonitorias)
+alunoRoutes.post('/monitoria',authenticateAluno, alunos.getMonitoria)
+alunoRoutes.post('/agendar/monitoria',authenticateAluno, alunos.agendarMonitoria) //post
+alunoRoutes.post('/solicitar/vaga/monitoria',authenticateAluno, alunos.sugerirMonitoria) //post
 
 export default alunoRoutes;

@@ -4,6 +4,7 @@ import {authenticateAluno} from '../middlewares/authentication'
 const alunoRoutes = Router()
 
 alunoRoutes.get('/vagasmonitoria', authenticateAluno ,alunos.getVagasMonitoria)
+alunoRoutes.post('/vagasmonitoria/candidatar',authenticateAluno, alunos.postVagaCandidatar)
 alunoRoutes.get('/monitor/minhasmonitorias',authenticateAluno, alunos.getMinhasMonitorias)
 alunoRoutes.get('/monitor/agendamento/monitoria',authenticateAluno, alunos.getAgendamentoMonitoria)
 alunoRoutes.put('/monitor/agendamento/solicitacao/finalizar',authenticateAluno, alunos.finalizarSolicitacaoAgentamento)
@@ -14,6 +15,5 @@ alunoRoutes.get('/monitorias',authenticateAluno, alunos.getMonitorias)
 alunoRoutes.get('/monitoria',authenticateAluno, alunos.getMonitoria)
 alunoRoutes.post('/agendar/monitoria',authenticateAluno, alunos.agendarMonitoria)
 alunoRoutes.post('/solicitar/vaga/monitoria',authenticateAluno, alunos.sugerirMonitoria)
-alunoRoutes.post('/vagasmonitoria/candidatar',authenticateAluno, alunos.vagaCandidatar)
 
 export default alunoRoutes;

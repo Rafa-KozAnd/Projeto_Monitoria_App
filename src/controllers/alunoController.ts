@@ -1,19 +1,31 @@
+import { randomUUID } from 'crypto';
 import { RequestHandler } from 'express';
 import { client } from '../../prisma/client'
 import {Aluno, User} from '../services/Aluno'
 import {Authenticator} from '../services/Authenticator'
 const { time } = require("console")
 
-const getVagasMonitoria: RequestHandler = async (req, res) => {
-    const {matricula, senha} = req.body;
-    const aluno = new Aluno(matricula, senha)
-    // TODO: nao sei se isso aqui funciona esse cast aqui
-    const validate = (Boolean)(await Authenticator.authenticateAluno(aluno))
-    if (validate != true)
-    {
-        res.status(403).send("não autorizado");
-        return false
+const getPreRequisitos : RequestHandler = async (req, res) => {
+    const { id_solicitacao } = req.body;
+    try {
+        const pre_requisito = await client.vaga_monitoria.findFirst({
+            where: {
+                id: id_solicitacao
+            },
+            select: {
+                pre_requisito: true
+            }
+        })
+        console.log(pre_requisito)
+        res.status(200).json({pre_requisito})
+    }catch(err) {
+        res.status(403).json({message: err.message})
     }
+}
+
+const getVagasMonitoria: RequestHandler = async (req, res) => {
+    const {matricula} = req.body;
+
     const vagasMonitorias = await client.vaga_monitoria.findMany({
         select: {
             id:true,
@@ -41,6 +53,7 @@ const getVagasMonitoria: RequestHandler = async (req, res) => {
     for  ( let vaga_monitoria of vagasMonitorias){
         monitoriasmap.push(
             {
+                "id": vaga_monitoria.id,
                 "nome_disciplina" : vaga_monitoria.monitoria.disciplina.nome,
                 "nome_professor": vaga_monitoria.monitoria.disciplina.colaborador.nome,
                 "codigo_disciplina" : vaga_monitoria.monitoria.disciplina.codigo_disciplina,
@@ -169,15 +182,7 @@ const getAgendamentos: RequestHandler = async (req, res) => {
 }
 
 const getPerfil: RequestHandler = async (req, res) => {
-    const { matricula, senha} = req.body;
-    const _aluno = new Aluno(matricula, senha)
-    // TODO: nao sei se isso aqui funciona esse cast aqui
-    const validate = (Boolean)(await Authenticator.authenticateAluno(_aluno));
-    if (validate != true)
-    {
-        res.status(403).send("não autorizado");
-        return false
-    }
+    const { matricula} = req.body;
 
     const aluno = await client.aluno.findFirst({
         where:  {matricula : matricula }
@@ -194,8 +199,8 @@ const getPerfil: RequestHandler = async (req, res) => {
     res.status(201).send(perfil);
 }
 
+
 const getMonitorias: RequestHandler = async (req, res) => {
-    const {matricula} = req.body;
     const monitorias = await client.monitoria.findMany({
         select: {
             id: true,
@@ -210,36 +215,36 @@ const getMonitorias: RequestHandler = async (req, res) => {
                     id: true,
                     aluno: {
                         select: {
-                            nome: true
+                            nome: true,
+                            matricula: true
                         }
                     }
-                
                 }
             } 
-        }
+        },
+        where: {aluno_monitoria: {some: {}}}
+    }).then((res) => {
+        return res.map((monitoria) => {
+            return monitoria.aluno_monitoria.map((aluno_monitor) => ({
+                id: randomUUID(),
+                id_monitoria: monitoria.id,
+                id_monitor: aluno_monitor.aluno.matricula,
+                nome_disciplina: monitoria.disciplina.nome,
+                nome_monitor: aluno_monitor.aluno.nome,
+                codigo_disciplina: monitoria.disciplina.codigo_disciplina
+            }))[0]
+        }) 
     });
-
-    var monitoriasmap : any[] = []
-    for (let monitoria of monitorias){
-        monitoriasmap.push(
-                {
-                    "nome_disciplina" : monitoria.disciplina.nome,
-                    "nome_monitor": monitoria.aluno_monitoria[0].aluno.nome,
-                    "codigo_disciplina" : monitoria.disciplina.codigo_disciplina,
-                }
-            )
-        }
-
-    
-    res.status(201).send(monitoriasmap)
+    res.status(201).send(monitorias)
 }
 
 const getMonitoria: RequestHandler = async (req, res) => {
-    const { id_monitoria } = req.body;
+    const { id_monitoria, id_monitor } = req.body;
 
     const monitoria = await client.monitoria.findFirst({
         where: {
-            id: id_monitoria
+            id: id_monitoria,
+            aluno_monitoria: {every: {matricula_aluno: id_monitor}}
         },
         select: {
             id: true,
@@ -255,7 +260,8 @@ const getMonitoria: RequestHandler = async (req, res) => {
                     id: true,
                     aluno: {
                         select: {
-                            nome: true
+                            nome: true,
+                            email: true,
                         }
                     }
                 
@@ -273,7 +279,7 @@ const getMonitoria: RequestHandler = async (req, res) => {
             "nome_professor": monitoria?.colaborador.nome,
             "nome_disciplina": monitoria?.disciplina.nome,
             "horario_monitoria": monitoria?.horario,
-            "email_contato": monitoria?.aluno_monitoria[0].aluno.nome
+            "email_contato": monitoria?.aluno_monitoria[0].aluno.email
         } 
     res.status(201).send(perfil)
 }
@@ -289,6 +295,7 @@ const agendarMonitoria: RequestHandler = (req, res) => {
 }
 
 const sugerirMonitoria: RequestHandler = async (req, res) => {
+    console.log(req.body)
     const {
         matricula_aluno, 
         codigo_disciplina, 
@@ -319,12 +326,11 @@ const sugerirMonitoria: RequestHandler = async (req, res) => {
                     status: 1
                 }
             })
-            
             res.status(201).send("sugestão foi criada com sucesso")
         } catch (error) {
+            console.log(error)
             res.status(404).send(error);
         }
-    res.status(201).send("ok")
 }
 
 export {
@@ -340,4 +346,5 @@ export {
     getMonitoria,
     agendarMonitoria,
     sugerirMonitoria,
+    getPreRequisitos
 }

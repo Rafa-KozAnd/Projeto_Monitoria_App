@@ -5,11 +5,11 @@ APROVADO = False
 PREREQUISITO = ''
 
 try:
-    connection = psycopg2.connect(user="postgres",
-                                  password="postgres",
-                                  host="localhost",
+    connection = psycopg2.connect(user="bnfepksdejvhlk",
+                                  password="a0f0042e009f50ced36050064d1f560a99c905c504c3556cd6f2bffccf9c6b7b",
+                                  host="ec2-34-227-135-211.compute-1.amazonaws.com",
                                   port="5432",
-                                  database="TCC")
+                                  database="d7959hnpnblal4")
     cursor = connection.cursor()
 
 

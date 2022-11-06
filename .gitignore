@@ -6,3 +6,4 @@ postgresql-data
 ./node_modules/
 *.log
 dist
+settings.json

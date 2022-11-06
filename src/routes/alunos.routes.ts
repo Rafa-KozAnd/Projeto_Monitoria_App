@@ -5,15 +5,16 @@ const alunoRoutes = Router()
 
 alunoRoutes.post('/monitor/prerequisitos', alunos.getPreRequisitos)
 alunoRoutes.get('/vagasmonitoria', authenticateAluno ,alunos.getVagasMonitoria)
+alunoRoutes.post('/vagasmonitoria/candidatar',authenticateAluno, alunos.postVagaCandidatar)
 alunoRoutes.get('/monitor/minhasmonitorias',authenticateAluno, alunos.getMinhasMonitorias)
 alunoRoutes.get('/monitor/agendamento/monitoria',authenticateAluno, alunos.getAgendamentoMonitoria)
-alunoRoutes.put('/monitor/agendamento/solicitacao/finalizar',authenticateAluno, alunos.finalizarSolicitacaoAgentamento) //PUT
-alunoRoutes.delete('/monitor/agendamento/remover',authenticateAluno, alunos.removerAgendamento) // DELETE
+alunoRoutes.put('/monitor/agendamento/solicitacao/finalizar',authenticateAluno, alunos.finalizarSolicitacaoAgentamento)
+alunoRoutes.delete('/monitor/agendamento/remover',authenticateAluno, alunos.removerAgendamento)
 alunoRoutes.get('/monitor/agendamentos',authenticateAluno, alunos.getAgendamentos)
 alunoRoutes.post('/perfil', authenticateAluno, alunos.getPerfil)
 alunoRoutes.get('/monitorias',authenticateAluno, alunos.getMonitorias)
 alunoRoutes.post('/monitoria',authenticateAluno, alunos.getMonitoria)
-alunoRoutes.post('/agendar/monitoria',authenticateAluno, alunos.agendarMonitoria) //post
-alunoRoutes.post('/solicitar/vaga/monitoria',authenticateAluno, alunos.sugerirMonitoria) //post
+alunoRoutes.post('/agendar/monitoria',authenticateAluno, alunos.agendarMonitoria)
+alunoRoutes.post('/solicitar/vaga/monitoria',authenticateAluno, alunos.sugerirMonitoria)
 
 export default alunoRoutes;

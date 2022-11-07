@@ -1,8 +1,7 @@
 import { RequestHandler } from 'express';
 import { client } from '../../prisma/client'
 
-// Atualizar
-export const getSolicitacoes: RequestHandler  = async (req, res) => {
+const getSolicitacoes: RequestHandler  = async (req, res) => {
 
     try {
         const solicitacoesAlunos = await client.vaga_aluno_monitoria.findMany({
@@ -44,32 +43,67 @@ export const getSolicitacoes: RequestHandler  = async (req, res) => {
 
         let solicitacoesAlunosFormat = {"solicitacoes": solicitacoesAlunosJson}
         
-        res.status(200).json(solicitacoesAlunosFormat)
+        return res.status(200).json(solicitacoesAlunosFormat)
 
     } catch(err) {
-        res.status(500).json({message: 'Ocorreu um erro.'})
+        return res.status(500).json({message: 'Ocorreu um erro.'})
     }
 }
 
-export const aprovaSolicitacoes: RequestHandler = (req, res) => {
-    res.status(200).json({id_solicitacao:"usahday8781"})
+const aprovaSolicitacoes: RequestHandler = async (req, res) => {
+    const { solicitacao_id } = req.body;
+
+    try {
+        const aprovaalunosolicit = await client.vaga_aluno_monitoria.update({
+            where: {
+                id: solicitacao_id
+            },
+            data: {
+                status:1
+            }
+        })
+        if(aprovaalunosolicit) {
+            return res.status(200).json({message:"Solicitação aprovada com sucesso!"})
+        }
+        return res.status(500).json({message:"Solicitação não encontrada"})
+
+    } catch(err) {
+        return res.status(500).json({message: 'Houve um erro ao alterar os dados, tente novamente mais tarde.'})
+    }
 }
 
-export const reprovaSolicitacoes: RequestHandler = (req, res) => {
-    res.status(200).json({comentario:"Aluno não foi aprovado na disciplina",id_solicitacao: "usahday8781"})
+const reprovaSolicitacoes: RequestHandler = async (req, res) => {
+    const { solicitacao_id } = req.body;
+    try {
+        const recusaalunosolicit = await client.vaga_aluno_monitoria.update({
+            where: {
+                id: solicitacao_id
+            },
+            data: {
+                status:3
+            }
+        })
+        if(recusaalunosolicit) {
+            return res.status(200).json({message:"Recusado com sucesso"})
+        }
+        return res.status(500).json({message:"Solicitação não encontrada"})
+
+    } catch(err) {
+        return res.status(500).json({message: 'Houve um erro ao alterar os dados, tente novamente mais tarde.'})
+    }
 }
 
-export const deleteSolicitacoes: RequestHandler = (req, res) => {
+// Verificar oque é essa rota
+const deleteSolicitacoes: RequestHandler = async (req, res) => {
     res.status(200).json({id_abertura_monitoria:"usahday8781"})
 }
 
-// Atualizar
-export const getSolicitacoesPendentes: RequestHandler = async (req, res) => {
+const getSolicitacoesPendentes: RequestHandler = async (req, res) => {
     
     try {
         const solicitacoesAlunos = await client.vaga_aluno_monitoria.findMany({
             where: {
-                status: 0
+                status: 1
             },
             select: {
                 matricula_aluno: true,
@@ -106,14 +140,14 @@ export const getSolicitacoesPendentes: RequestHandler = async (req, res) => {
 
         let solicitacoesAlunosFormat = {"solicitacoes": solicitacoesAlunosJson}
         
-        res.status(200).json(solicitacoesAlunosFormat)
+        return res.status(200).json(solicitacoesAlunosFormat)
 
     } catch(err) {
-        res.status(500).json({message: 'Ocorreu um erro.'})
+        return res.status(500).json({message: 'Ocorreu um erro.'})
     }
 }
 
-module.exports = {
+export {
     getSolicitacoes,
     aprovaSolicitacoes,
     reprovaSolicitacoes,

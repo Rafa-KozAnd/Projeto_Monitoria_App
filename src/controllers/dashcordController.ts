@@ -10,7 +10,7 @@ const getSolicitacoes: RequestHandler  = async (req, res) => {
             },
             select: {
                 matricula_aluno: true,
-                id_vaga: true,
+                id: true,
                 aluno: {
                     select: {
                         email: true
@@ -34,7 +34,7 @@ const getSolicitacoes: RequestHandler  = async (req, res) => {
         for (let solicitacaoAluno of solicitacoesAlunos) {
             solicitacoesAlunosJson.push
             ( {
-                "id": solicitacaoAluno.id_vaga,
+                "id": solicitacaoAluno.id,
                 "matriculaAluno": solicitacaoAluno.matricula_aluno,
                 "disciplinaDesejada": solicitacaoAluno.vaga_monitoria.disciplina.nome,
                 "emailAluno": solicitacaoAluno.aluno.email
@@ -107,7 +107,7 @@ const getSolicitacoesPendentes: RequestHandler = async (req, res) => {
             },
             select: {
                 matricula_aluno: true,
-                id_vaga: true,
+                id: true,
                 aluno: {
                     select: {
                         email: true
@@ -131,7 +131,7 @@ const getSolicitacoesPendentes: RequestHandler = async (req, res) => {
         for (let solicitacaoAluno of solicitacoesAlunos) {
             solicitacoesAlunosJson.push
             ( {
-                "id": solicitacaoAluno.id_vaga,
+                "id": solicitacaoAluno.id,
                 "matriculaAluno": solicitacaoAluno.matricula_aluno,
                 "disciplinaDesejada": solicitacaoAluno.vaga_monitoria.disciplina.nome,
                 "emailAluno": solicitacaoAluno.aluno.email

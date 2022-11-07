@@ -93,9 +93,22 @@ const reprovaSolicitacoes: RequestHandler = async (req, res) => {
     }
 }
 
-// Verificar oque é essa rota
 const deleteSolicitacoes: RequestHandler = async (req, res) => {
-    res.status(200).json({id_abertura_monitoria:"usahday8781"})
+    const { solicitacao_id } = req.body;
+    try {
+        const recusaalunosolicit = await client.vaga_aluno_monitoria.delete({
+            where: {
+                id: solicitacao_id
+            }
+        })
+        if(recusaalunosolicit) {
+            return res.status(200).json({message:"Removido com sucesso"})
+        }
+        return res.status(500).json({message:"Solicitação não encontrada"})
+
+    } catch(err) {
+        return res.status(500).json({message: 'Houve um erro ao alterar os dados, tente novamente mais tarde.'})
+    }
 }
 
 const getSolicitacoesPendentes: RequestHandler = async (req, res) => {

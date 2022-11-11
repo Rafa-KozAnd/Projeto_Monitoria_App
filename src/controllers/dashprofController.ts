@@ -123,7 +123,7 @@ const getVagas: RequestHandler = async (req, res) => {
     try {
         const solicitacoesMonitorias = await client.sugestao_monitoria.findMany({
             where: {
-                status: 0,// verificar significado dos status
+                status: 1,
                 disciplina: {
                     colaborador:{
                         cpf: cpf_professor
@@ -166,7 +166,7 @@ const getVagas: RequestHandler = async (req, res) => {
 }
 
 const aprovaVaga: RequestHandler = async (req, res) => {
-    const { id_vaga, cpf_professor} = req.body;
+    const { id_vaga, cpf_professor, pre_requisitos} = req.body;
 
     try {
         const aprovaalunovaga = await client.sugestao_monitoria.update({
@@ -174,22 +174,27 @@ const aprovaVaga: RequestHandler = async (req, res) => {
                 id: id_vaga
             },
             data: {
-                status: 1
+                status: 2
             }
         })
         if(aprovaalunovaga) {
-            let dateTime = new Date()
-
-            const criamonitoria = await client.monitoria.create({
+            const nova_monitoria = await client.monitoria.create({
                 data: {
-                    codigo_disciplina: aprovaalunovaga.codigo_disciplina,
                     codigo_professor: cpf_professor,
-                    horario: new Date(),
+                    codigo_disciplina: aprovaalunovaga.codigo_disciplina,
                 }
-
             })
-            if(criamonitoria) {
-                return res.status(201).json({message:"Aprovado e monitoria criada com sucesso."})
+            const abrir_vaga = await client.vaga_monitoria.create({
+                data: {
+                    aprovado: false,
+                    codigo_disciplina: nova_monitoria.codigo_disciplina,
+                    professor_requisitante: nova_monitoria.codigo_professor,
+                    id_monitoria: nova_monitoria.id,
+                    pre_requisito: pre_requisitos,
+                }
+            })
+            if(nova_monitoria && abrir_vaga) {
+                return res.status(201).json({message:"Monitoria criada com sucesso."})
             }
             return res.status(500).json({message:"Erro ao criar monitoria"})
         }

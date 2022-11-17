@@ -13,6 +13,8 @@ profRoutes.post('/abrirmonitoria',authenticaColaborador, profController.abrirVag
 profRoutes.put('/aberturamonitoria/aprovar',authenticaColaborador, profController.aprovaVaga)
 profRoutes.delete('/aberturamonitoria/remover',authenticaColaborador, profController.removeVaga)
 
+profRoutes.delete('/excluimonitor', authenticaColaborador, profController.excluiMonitor)
+
 profRoutes.post('/monitorias',authenticaColaborador, profController.getMonitorias)
 
 export default profRoutes;

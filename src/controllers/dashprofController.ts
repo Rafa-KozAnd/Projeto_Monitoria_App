@@ -226,19 +226,21 @@ const removeVaga: RequestHandler = async (req, res) => {
 }
 
 const getMonitorias: RequestHandler = async (req, res) => {
-    const { cpf_professor } = req.body;
+    const { authorization : token } = req.headers;
 
     try {
+        const result = decode(token);
         const monitorias = await client.monitoria.findMany({
             where: {
                 colaborador: {
-                    cpf: cpf_professor
+                    cpf: result["user_id"]
                 }
             },
             select: {
                 id: true,
                 disciplina: {
                     select: {
+                        codigo_disciplina: true,
                         nome: true
                     }
                 },
@@ -269,9 +271,10 @@ const getMonitorias: RequestHandler = async (req, res) => {
             }
             monitoriaJson.push
             ({
-                "idDisciplina": monitoria.id,
+                "idMonitoria": monitoria.id,
+                "idDisciplina": monitoria.disciplina.codigo_disciplina,
                 "nomeDisciplina": monitoria.disciplina.nome,
-                "monitores": monitorJson,
+                "monitores": monitorJson
             })
         }
         

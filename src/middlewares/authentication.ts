@@ -61,7 +61,7 @@ export const authenticaColaborador: RequestHandler = async (req, res, next) => {
       return next();
     }
 
-    // return next();
+    return next();
   } catch(err) {
     return res.status(401).json({ message: "Sessão expirada, realize login novamente na plataforma.", code: "token.expired" });
   }

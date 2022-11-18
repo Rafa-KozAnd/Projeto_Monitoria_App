@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 import { RequestHandler } from 'express';
 import { client } from '../../prisma/client'
+import { decode } from 'jsonwebtoken';
 import {Aluno, User} from '../services/Aluno'
 import {Authenticator} from '../services/Authenticator'
 const { time } = require("console")
@@ -333,6 +334,46 @@ const sugerirMonitoria: RequestHandler = async (req, res) => {
         }
 }
 
+const getCandidaturas: RequestHandler = async (req, res) => {
+    const { authorization : token } = req.headers;
+    const result = decode(token);
+
+
+    const candidaturas = await client.vaga_aluno_monitoria.findMany({
+        where: {
+            matricula_aluno: result["user_id"],
+        },
+        select: {
+            status: true,
+            motivo: true,
+            vaga_monitoria: {
+                select: {
+                    disciplina: {
+                        select: {
+                            nome: true,
+                        }
+                    }
+                } 
+            }
+        }
+    })
+
+    var candidaturasJson : any[] = []
+    for  ( let candidatura of candidaturas){
+        candidaturasJson.push(
+            {
+                "nome_disciplina": candidatura?.vaga_monitoria.disciplina.nome,
+                "status": candidatura?.status,
+                "motivo": candidatura?.motivo,
+            }
+        )
+    }
+
+    let candidaturasformat = {candidaturasJson}
+
+    return res.status(201).send(candidaturasformat)
+}
+
 export {
     getVagasMonitoria,
     postVagaCandidatar,
@@ -346,5 +387,6 @@ export {
     getMonitoria,
     agendarMonitoria,
     sugerirMonitoria,
-    getPreRequisitos
+    getPreRequisitos,
+    getCandidaturas
 }

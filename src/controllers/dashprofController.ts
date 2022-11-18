@@ -226,19 +226,20 @@ const removeVaga: RequestHandler = async (req, res) => {
 }
 
 const getMonitorias: RequestHandler = async (req, res) => {
-    const { cpf_professor } = req.body;
-
+    const { my } = req.body; 
     try {
+
         const monitorias = await client.monitoria.findMany({
             where: {
                 colaborador: {
-                    cpf: cpf_professor
+                    cpf: my
                 }
             },
             select: {
                 id: true,
                 disciplina: {
                     select: {
+                        codigo_disciplina: true,
                         nome: true
                     }
                 },
@@ -269,9 +270,10 @@ const getMonitorias: RequestHandler = async (req, res) => {
             }
             monitoriaJson.push
             ({
-                "idDisciplina": monitoria.id,
+                "idMonitoria": monitoria.id,
+                "idDisciplina": monitoria.disciplina.codigo_disciplina,
                 "nomeDisciplina": monitoria.disciplina.nome,
-                "monitores": monitorJson,
+                "monitores": monitorJson
             })
         }
         
@@ -314,6 +316,27 @@ const abrirVaga : RequestHandler = async (req, res) => {
     }
 }
 
+const excluiMonitor: RequestHandler = async (req, res) => {
+    const { id_monitoria } = req.body;
+
+    try {
+        const removemonitor = await client.aluno_monitoria.deleteMany({
+            where: {
+                monitoria: {
+                    id: id_monitoria
+                }
+            }
+        })
+        if(removemonitor) {
+            return res.status(200).json({message: 'Monitor removido com sucesso'})
+        }
+        return res.status(500).json({message: 'Monitor não encontrado'})
+
+    } catch(err) {
+        return res.status(500).json({message: 'Houve um erro ao alterar os dados, tente novamente mais tarde.'})
+    }
+}
+
 export {
     getSolicitacoes,
     aprovaSolicitacoes,
@@ -322,5 +345,6 @@ export {
     aprovaVaga,
     removeVaga,
     getMonitorias,
-    abrirVaga
+    abrirVaga,
+    excluiMonitor
 }

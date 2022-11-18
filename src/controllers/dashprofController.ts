@@ -226,14 +226,13 @@ const removeVaga: RequestHandler = async (req, res) => {
 }
 
 const getMonitorias: RequestHandler = async (req, res) => {
-    const { authorization : token } = req.headers;
-
+    const { my } = req.body; 
     try {
-        const result = decode(token);
+
         const monitorias = await client.monitoria.findMany({
             where: {
                 colaborador: {
-                    cpf: result["user_id"]
+                    cpf: my
                 }
             },
             select: {

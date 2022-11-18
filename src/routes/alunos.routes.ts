@@ -16,5 +16,6 @@ alunoRoutes.get('/monitorias',authenticateAluno, alunos.getMonitorias)
 alunoRoutes.post('/monitoria',authenticateAluno, alunos.getMonitoria)
 alunoRoutes.post('/agendar/monitoria',authenticateAluno, alunos.agendarMonitoria)
 alunoRoutes.post('/solicitar/vaga/monitoria',authenticateAluno, alunos.sugerirMonitoria)
+alunoRoutes.post('/candidaturas',authenticateAluno, alunos.getCandidaturas)
 
 export default alunoRoutes;

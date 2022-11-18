@@ -1,17 +1,16 @@
 import { RequestHandler } from 'express';
-import { decode } from 'jsonwebtoken';
 import { client } from '../../prisma/client'
 
 
 const getSolicitacoes: RequestHandler  = async (req, res) => {
-    const { cpf_professor } = req.body;
+    const { my } = req.body;
     
     try {
         const solicitacoesAlunos = await client.vaga_aluno_monitoria.findMany({
             where: {
                 status: 1,
                 vaga_monitoria: {
-                    professor_requisitante: cpf_professor,
+                    professor_requisitante: my,
                     aprovado: false
                 }
             },
@@ -118,7 +117,7 @@ const reprovaSolicitacoes: RequestHandler = async (req, res) => {
 }
 
 const getVagas: RequestHandler = async (req, res) => {
-    const { cpf_professor } = req.body;
+    const { my } = req.body;
 
     try {
         const solicitacoesMonitorias = await client.sugestao_monitoria.findMany({
@@ -126,7 +125,7 @@ const getVagas: RequestHandler = async (req, res) => {
                 status: 1,
                 disciplina: {
                     colaborador:{
-                        cpf: cpf_professor
+                        cpf: my
                     }
                 }
             },
@@ -166,7 +165,7 @@ const getVagas: RequestHandler = async (req, res) => {
 }
 
 const aprovaVaga: RequestHandler = async (req, res) => {
-    const { id_vaga, cpf_professor, pre_requisitos} = req.body;
+    const { id_vaga, pre_requisitos, my} = req.body;
 
     try {
         const aprovaalunovaga = await client.sugestao_monitoria.update({
@@ -180,7 +179,7 @@ const aprovaVaga: RequestHandler = async (req, res) => {
         if(aprovaalunovaga) {
             const nova_monitoria = await client.monitoria.create({
                 data: {
-                    codigo_professor: cpf_professor,
+                    codigo_professor: my,
                     codigo_disciplina: aprovaalunovaga.codigo_disciplina,
                 }
             })
@@ -289,14 +288,12 @@ const getMonitorias: RequestHandler = async (req, res) => {
 }
 
 const abrirVaga : RequestHandler = async (req, res) => {
-    const { authorization : token } = req.headers;
-    const { vaga } = req.body;
+    const { vaga, my } = req.body;
     try {
-        const result = decode(token);
         const nova_monitoria = await client.monitoria.create({
             data: {
                 horario: new Date(),
-                codigo_professor: result["user_id"],
+                codigo_professor: my,
                 codigo_disciplina: vaga.codigo_disciplina,
             }
         })

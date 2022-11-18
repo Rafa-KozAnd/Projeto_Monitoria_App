@@ -268,13 +268,15 @@ const getMonitorias: RequestHandler = async (req, res) => {
                     "email": monitor.aluno.email
                 })
             }
-            monitoriaJson.push
-            ({
-                "idMonitoria": monitoria.id,
-                "idDisciplina": monitoria.disciplina.codigo_disciplina,
-                "nomeDisciplina": monitoria.disciplina.nome,
-                "monitores": monitorJson
-            })
+            if(monitorJson.length != 0) {
+                monitoriaJson.push
+                ({
+                    "idMonitoria": monitoria.id,
+                    "idDisciplina": monitoria.disciplina.codigo_disciplina,
+                    "nomeDisciplina": monitoria.disciplina.nome,
+                    "monitores": monitorJson,
+                })
+            }
         }
         
         let monitoriasFormat = {"disciplinas": monitoriaJson}

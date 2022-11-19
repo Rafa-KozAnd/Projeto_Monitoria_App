@@ -266,34 +266,88 @@ const getMonitoria: RequestHandler = async (req, res) => {
 
 
 //TODO: Faltou algo aqui
-const getAgendamentoMonitoria: RequestHandler  = async (req, res) => {
+const getAgendamentoMonitoriaAluno: RequestHandler  = async (req, res) => {
     const {my} = req.body;
     const today = new Date();
     const hoje = await today.getDate()
     const amanha = await today.getDate() + 1
-    const agendamentos = await client.agendamento.findMany({
+    
+    function addDays(date, days) {
+        var result = new Date(date);
+        result.setDate(result.getDate() + days);
+        result.setHours(0);
+        result.setMinutes(0);
+        return result;
+    }
+    console.log(today);
+    const agendamentos_data = await client.agendamento.findMany({
         where:{
             horario: {
-                lte: amanha.toString(),
-                gte: hoje.toString(),
+                lte: addDays(today,1),
+                gte: addDays(today,0),
               },
         },
-        select:{
+        include:{
             monitoria: {
-                select : {
-                    aluno_monitoria:{
-                        select: {
-                            aluno: {
-                                select: {
-                                    nome:true
-                                }
-                            }
+                include : {
+                    aluno_monitoria: {
+                        include: {
+                            aluno:true
                         }
                     }
                 }
             }
         }
-    })
+    });
+
+
+
+    console.log(agendamentos_data);
+    var agendamentos : any[] = []
+    for  ( let agendamento of agendamentos_data){
+        agendamentos.push(
+            {
+                "nome_monitor": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
+                "horario" : agendamento.horario,
+                "matricula_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.matricula,
+                "status": 1
+            }
+        )
+    }
+
+    let agendamentos_json = {agendamentos}
+
+    return res.status(201).send(agendamentos_json)
+}
+
+const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
+    const {my} = req.body;
+    const today = new Date();
+    const hoje = await today.getDate()
+    const amanha = await today.getDate() + 1
+    // const agendamentos = await client.agendamento.findMany({
+    //     where:{
+    //         horario: {
+    //             lte: amanha.toString(),
+    //             gte: hoje.toString(),
+    //           },
+    //     },
+    //     select:{
+    //         monitoria: {
+    //             select : {
+    //                 aluno_monitoria:{
+    //                     select: {
+    //                         aluno: {
+    //                             select: {
+    //                                 nome:true
+    //                             }
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // })
 
     // var agendamentoJson : any[] = []
     // for  ( let agendamento of agendamentos){
@@ -418,8 +472,9 @@ export {
     getVagasMonitoria,
     postVagaCandidatar,
     getMinhasMonitorias,
-    getAgendamentoMonitoria,
+    getAgendamentoMonitoriaAluno,
     finalizarSolicitacaoAgentamento,
+    getAgendamentoMonitoriaMonitor,
     removerAgendamento,
     getAgendamentos,
     getPerfil,

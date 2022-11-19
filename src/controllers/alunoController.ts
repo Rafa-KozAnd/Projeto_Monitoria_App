@@ -121,27 +121,6 @@ const getMinhasMonitorias: RequestHandler  = async (req, res) => {
     res.status(201).send(monitorias);
 }
 
-//TODO: Faltou algo aqui
-const getAgendamentoMonitoria: RequestHandler  = (req, res) => {
-    let response = {
-        "nome _aluno": "hedison",
-        "horario" : Date.now(),
-        "matricula_aluno": "123451000",
-        "status": 0
-    }
-    res.status(201).send(response)
-}
-
-const finalizarSolicitacaoAgentamento: RequestHandler  = (req, res) => {
-    let id = req.body["id_solicitacao"]
-    res.status(200).send({msg:`solicitacao  ${id} finalizada`})
-}
-
-const removerAgendamento: RequestHandler  = (req, res) => {
-    let id = req.body["id_solicitacao"]
-    res.status(200).send({msg:`solicitacao de agendamento ${id} removida`})
-}
-
 const getAgendamentos: RequestHandler = async (req, res) => {
     const { matricula_aluno } = req.body;
 
@@ -283,6 +262,51 @@ const getMonitoria: RequestHandler = async (req, res) => {
             "email_contato": monitoria?.aluno_monitoria[0].aluno.email
         } 
     res.status(201).send(perfil)
+}
+
+
+//TODO: Faltou algo aqui
+const getAgendamentoMonitoria: RequestHandler  = (req, res) => {
+    const {my} = req.body;
+    const today = new Date();
+    const hoje = today.getDate()
+    const amanha = today.getDate() + 1
+    const agendamentos = client.agendamento.findMAny({
+        where:{
+            horario: {
+                lte: amanha,
+                gte: hoje,
+              },
+        }
+    })
+
+    var agendamentoJson : any[] = []
+    for  ( let agendamento of agendamentos){
+        agendamentoJson.push(
+            {
+                "nome_monitor": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
+                "horario" : agendamento.horario,
+                "matricula_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.mtricula,
+                "status": 1
+            }
+        )
+    }
+
+    let candidaturasformat = {agendamentoJson}
+
+    return res.status(201).send(candidaturasformat)
+}
+
+
+const finalizarSolicitacaoAgentamento: RequestHandler  = (req, res) => {
+    let id = req.body["id_solicitacao"]
+    res.status(200).send({msg:`solicitacao  ${id} finalizada`})
+}
+
+
+const removerAgendamento: RequestHandler  = (req, res) => {
+    let id = req.body["id_solicitacao"]
+    res.status(200).send({msg:`solicitacao de agendamento ${id} removida`})
 }
 
 const agendarMonitoria: RequestHandler = (req, res) => {

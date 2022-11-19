@@ -20,8 +20,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  shadowDatabaseUrl = "postgres://syhsjgutokchtc:c1ebac4331ce02546f2404e53e96af304f7d6a5023a51ca8fd75fdd4e2e36406@ec2-52-70-45-163.compute-1.amazonaws.com:5432/d1e1e53kpbac3b"
-  previewFeatures = ["nativeTypes"]
+  shadowDatabaseUrl = "postgres://uaoffnjeeejiqv:760ac822632a7f0137fd00f28b8c2ed443ae5c8a8b164ba2331bf04a1024f6d4@ec2-3-209-39-2.compute-1.amazonaws.com:5432/d1fa276d52ji7a"
 }
 
 model refresh_token {

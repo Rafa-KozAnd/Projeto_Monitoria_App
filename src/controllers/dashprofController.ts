@@ -181,6 +181,7 @@ const aprovaVaga: RequestHandler = async (req, res) => {
                 data: {
                     codigo_professor: my,
                     codigo_disciplina: aprovaalunovaga.codigo_disciplina,
+                    horario: new Date().getDate().toString()
                 }
             })
             const abrir_vaga = await client.vaga_monitoria.create({

@@ -266,35 +266,51 @@ const getMonitoria: RequestHandler = async (req, res) => {
 
 
 //TODO: Faltou algo aqui
-const getAgendamentoMonitoria: RequestHandler  = (req, res) => {
+const getAgendamentoMonitoria: RequestHandler  = async (req, res) => {
     const {my} = req.body;
     const today = new Date();
-    const hoje = today.getDate()
-    const amanha = today.getDate() + 1
-    const agendamentos = client.agendamento.findMAny({
+    const hoje = await today.getDate()
+    const amanha = await today.getDate() + 1
+    const agendamentos = await client.agendamento.findMany({
         where:{
             horario: {
-                lte: amanha,
-                gte: hoje,
+                lte: amanha.toString(),
+                gte: hoje.toString(),
               },
+        },
+        select:{
+            monitoria: {
+                select : {
+                    aluno_monitoria:{
+                        select: {
+                            aluno: {
+                                select: {
+                                    nome:true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     })
 
-    var agendamentoJson : any[] = []
-    for  ( let agendamento of agendamentos){
-        agendamentoJson.push(
-            {
-                "nome_monitor": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
-                "horario" : agendamento.horario,
-                "matricula_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.mtricula,
-                "status": 1
-            }
-        )
-    }
+    // var agendamentoJson : any[] = []
+    // for  ( let agendamento of agendamentos){
+    //     agendamentoJson.push(
+    //         {
+    //             "nome_monitor": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
+    //             "horario" : agendamento.horario,
+    //             "matricula_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.matricula,
+    //             "status": 1
+    //         }
+    //     )
+    // }
 
-    let candidaturasformat = {agendamentoJson}
+    // let candidaturasformat = {agendamentoJson}
 
-    return res.status(201).send(candidaturasformat)
+    // return res.status(201).send(candidaturasformat)
+    return res.status(201).send("jsion");
 }
 
 

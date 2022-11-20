@@ -56,7 +56,7 @@ const getSolicitacoes: RequestHandler  = async (req, res) => {
 }
 
 const aprovaSolicitacoes: RequestHandler = async (req, res) => {
-    const { solicitacao_id } = req.body;
+    const { solicitacao_id, horario, dia } = req.body;
 
     try {
         const aprovaalunosolicit = await client.vaga_aluno_monitoria.update({
@@ -88,6 +88,15 @@ const aprovaSolicitacoes: RequestHandler = async (req, res) => {
                 },
                 data: {
                     e_monitor: true
+                }
+            })
+            await client.monitoria.update({
+                where: {
+                    id: atualiza_vaga.id_monitoria
+                },
+                data: {
+                    horario: horario,
+                    dia: dia
                 }
             })
 

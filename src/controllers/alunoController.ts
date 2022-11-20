@@ -423,13 +423,43 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
 
 const aprovarSolicitacaoAgentamento: RequestHandler  = (req, res) => {
     let id = req.body["id_agendamento"]
-    res.status(200).send({msg:`solicitacao  ${id} finalizada`})
+    const id_agendamento = req.body["id_agendamento"]
+    try {
+        const agendamentos = client.agendamento.update({
+            where : {
+                id: parseInt(id_agendamento)
+            },
+            data:{
+                status:"Aprovado"
+            }
+        })
+    } catch (error) {
+        res.status(400).send({msg:`Não foi possivel atualizart o status`})
+        console.log(error)
+    }
+    
+    res.status(200).send({msg:`sAgendamento confirmado com sucesso`})
 }
 
 
 const cancelarAgendamento: RequestHandler  = (req, res) => {
-    let id = req.body["id_solicitacao"]
-    res.status(200).send({msg:`solicitacao de agendamento ${id} removida`})
+    const id_agendamento = req.body["id_agendamento"]
+
+    try {
+        const agendamentos = client.agendamento.update({
+            where : {
+                id: parseInt(id_agendamento)
+            },
+            data:{
+                status:"Cancelado"
+            }
+        })
+    } catch (error) {
+        res.status(400).send({msg:`Não foi possivel atualizart o status`})
+        console.log(error)
+    }
+    
+    res.status(200).send({msg:`sAgendamento cancelado com sucesso`})
 }
 
 const agendarMonitoria: RequestHandler = async (req, res) => {

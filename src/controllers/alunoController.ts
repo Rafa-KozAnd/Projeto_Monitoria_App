@@ -459,11 +459,17 @@ const getHorariosDisponiveis: RequestHandler = async(req,res) => {
     }
     for  ( let agendamento of agendamentos){
         const horarios_agendamento= new Date(agendamento.horario);
-        const hora = new Date(agendamento.horario).getHours();
-        const minutos = new Date(agendamento.horario).getMinutes();
+        let hora = new Date(agendamento.horario).getHours().toString();
+        let minutos = new Date(agendamento.horario).getMinutes().toString();
+        if (minutos.length < 2){
+            minutos = minutos + "0";
+        }
+        if (hora.length < 2){
+            hora = "0" + hora; 
+        }
         result.forEach(v => {
-            if ((hora.toString()+":"+ minutos.toString()).match(v)) {
-                result.splice(result.indexOf(v))
+            if ((hora+":"+ minutos).match(v)) {
+                result.splice(result.indexOf(v),1)
             }
           });
     }    

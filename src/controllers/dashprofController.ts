@@ -57,7 +57,11 @@ const getSolicitacoes: RequestHandler  = async (req, res) => {
 
 const aprovaSolicitacoes: RequestHandler = async (req, res) => {
     const { solicitacao_id, horario, dia } = req.body;
-
+    const input_date = new Date();
+    input_date.setHours(horario.slice(0,2));
+    input_date.setMinutes(horario.slice(3,5));
+    input_date.setSeconds(0);
+    
     try {
         const aprovaalunosolicit = await client.vaga_aluno_monitoria.update({
             where: {
@@ -95,7 +99,7 @@ const aprovaSolicitacoes: RequestHandler = async (req, res) => {
                     id: atualiza_vaga.id_monitoria
                 },
                 data: {
-                    horario: horario,
+                    horario: input_date,
                     dia: dia
                 }
             })

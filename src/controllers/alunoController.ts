@@ -369,6 +369,7 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
             },
         },
         include:{
+            aluno:true,
             monitoria: {
                 include : {
                     aluno_monitoria: {
@@ -380,7 +381,7 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
             }
         }
     });
-
+    
 
 
     var agendamentos : any[] = []
@@ -388,12 +389,13 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
         agendamentos.push(
             {
                 "id_agendamento": agendamento.id,
-                "nome_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
+                "nome_aluno": agendamento.aluno.nome,
                 "horario" : agendamento.horario,
-                "matricula_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.matricula,
+                "matricula_aluno": agendamento.aluno.matricula,
                 "status": 1
             }
         )
+        console.log(agendamento.monitoria.aluno_monitoria[0].aluno.nome);
     }
 
     let agendamentos_json = {agendamentos}

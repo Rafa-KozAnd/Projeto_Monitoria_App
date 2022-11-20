@@ -599,13 +599,12 @@ const sugerirMonitoria: RequestHandler = async (req, res) => {
 }
 
 const getCandidaturas: RequestHandler = async (req, res) => {
-    const { authorization : token } = req.headers;
-    const result = decode(token);
+    const {my} = req.body;
 
 
     const candidaturas = await client.vaga_aluno_monitoria.findMany({
         where: {
-            matricula_aluno: result["user_id"],
+            matricula_aluno: my,
         },
         select: {
             status: true,

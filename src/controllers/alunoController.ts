@@ -390,7 +390,6 @@ const getAgendamentoMonitoriaAluno: RequestHandler  = async (req, res) => {
     const agendamentos_data = await client.agendamento.findMany({
         where:{
             horario: {
-                lte: addDays(today,1),
                 gte: addDays(today,0),
               },
             matricula_aluno: my

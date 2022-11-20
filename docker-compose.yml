@@ -13,9 +13,10 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - type: bind
-        source: ./postgresql-data
-        target: /var/lib/postgresql/data
+      - ./postgresql-data:/var/lib/postgresql/data
+      # - type: bind
+      #   source: ./postgresql-data
+      #   target: /var/lib/postgresql/data
 
   adminer:
     image: adminer

@@ -463,7 +463,11 @@ const getHorariosDisponiveis: RequestHandler = async(req,res) => {
         if (hora_nova.length < 2){
             hora_nova = "0" + hora_nova; 
         }
-        result.push(hora_nova + ":"+ minutos_novo)
+        let _horario = hora_nova + ":"+ minutos_novo
+        result.push({
+            horario:_horario,
+            disponivel:true
+        })
         horario_inicial = addMinutes(horario_inicial,30);
     }
     for  ( let agendamento of agendamentos){
@@ -477,8 +481,8 @@ const getHorariosDisponiveis: RequestHandler = async(req,res) => {
             hora = "0" + hora; 
         }
         result.forEach(v => {
-            if ((hora+":"+ minutos).match(v)) {
-                result.splice(result.indexOf(v),1)
+            if ((hora+":"+ minutos).match(v.horario)) {
+                result[result.indexOf(v)].disponivel = false
             }
           });
     }    

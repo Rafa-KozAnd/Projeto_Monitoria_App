@@ -242,7 +242,6 @@ const getAgendamentos: RequestHandler = async (req, res) => {
                 gte: addDays(today,0),
               },
             monitoria: {
-                    id: parseInt(id_monitoria),
                     aluno_monitoria: {
                         some: {
                             matricula_aluno: my
@@ -415,7 +414,6 @@ const getAgendamentoMonitoriaAluno: RequestHandler  = async (req, res) => {
             }
         }
     });
-
 
 
     console.log(agendamentos_data);

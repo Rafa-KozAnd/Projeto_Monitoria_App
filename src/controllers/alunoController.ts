@@ -172,9 +172,7 @@ const getAgendamentosAluno: RequestHandler = async (req, res) => {
     const agendamentos = await client.agendamento.findMany({
         where: { 
             matricula_aluno: my,
-            NOT: {
-                status:"Cancelado"
-            }
+            status: "Aprovado"
         },
         select: {
             horario:true,

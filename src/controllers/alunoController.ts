@@ -279,6 +279,7 @@ const getMonitoria: RequestHandler = async (req, res) => {
         select: {
             id: true,
             horario: true,
+            dia: true,
             disciplina: {
                 select: {
                     nome: true,
@@ -305,6 +306,7 @@ const getMonitoria: RequestHandler = async (req, res) => {
         }
     });
     let perfil = { 
+            "dia": monitoria?.dia,
             "id_monitoria":monitoria?.id,
             "nome_aluno": monitoria?.aluno_monitoria[0].aluno.nome,
             "nome_professor": monitoria?.colaborador.nome,

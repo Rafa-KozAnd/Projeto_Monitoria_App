@@ -6,6 +6,15 @@ import {Aluno, User} from '../services/Aluno'
 import {Authenticator} from '../services/Authenticator'
 const { time } = require("console")
 
+const dias = {
+    0:'Domingo',
+    1:'Segunda',
+    2:'Terca',
+    3:"Quarta",
+    4:"Quinta",
+    5:"Sexta",
+    6:"Sabado"
+}
 
 function addDays(date, days) {
     var result = new Date(date);
@@ -418,20 +427,59 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
     return res.status(201).send(agendamentos_json)
 }
 
-// const getHorariosDisponiveis: RequestHandler = async(req,res) => {
-//     const {id_monitoria} = req.body;
-//     const monitoria = client.monitoria.findFirst({
-//         where:{
-//             id_monitoria : id_monitoria
-//         }
-//     })
+const getHorariosDisponiveis: RequestHandler = async(req,res) => {
+    const { my } = req.body;
+    const { id_monitoria} = req.params;
+    const today = new Date(Date.now());
 
-//     const agendamentos = client.monitoria.findMany({
-//         where:{
-//             id_monitoria: id_monitoria
-//         }
-//     })
-// }
+    const agendamentos = await client.agendamento.findMany({
+        where: {
+            id_monitoria: parseInt(id_monitoria),
+            NOT:{
+                status:"Cancelado"
+            }
+        }
+    });
+
+    const monitoria = await client.monitoria.findFirst({
+        where :{
+            id: parseInt(id_monitoria)
+        }
+    })
+    const horario_monitoria = new Date(monitoria.horario)
+    const result = []
+
+    if(monitoria.dia != dias[today.getDay()]){
+        console.log("não e esse dia")
+        res.status(202).send({horarios:result})
+        return
+    }
+    let horario_inicial = horario_monitoria;
+    while(horario_inicial <= addMinutes(horario_monitoria,180)){
+        let hora_nova = horario_inicial.getHours().toString();
+        let minutos_novo = horario_inicial.getMinutes().toString();
+        if (minutos_novo.length < 2){
+            minutos_novo = minutos_novo + "0";
+        }
+        if (hora_nova.length < 2){
+            hora_nova = "0" + hora_nova; 
+        }
+        result.push(hora_nova + ":"+ minutos_novo)
+        horario_inicial = addMinutes(horario_inicial,30);
+    }
+    for  ( let agendamento of agendamentos){
+        const horarios_agendamento= new Date(agendamento.horario);
+        const hora = new Date(agendamento.horario).getHours();
+        const minutos = new Date(agendamento.horario).getMinutes();
+        result.forEach(v => {
+            if ((hora.toString()+":"+ minutos.toString()).match(v)) {
+                result.splice(result.indexOf(v))
+            }
+          });
+    }    
+    res.status(202).send({horarios:result})
+    return
+}
 
 const aprovarSolicitacaoAgentamento: RequestHandler  = async (req, res) => {
     const id_agendamento = req.body["id_agendamento"]
@@ -474,15 +522,15 @@ const cancelarAgendamento: RequestHandler  = async (req, res) => {
 
 const agendarMonitoria: RequestHandler = async (req, res) => {
     const { id_monitoria, horario , my} = req.body;
-    const dias = {
-        0:'Domingo',
-        1:'Segunda',
-        2:'Terca',
-        3:"Quarta",
-        4:"Quinta",
-        5:"Sexta",
-        6:"Sabado"
-    }
+    // const dias = {
+    //     0:'Domingo',
+    //     1:'Segunda',
+    //     2:'Terca',
+    //     3:"Quarta",
+    //     4:"Quinta",
+    //     5:"Sexta",
+    //     6:"Sabado"
+    // }
     const monitoria = await client.monitoria.findFirst({
         where: {
             id: parseInt(id_monitoria)
@@ -662,5 +710,6 @@ export {
     agendarMonitoria,
     sugerirMonitoria,
     getPreRequisitos,
-    getCandidaturas
+    getCandidaturas,
+    getHorariosDisponiveis
 }

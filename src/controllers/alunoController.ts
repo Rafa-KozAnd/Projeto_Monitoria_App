@@ -121,27 +121,6 @@ const getMinhasMonitorias: RequestHandler  = async (req, res) => {
     res.status(201).send(monitorias);
 }
 
-//TODO: Faltou algo aqui
-const getAgendamentoMonitoria: RequestHandler  = (req, res) => {
-    let response = {
-        "nome _aluno": "hedison",
-        "horario" : Date.now(),
-        "matricula_aluno": "123451000",
-        "status": 0
-    }
-    res.status(201).send(response)
-}
-
-const finalizarSolicitacaoAgentamento: RequestHandler  = (req, res) => {
-    let id = req.body["id_solicitacao"]
-    res.status(200).send({msg:`solicitacao  ${id} finalizada`})
-}
-
-const removerAgendamento: RequestHandler  = (req, res) => {
-    let id = req.body["id_solicitacao"]
-    res.status(200).send({msg:`solicitacao de agendamento ${id} removida`})
-}
-
 const getAgendamentos: RequestHandler = async (req, res) => {
     const { matricula_aluno } = req.body;
 
@@ -285,6 +264,136 @@ const getMonitoria: RequestHandler = async (req, res) => {
     res.status(201).send(perfil)
 }
 
+
+//TODO: Faltou algo aqui
+const getAgendamentoMonitoriaAluno: RequestHandler  = async (req, res) => {
+    const {my} = req.body;
+    const today = new Date();
+    const hoje = await today.getDate()
+    const amanha = await today.getDate() + 1
+    
+    function addDays(date, days) {
+        var result = new Date(date);
+        result.setDate(result.getDate() + days);
+        result.setHours(0);
+        result.setMinutes(0);
+        return result;
+    }
+    console.log(today);
+    const agendamentos_data = await client.agendamento.findMany({
+        where:{
+            horario: {
+                lte: addDays(today,1),
+                gte: addDays(today,0),
+              },
+            matricula_aluno: my
+        },
+        include:{
+            monitoria: {
+                include : {
+                    aluno_monitoria: {
+                        include: {
+                            aluno:true
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+
+
+    console.log(agendamentos_data);
+    var agendamentos : any[] = []
+    for  ( let agendamento of agendamentos_data){
+        agendamentos.push(
+            {
+                "nome_monitor": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
+                "horario" : agendamento.horario,
+                "matricula_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.matricula,
+                "status": 1
+            }
+        )
+    }
+
+    let agendamentos_json = {agendamentos}
+
+    return res.status(201).send(agendamentos_json)
+}
+
+const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
+    const {my} = req.body;
+    const today = new Date();
+    const hoje = await today.getDate()
+    const amanha = await today.getDate() + 1
+    
+    function addDays(date, days) {
+        var result = new Date(date);
+        result.setDate(result.getDate() + days);
+        result.setHours(0);
+        result.setMinutes(0);
+        return result;
+    }
+    console.log(today);
+    const agendamentos_data = await client.agendamento.findMany({
+        where:{
+            horario: {
+                lte: addDays(today,1),
+                gte: addDays(today,0),
+              },
+            monitoria: {
+                    aluno_monitoria: {
+                        some: {
+                            matricula_aluno: my
+                        }
+                    }     
+            }
+        },
+        include:{
+            monitoria: {
+                include : {
+                    aluno_monitoria: {
+                        include: {
+                            aluno:true
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+
+
+    console.log(agendamentos_data);
+    var agendamentos : any[] = []
+    for  ( let agendamento of agendamentos_data){
+        agendamentos.push(
+            {
+                "nome_monitor": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
+                "horario" : agendamento.horario,
+                "matricula_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.matricula,
+                "status": 1
+            }
+        )
+    }
+
+    let agendamentos_json = {agendamentos}
+
+    return res.status(201).send(agendamentos_json)
+}
+
+
+const finalizarSolicitacaoAgentamento: RequestHandler  = (req, res) => {
+    let id = req.body["id_solicitacao"]
+    res.status(200).send({msg:`solicitacao  ${id} finalizada`})
+}
+
+
+const removerAgendamento: RequestHandler  = (req, res) => {
+    let id = req.body["id_solicitacao"]
+    res.status(200).send({msg:`solicitacao de agendamento ${id} removida`})
+}
+
 const agendarMonitoria: RequestHandler = (req, res) => {
     let perfil = {
         "nome_aluno": "meunomeéjoao",
@@ -378,8 +487,9 @@ export {
     getVagasMonitoria,
     postVagaCandidatar,
     getMinhasMonitorias,
-    getAgendamentoMonitoria,
+    getAgendamentoMonitoriaAluno,
     finalizarSolicitacaoAgentamento,
+    getAgendamentoMonitoriaMonitor,
     removerAgendamento,
     getAgendamentos,
     getPerfil,

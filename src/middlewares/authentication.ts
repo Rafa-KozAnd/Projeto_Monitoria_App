@@ -17,7 +17,8 @@ export const authenticateAluno: RequestHandler = async (req, res, next) => {
   const [, token] = await authorization.split(".");
   try {
     const decoded = verify(authorization, `${process.env.SECRETTOKEN}`) as JwtPayload
-    req.body.my = decoded.user_id;
+    req.body.my = await decoded.user_id;
+    console.log(req.body.my, "aaaa");
    // TODO :  Verificar como iremos separar os professores dos alunos
     // const aluno = await client.aluno.findFirst({
     //   where:  {matricula : user_id }

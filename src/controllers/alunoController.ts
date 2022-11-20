@@ -291,8 +291,6 @@ const getMonitoria: RequestHandler = async (req, res) => {
     res.status(201).send(perfil)
 }
 
-
-//TODO: Faltou algo aqui
 const getAgendamentoMonitoriaAluno: RequestHandler  = async (req, res) => {
     const {my} = req.body;
     const today = new Date();
@@ -328,8 +326,8 @@ const getAgendamentoMonitoriaAluno: RequestHandler  = async (req, res) => {
     for  ( let agendamento of agendamentos_data){
         agendamentos.push(
             {
-                "nome_monitor": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
                 "horario" : agendamento.horario,
+                "nome_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
                 "matricula_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.matricula,
                 "status": 1
             }

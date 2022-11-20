@@ -421,11 +421,11 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
 //     })
 // }
 
-const aprovarSolicitacaoAgentamento: RequestHandler  = (req, res) => {
+const aprovarSolicitacaoAgentamento: RequestHandler  = async (req, res) => {
     let id = req.body["id_agendamento"]
     const id_agendamento = req.body["id_agendamento"]
     try {
-        const agendamentos = client.agendamento.update({
+        await client.agendamento.update({
             where : {
                 id: parseInt(id_agendamento)
             },
@@ -442,11 +442,10 @@ const aprovarSolicitacaoAgentamento: RequestHandler  = (req, res) => {
 }
 
 
-const cancelarAgendamento: RequestHandler  = (req, res) => {
+const cancelarAgendamento: RequestHandler  = async (req, res) => {
     const id_agendamento = req.body["id_agendamento"]
-
     try {
-        const agendamentos = client.agendamento.update({
+        await client.agendamento.update({
             where : {
                 id: parseInt(id_agendamento)
             },

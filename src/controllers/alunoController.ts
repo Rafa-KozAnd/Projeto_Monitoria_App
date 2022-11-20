@@ -61,8 +61,18 @@ const getPreRequisitos : RequestHandler = async (req, res) => {
 }
 
 const getVagasMonitoria: RequestHandler = async (req, res) => {
+    const { my } = req.body;
 
     const vagasMonitorias = await client.vaga_monitoria.findMany({
+        where: {
+            NOT: {
+                vaga_aluno_monitoria: {
+                    some: {
+                        matricula_aluno: my
+                    }   
+                }
+            }
+        },
         select: {
             id:true,
             pre_requisito: true,

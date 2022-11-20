@@ -366,6 +366,9 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
                             matricula_aluno: my
                         }
                     }     
+            },
+            NOT: {
+                status:"Cancelado"
             }
         },
         include:{

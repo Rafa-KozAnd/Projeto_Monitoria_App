@@ -52,7 +52,6 @@ const getPreRequisitos : RequestHandler = async (req, res) => {
 }
 
 const getVagasMonitoria: RequestHandler = async (req, res) => {
-    const {matricula} = req.body;
 
     const vagasMonitorias = await client.vaga_monitoria.findMany({
         select: {
@@ -96,12 +95,12 @@ const getVagasMonitoria: RequestHandler = async (req, res) => {
 }
 
 const postVagaCandidatar: RequestHandler = async (req, res) => {
-    const { vaga, matricula } = req.body;
+    const { vaga, my } = req.body;
     try {
         const nova_candidatura = await client.vaga_aluno_monitoria.create({
             data: {
                 id_vaga: vaga,
-                matricula_aluno: matricula,
+                matricula_aluno: my,
                 status: 0,
             }
         })
@@ -114,9 +113,7 @@ const postVagaCandidatar: RequestHandler = async (req, res) => {
     }
 }
 
-// TODO: Arrumar esse endpoint foi feito para receber as monitorias de um monitor
 const getMinhasMonitorias: RequestHandler  = async (req, res) => {
-    const {matricula} = req.body;
     const monitorias = await client.monitoria.findMany({
         select: {
             id: true,
@@ -149,10 +146,15 @@ const getMinhasMonitorias: RequestHandler  = async (req, res) => {
 }
 
 const getAgendamentos: RequestHandler = async (req, res) => {
-    const { matricula_aluno } = req.body;
+    const { my } = req.body;
 
     const agendamentos = await client.agendamento.findMany({
-        where: { matricula_aluno: matricula_aluno},
+        where: { 
+            matricula_aluno: my,
+            NOT: {
+                status:"Cancelado"
+            }
+        },
         select: {
             horario:true,
             aluno: {
@@ -422,7 +424,6 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
 // }
 
 const aprovarSolicitacaoAgentamento: RequestHandler  = async (req, res) => {
-    let id = req.body["id_agendamento"]
     const id_agendamento = req.body["id_agendamento"]
     try {
         await client.agendamento.update({

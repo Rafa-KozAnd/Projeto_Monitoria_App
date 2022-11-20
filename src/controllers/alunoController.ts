@@ -222,56 +222,65 @@ const getAgendamentosAluno: RequestHandler = async (req, res) => {
 }
 
 const getAgendamentos: RequestHandler = async (req, res) => {
-    const { my } = req.body;
-
-    const agendamentos = await client.agendamento.findMany({
-        where: { 
-            NOT: {
-                status:"Cancelado"
-            },
+    const {my} = req.body;
+    const {id_monitoria} = req.params;
+    const today = new Date();
+    const hoje = await today.getDate()
+    const amanha = await today.getDate() + 1
+    
+    function addDays(date, days) {
+        var result = new Date(date);
+        result.setDate(result.getDate() + days);
+        result.setHours(0);
+        result.setMinutes(0);
+        return result;
+    }
+    const agendamentos_data = await client.agendamento.findMany({
+        where:{
+            status:"Aprovado",
+            horario: {
+                gte: addDays(today,0),
+              },
             monitoria: {
-                aluno_monitoria: {
-                    some: {
-                        aluno: {
-                            matricula: my
+                    id: parseInt(id_monitoria),
+                    aluno_monitoria: {
+                        some: {
+                            matricula_aluno: my
                         }
-                    }
-                }
-            }
+                    }     
+            },
         },
-        select: {
-            horario:true,
-            aluno: {
-                select:{
-                    nome: true
+        include:{
+            aluno:true,
+            monitoria: {
+                include : {
+                    aluno_monitoria: {
+                        include: {
+                            aluno:true
+                        }
+                    },
+                    disciplina:true
                 }
             },
-            monitoria:{
-                select: {
-                    disciplina:{
-                        select: {
-                            nome: true
-                        }
-                    }
-                }
-            }
-            
-        }   
-    })
+        }
+    });
+    
 
-    var agendamentosMap : any[] = []
-    for  ( let agendamento of agendamentos){
-        agendamentosMap.push(
+
+    var agendamentos : any[] = []
+    for  ( let agendamento of agendamentos_data){
+        agendamentos.push(
             {
-                "horario" : agendamento.horario,
                 "nome_aluno": agendamento.aluno.nome,
-                "nome_disciplina" : agendamento.monitoria.disciplina.nome           }
+                "horario" : agendamento.horario,
+                "disciplina": agendamento.monitoria.disciplina.nome,
+            }
         )
     }
 
-    let monitoriasJson = {"vagas_monitorias": agendamentosMap}
+    let agendamentos_json = {agendamentos}
 
-    res.status(201).send(monitoriasJson)
+    return res.status(201).send(agendamentos_json)
 }
 
 const getPerfil: RequestHandler = async (req, res) => {

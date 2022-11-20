@@ -4,6 +4,8 @@ import { client } from '../../prisma/client'
 import { decode } from 'jsonwebtoken';
 import {Aluno, User} from '../services/Aluno'
 import {Authenticator} from '../services/Authenticator'
+import { Console } from 'console';
+import { prisma } from '@prisma/client';
 const { time } = require("console")
 
 const dias = {
@@ -531,15 +533,15 @@ const cancelarAgendamento: RequestHandler  = async (req, res) => {
 
 const agendarMonitoria: RequestHandler = async (req, res) => {
     const { id_monitoria, horario , my} = req.body;
-    // const dias = {
-    //     0:'Domingo',
-    //     1:'Segunda',
-    //     2:'Terca',
-    //     3:"Quarta",
-    //     4:"Quinta",
-    //     5:"Sexta",
-    //     6:"Sabado"
-    // }
+    const _dias = {
+        'Domingo': 0,
+        'Segunda':1,
+        'Terca':2,
+        "Quarta":3,
+        "Quinta":4,
+        "Sexta":5,
+        "Sabado":6
+    }
     const monitoria = await client.monitoria.findFirst({
         where: {
             id: parseInt(id_monitoria)
@@ -555,70 +557,73 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
         return 
     }
 
-    const data_entrada = new Date(horario);
-    data_entrada.setHours(horario[0-1]);
-    data_entrada.setMinutes(horario[2-3]);
+
+
+    const data_entrada = new Date();
+
+    data_entrada.setDate(parseInt( (_dias[monitoria.dia].toString())));
+    console.log(data_entrada)
+    data_entrada.setHours(horario.slice(0, 2));
+    console.log(data_entrada)
+    data_entrada.setMinutes(horario.slice(3, 5));
+    console.log(data_entrada)
+    data_entrada.setSeconds(0);
+    data_entrada.setMilliseconds(0);
     const data_hoje = new Date(Date.now());
     
     const dia_entrada = data_entrada.getDay();
     const dia_hoje = data_hoje.getDay();
-    console.log(monitoria);
-    console.log(dia_hoje);
-    if(dias[dia_hoje] == monitoria.dia ){
+    // console.log(monitoria);
+    // console.log(dia_hoje);
+    console.log(data_entrada);
         // Verifica se o horario da monitoria esta disponivel
         // 1 - Pega os agendamentos da disciplina no dia de hoje
-        const agendamentos = await client.agendamento.findMany({
-            where: {
+    const agendamentos = await client.agendamento.findMany({
+        where: {
+            id_monitoria: parseInt(id_monitoria),
+            horario:
+            {
+                lte: addMinutes(data_entrada,120),
+                gte: addMinutes(data_entrada,0)
+            }
+        }
+    })
+    const horario_solicitado = data_entrada.getHours()
+    if(agendamentos){
+        for  ( let agendamento of agendamentos){
+            const date = new Date(agendamento.horario);
+            if (
+                timeBetween(horario_solicitado, date, 30)
+            ){
+                console.log("horario ja esta reservado");
+                res.status(404).send('{"message": "horario ja esta agendado"}')
+                return
+            }
+        }    
+    }
+    try {
+        console.log("Pode agendar")
+        const novo_agendamento_data = {
+                horario:  data_entrada,
+                agendamento: "a",
                 id_monitoria: parseInt(id_monitoria),
-                horario:
-                {
-                    lte: addMinutes(data_entrada,120),
-                    gte: addMinutes(data_entrada,0)
-                }
-            }
-        })
-        const horario_solicitado = data_entrada.getHours()
-        if(agendamentos){
-            for  ( let agendamento of agendamentos){
-                const date = new Date(agendamento.horario);
-                if (
-                    timeBetween(horario_solicitado, date, 30)
-                ){
-                    console.log("horario ja esta reservado");
-                    res.status(404).send('{"message": "horario ja esta agendado"}')
-                    return
-                }
-            }        
+                matricula_aluno: my 
         }
-        try {
-            console.log("Pode agendar")
-            const novo_agendamento_data = {
-                    horario:  data_entrada,
-                    agendamento: "a",
-                    id_monitoria:parseInt(id_monitoria),
-                    matricula_aluno: my 
-            }
-            const novo_agendamento = await client.agendamento.create({
-                data:novo_agendamento_data
-            });
-            client.monitoria
-            console.log("Agendamento marcado com sucesso");
-        } catch (error) {
-            console.log(error)
-            res.status(404).send('{"message": "Algo ocoorreu durante a criacao do agendamento"}')
-            return
-        }
+        const novo_agendamento = await client.agendamento.create({
+            data:novo_agendamento_data
+        });
+        client.monitoria
+        console.log("Agendamento marcado com sucesso");
+    } catch (error) {
+        console.log(error)
+        res.status(404).send('{"message": "Algo ocoorreu durante a criacao do agendamento"}')
+        return
+    }
 
         // 2 - Verifica se o horario esta dentro da time-range da monitoria
         // 3 - Cria o agendamento
         res.status(202).send('{"message": "agendou"}')
         return
-    }
-    else{
-        console.log("Não pode agendar por conta do dia")
-        res.status(202).send('{"message": "nao agendou"}')
-        return
-    }
     // const dia_agendamento = new Date()
     // let perfil = {
     //     "nome_aluno": "meunomeéjoao",

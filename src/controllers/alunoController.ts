@@ -676,8 +676,7 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
         }
         const novo_agendamento = await client.agendamento.create({
             data:novo_agendamento_data
-        });
-        client.monitoria
+        })
         console.log("Agendamento marcado com sucesso");
     } catch (error) {
         console.log(error)

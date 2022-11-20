@@ -96,7 +96,7 @@ model monitoria {
   colaborador       colaborador       @relation(fields: [codigo_professor], references: [cpf])
   codigo_professor  String
   dia               Dia               @default(Segunda)
-  horario           DateTime          @db.Time(3) @default()
+  horario           DateTime          @db.Time(3) 
   aluno_monitoria   aluno_monitoria[]
   vaga_monitoria    vaga_monitoria[]
   agendamento       agendamento[]

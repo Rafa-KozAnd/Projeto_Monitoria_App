@@ -343,6 +343,7 @@ const getAgendamentoMonitoriaAluno: RequestHandler  = async (req, res) => {
 
 const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
     const {my} = req.body;
+    const {id_monitoria} = req.params;
     const today = new Date();
     const hoje = await today.getDate()
     const amanha = await today.getDate() + 1
@@ -362,12 +363,13 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
                 gte: addDays(today,0),
               },
             monitoria: {
+                    id: parseInt(id_monitoria),
                     aluno_monitoria: {
                         some: {
                             matricula_aluno: my
                         }
                     }     
-            }
+            },
         },
         include:{
             monitoria: {
@@ -389,6 +391,7 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
     for  ( let agendamento of agendamentos_data){
         agendamentos.push(
             {
+                "id_agendamento": agendamento.id,
                 "nome_monitor": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
                 "horario" : agendamento.horario,
                 "matricula_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.matricula,

@@ -438,6 +438,7 @@ const getHorariosDisponiveis: RequestHandler = async(req,res) => {
     })
     const horario_monitoria = new Date(monitoria.horario)
     const result = []
+
     if(monitoria.dia != dias[today.getDay()]){
         console.log("não e esse dia")
         res.status(202).send({horarios:result})
@@ -445,8 +446,15 @@ const getHorariosDisponiveis: RequestHandler = async(req,res) => {
     }
     let horario_inicial = horario_monitoria;
     while(horario_inicial <= addMinutes(horario_monitoria,180)){
-        result.push(horario_inicial.getHours().toString()+ ":"+ horario_inicial.getMinutes().toString())
-
+        let hora_nova = horario_inicial.getHours().toString();
+        let minutos_novo = horario_inicial.getMinutes().toString();
+        if (minutos_novo.length < 2){
+            minutos_novo = minutos_novo + "0";
+        }
+        if (hora_nova.length < 2){
+            hora_nova = "0" + hora_nova; 
+        }
+        result.push(hora_nova + ":"+ minutos_novo)
         horario_inicial = addMinutes(horario_inicial,30);
     }
     for  ( let agendamento of agendamentos){

@@ -166,7 +166,7 @@ const getMinhasMonitorias: RequestHandler  = async (req, res) => {
     res.status(201).send(monitorias);
 }
 
-const getAgendamentos: RequestHandler = async (req, res) => {
+const getAgendamentosAluno: RequestHandler = async (req, res) => {
     const { my } = req.body;
 
     const agendamentos = await client.agendamento.findMany({
@@ -174,6 +174,71 @@ const getAgendamentos: RequestHandler = async (req, res) => {
             matricula_aluno: my,
             NOT: {
                 status:"Cancelado"
+            }
+        },
+        select: {
+            horario:true,
+            aluno: {
+                select:{
+                    nome: true
+                }
+            },
+            monitoria:{
+                select: {
+                    id: true,
+                    disciplina:{
+                        select: {
+                            nome: true
+                        }
+                    },
+                    aluno_monitoria: {
+                        select: {
+                            aluno: {
+                                select: {
+                                    nome: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }   
+    })
+
+    var agendamentosMap : any[] = []
+    for  ( let agendamento of agendamentos){
+
+        agendamentosMap.push(
+            {
+                "horario" : agendamento.horario,
+                "nome_monitor": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
+                "nome_disciplina" : agendamento.monitoria.disciplina.nome
+            }
+        )
+    }
+
+    let monitoriasJson = {"vagas_monitorias": agendamentosMap}
+
+    res.status(201).send(monitoriasJson)
+}
+
+const getAgendamentos: RequestHandler = async (req, res) => {
+    const { my } = req.body;
+
+    const agendamentos = await client.agendamento.findMany({
+        where: { 
+            NOT: {
+                status:"Cancelado"
+            },
+            monitoria: {
+                aluno_monitoria: {
+                    some: {
+                        aluno: {
+                            matricula: my
+                        }
+                    }
+                }
             }
         },
         select: {
@@ -730,5 +795,6 @@ export {
     sugerirMonitoria,
     getPreRequisitos,
     getCandidaturas,
-    getHorariosDisponiveis
+    getHorariosDisponiveis,
+    getAgendamentosAluno
 }

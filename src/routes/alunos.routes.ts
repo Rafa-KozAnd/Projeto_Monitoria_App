@@ -13,6 +13,7 @@ alunoRoutes.put('/monitor/agendamento/aprovar',authenticateAluno, alunos.aprovar
 alunoRoutes.put('/monitor/agendamento/cancelar',authenticateAluno, alunos.cancelarAgendamento)
 alunoRoutes.get('/agendamento/horarios/:id_monitoria',authenticateAluno, alunos.getHorariosDisponiveis)
 alunoRoutes.get('/monitor/agendamentos',authenticateAluno, alunos.getAgendamentos)
+alunoRoutes.get('/agendamentos',authenticateAluno, alunos.getAgendamentosAluno)
 alunoRoutes.post('/perfil', authenticateAluno, alunos.getPerfil)
 alunoRoutes.get('/monitorias',authenticateAluno, alunos.getMonitorias)
 alunoRoutes.post('/monitoria',authenticateAluno, alunos.getMonitoria)

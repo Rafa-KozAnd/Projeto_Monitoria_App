@@ -326,8 +326,8 @@ const getAgendamentoMonitoriaAluno: RequestHandler  = async (req, res) => {
     for  ( let agendamento of agendamentos_data){
         agendamentos.push(
             {
+                "nome_monitor": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
                 "horario" : agendamento.horario,
-                "nome_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
                 "matricula_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.matricula,
                 "status": 1
             }
@@ -390,7 +390,7 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
         agendamentos.push(
             {
                 "id_agendamento": agendamento.id,
-                "nome_monitor": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
+                "nome_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
                 "horario" : agendamento.horario,
                 "matricula_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.matricula,
                 "status": 1

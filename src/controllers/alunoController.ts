@@ -366,7 +366,7 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
                             matricula_aluno: my
                         }
                     }     
-            },
+            }
         },
         include:{
             aluno:true,
@@ -392,7 +392,7 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
                 "nome_aluno": agendamento.aluno.nome,
                 "horario" : agendamento.horario,
                 "matricula_aluno": agendamento.aluno.matricula,
-                "status": 1
+                "status": agendamento.status
             }
         )
         console.log(agendamento.monitoria.aluno_monitoria[0].aluno.nome);

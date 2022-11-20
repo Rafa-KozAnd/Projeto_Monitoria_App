@@ -329,7 +329,7 @@ const getAgendamentoMonitoriaAluno: RequestHandler  = async (req, res) => {
                 "nome_monitor": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
                 "horario" : agendamento.horario,
                 "matricula_aluno": agendamento.monitoria.aluno_monitoria[0].aluno.matricula,
-                "status": 1
+                "status": agendamento.status
             }
         )
     }

@@ -303,6 +303,7 @@ const getMonitoria: RequestHandler = async (req, res) => {
         }
     });
     let perfil = { 
+            "id_monitoria":monitoria?.id,
             "nome_aluno": monitoria?.aluno_monitoria[0].aluno.nome,
             "nome_professor": monitoria?.colaborador.nome,
             "nome_disciplina": monitoria?.disciplina.nome,

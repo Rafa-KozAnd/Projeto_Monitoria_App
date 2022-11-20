@@ -436,6 +436,9 @@ const getHorariosDisponiveis: RequestHandler = async(req,res) => {
     const agendamentos = await client.agendamento.findMany({
         where: {
             id_monitoria: parseInt(id_monitoria),
+            horario: {
+                gte: addDays(today,0)
+            },
             NOT:{
                 status:"Cancelado"
             }
@@ -450,11 +453,6 @@ const getHorariosDisponiveis: RequestHandler = async(req,res) => {
     const horario_monitoria = new Date(monitoria.horario)
     const result = []
 
-    if(monitoria.dia != dias[today.getDay()]){
-        console.log("não e esse dia")
-        res.status(202).send({horarios:result})
-        return
-    }
     let horario_inicial = horario_monitoria;
     while(horario_inicial <= addMinutes(horario_monitoria,180)){
         let hora_nova = horario_inicial.getHours().toString();
@@ -552,7 +550,10 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
         res.status(404).send('{"message": "monitoria não existe"}')
         return 
     }
+
     const data_entrada = new Date(horario);
+    data_entrada.setHours(horario[0-1]);
+    data_entrada.setMinutes(horario[2-3]);
     const data_hoje = new Date(Date.now());
     
     const dia_entrada = data_entrada.getDay();

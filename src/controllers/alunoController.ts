@@ -534,7 +534,7 @@ const cancelarAgendamento: RequestHandler  = async (req, res) => {
 }
 
 const agendarMonitoria: RequestHandler = async (req, res) => {
-    const { id_monitoria, horario , my} = req.body;
+    const { id_monitoria, horario , data, my} = req.body;
     const _dias = {
         'Domingo': 0,
         'Segunda':1,
@@ -563,7 +563,7 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
 
     const data_entrada = new Date();
 
-    data_entrada.setDate(parseInt( (_dias[monitoria.dia].toString())));
+    data_entrada.setDate(data.slice(0,2));
     console.log(data_entrada)
     data_entrada.setHours(horario.slice(0, 2));
     console.log(data_entrada)

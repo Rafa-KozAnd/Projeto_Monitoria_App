@@ -154,6 +154,12 @@ enum Role {
   ProfessorCoordenador
 }
 
+enum Status {
+  Pendente
+  Aprovado
+  Cancelado
+}
+
 enum Dia{
   Domingo
   Segunda

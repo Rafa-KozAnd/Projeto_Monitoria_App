@@ -402,14 +402,28 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
     return res.status(201).send(agendamentos_json)
 }
 
+// const getHorariosDisponiveis: RequestHandler = async(req,res) => {
+//     const {id_monitoria} = req.body;
+//     const monitoria = client.monitoria.findFirst({
+//         where:{
+//             id_monitoria : id_monitoria
+//         }
+//     })
 
-const finalizarSolicitacaoAgentamento: RequestHandler  = (req, res) => {
-    let id = req.body["id_solicitacao"]
+//     const agendamentos = client.monitoria.findMany({
+//         where:{
+//             id_monitoria: id_monitoria
+//         }
+//     })
+// }
+
+const aprovarSolicitacaoAgentamento: RequestHandler  = (req, res) => {
+    let id = req.body["id_agendamento"]
     res.status(200).send({msg:`solicitacao  ${id} finalizada`})
 }
 
 
-const removerAgendamento: RequestHandler  = (req, res) => {
+const cancelarAgendamento: RequestHandler  = (req, res) => {
     let id = req.body["id_solicitacao"]
     res.status(200).send({msg:`solicitacao de agendamento ${id} removida`})
 }
@@ -595,9 +609,9 @@ export {
     postVagaCandidatar,
     getMinhasMonitorias,
     getAgendamentoMonitoriaAluno,
-    finalizarSolicitacaoAgentamento,
+    aprovarSolicitacaoAgentamento,
     getAgendamentoMonitoriaMonitor,
-    removerAgendamento,
+    cancelarAgendamento,
     getAgendamentos,
     getPerfil,
     getMonitorias,

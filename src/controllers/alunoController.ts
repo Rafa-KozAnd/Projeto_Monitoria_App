@@ -353,7 +353,6 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
         result.setMinutes(0);
         return result;
     }
-    console.log(today);
     const agendamentos_data = await client.agendamento.findMany({
         where:{
             horario: {
@@ -384,7 +383,6 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
 
 
 
-    console.log(agendamentos_data);
     var agendamentos : any[] = []
     for  ( let agendamento of agendamentos_data){
         agendamentos.push(

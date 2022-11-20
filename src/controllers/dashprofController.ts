@@ -82,6 +82,14 @@ const aprovaSolicitacoes: RequestHandler = async (req, res) => {
                     matricula_aluno: aprovaalunosolicit.matricula_aluno
                 }
             })
+            await client.aluno.update({
+                where: {
+                    matricula: aprovaalunosolicit.matricula_aluno
+                },
+                data: {
+                    e_monitor: true
+                }
+            })
 
             return res.status(200).json({message:"Solicitação aprovada com sucesso!"})
         }

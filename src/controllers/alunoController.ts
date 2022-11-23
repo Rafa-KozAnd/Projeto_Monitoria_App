@@ -135,7 +135,16 @@ const postVagaCandidatar: RequestHandler = async (req, res) => {
 }
 
 const getMinhasMonitorias: RequestHandler  = async (req, res) => {
+    const { my } = req.body;
+    
     const monitorias = await client.monitoria.findMany({
+        where: {
+            aluno_monitoria: {
+                some: {
+                    matricula_aluno: my
+                }
+            }
+        },
         select: {
             id: true,
             disciplina:{

@@ -319,13 +319,19 @@ const abrirVaga : RequestHandler = async (req, res) => {
                 codigo_disciplina: vaga.codigo_disciplina,
             }
         })
+        
+
+        let preRequisito = ""
+        vaga.pre_requisitos.map((e) => preRequisito = preRequisito.concat('${e}, '))
+
         const abrir_vaga = await client.vaga_monitoria.create({
+
             data: {
                 aprovado: false,
                 codigo_disciplina: nova_monitoria.codigo_disciplina,
                 professor_requisitante: nova_monitoria.codigo_professor,
                 id_monitoria: nova_monitoria.id,
-                pre_requisito: vaga.pre_requisitos[0],
+                pre_requisito: preRequisito,
             }
         })
         if(abrir_vaga) {

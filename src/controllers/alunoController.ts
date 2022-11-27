@@ -67,6 +67,7 @@ const getVagasMonitoria: RequestHandler = async (req, res) => {
 
     const vagasMonitorias = await client.vaga_monitoria.findMany({
         where: {
+            aprovado: false,
             NOT: {
                 vaga_aluno_monitoria: {
                     some: {

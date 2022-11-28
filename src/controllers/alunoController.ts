@@ -195,6 +195,7 @@ const getAgendamentosAluno: RequestHandler = async (req, res) => {
             },
             monitoria:{
                 select: {
+                    dia:true,
                     id: true,
                     disciplina:{
                         select: {
@@ -221,6 +222,7 @@ const getAgendamentosAluno: RequestHandler = async (req, res) => {
 
         agendamentosMap.push(
             {
+                "dia": agendamento.monitoria.dia,
                 "horario" : agendamento.horario,
                 "nome_monitor": agendamento.monitoria.aluno_monitoria[0].aluno.nome,
                 "nome_disciplina" : agendamento.monitoria.disciplina.nome
@@ -282,6 +284,7 @@ const getAgendamentos: RequestHandler = async (req, res) => {
     for  ( let agendamento of agendamentos_data){
         agendamentos.push(
             {
+                "dia": agendamento.monitoria.dia,
                 "nome_aluno": agendamento.aluno.nome,
                 "horario" : agendamento.horario,
                 "disciplina": agendamento.monitoria.disciplina.nome,

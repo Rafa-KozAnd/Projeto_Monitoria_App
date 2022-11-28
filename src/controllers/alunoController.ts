@@ -352,6 +352,8 @@ const getMonitorias: RequestHandler = async (req, res) => {
 }
 
 const getMonitoria: RequestHandler = async (req, res) => {
+    console.log("rota: getMonitoria- aluno: Body:");
+    console.log(req.body);
     const { id_monitoria, id_monitor } = req.body;
 
     const monitoria = await client.monitoria.findFirst({
@@ -401,6 +403,8 @@ const getMonitoria: RequestHandler = async (req, res) => {
 }
 
 const getAgendamentoMonitoriaAluno: RequestHandler  = async (req, res) => {
+    console.log("rota: getAgendamentoMonitoriaAluno: Body:");
+    console.log(req.body);
     const {my} = req.body;
     const today = new Date();
     const hoje = await today.getDate()
@@ -447,7 +451,11 @@ const getAgendamentoMonitoriaAluno: RequestHandler  = async (req, res) => {
 }
 
 const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
+    console.log("rota: getAgendamentosDoMonitor: Body:");
+    console.log(req.body);
     const {my} = req.body;
+    console.log("params:");
+    console.log(req.params);
     const {id_monitoria} = req.params;
     const today = new Date();
     const hoje = await today.getDate()
@@ -513,6 +521,10 @@ const getAgendamentoMonitoriaMonitor: RequestHandler  = async (req, res) => {
 }
 
 const getHorariosDisponiveis: RequestHandler = async(req,res) => {
+    console.log("rota: getHorariosDisponiveis: Body:");
+    console.log(req.body);
+    console.log("Params:")
+    console.log(req.params);
     const { my } = req.body;
     const { id_monitoria} = req.params;
     const today = new Date(Date.now());
@@ -576,6 +588,8 @@ const getHorariosDisponiveis: RequestHandler = async(req,res) => {
 }
 
 const aprovarSolicitacaoAgentamento: RequestHandler  = async (req, res) => {
+    console.log("rota: aprovarSolicitacaoAendamento: Body:");
+    console.log(req.body);
     const id_agendamento = req.body["id_agendamento"]
     try {
         await client.agendamento.update({
@@ -596,6 +610,8 @@ const aprovarSolicitacaoAgentamento: RequestHandler  = async (req, res) => {
 
 
 const cancelarAgendamento: RequestHandler  = async (req, res) => {
+    console.log("rota: cancelarAgendamento: Body:");
+    console.log(req.body)
     const id_agendamento = req.body["id_agendamento"]
     try {
         await client.agendamento.update({
@@ -616,6 +632,8 @@ const cancelarAgendamento: RequestHandler  = async (req, res) => {
 
 const agendarMonitoria: RequestHandler = async (req, res) => {
     const { id_monitoria, horario , data, my} = req.body;
+    console.log("rota: agendar monitoria: Body:");
+    console.log(req.body);
     const _dias = {
         'Domingo': 0,
         'Segunda':1,
@@ -645,24 +663,27 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
     const data_entrada = new Date();
 
     data_entrada.setDate(data.slice(0,2));
-    
+    console.log(data.slice(3,5))
+    data_entrada.setMonth(data.slice(3,5)-1);
+    data_entrada.setFullYear(2022);
     data_entrada.setHours(horario.slice(0, 2));
-    
     data_entrada.setMinutes(horario.slice(3, 5));
-
     data_entrada.setSeconds(0);
     data_entrada.setMilliseconds(0);
-    console.log("Data_entrada: " + data_entrada)
 
-    const data_hoje = new Date(Date.now());
-    
+    console.log("Data_entrada: " + data_entrada)
     const dia_entrada = data_entrada.getDay();
-    const dia_hoje = data_hoje.getDay();
-    // console.log(monitoria);
-    // console.log(dia_hoje);
+    console.log(dia_entrada);
     
-        // Verifica se o horario da monitoria esta disponivel
-        // 1 - Pega os agendamentos da disciplina no dia de hoje
+    if(dias[dia_entrada] != monitoria.dia){
+        console.log("Não é possivel agendar em um dia diferente do da monitoria ")
+        console.log("monitoria é em uma ", monitoria.dia);
+        console.log("aluno tentou agendar em uma ", dias[dia_entrada]);
+        res.status(400).send('{"message": "Voce não pode agendar um horario em um dia diferente do da monitoria"}');
+        return
+    }
+
+    // Verifica se o horario da monitoria esta disponivel
     console.log("less than:" + addMinutes(data_entrada,29));
     console.log("gteater than:" + addMinutes(data_entrada,-1));
     const agendamentos = await client.agendamento.findMany({
@@ -675,21 +696,7 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
             }
         }
     })
-    
-    // REMOVE quando der certo
-    // if(agendamentos.length > 0){
-    //     for  ( let agendamento of agendamentos){
-    //         const date = new Date(agendamento.horario);
-    //         console.log(date)
-    //         if (
-    //             timeBetween(data_entrada, date, 30)
-    //         ){
-    //             console.log("horario ja esta reservado");
-    //             res.status(403).send('{"message": "horario ja esta agendado"}')
-    //             return
-    //         }
-    //     }    
-    // }
+
     console.log(agendamentos);
 
     if (agendamentos.length < 1)
@@ -721,21 +728,12 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
         return
     }
 
-        // 2 - Verifica se o horario esta dentro da time-range da monitoria
-        // 3 - Cria o agendamento
         res.status(202).send('{"message": "agendou"}')
         return
-    // const dia_agendamento = new Date()
-    // let perfil = {
-    //     "nome_aluno": "meunomeéjoao",
-    //     "email": "joao@email.com",
-    //     "matricula": "12387878",
-    //     "e_monitor": true
-    // }
-    // res.status(201).send(perfil)
 }
 
 const sugerirMonitoria: RequestHandler = async (req, res) => {
+    console.log("rota: sugerirMonitoria: Body:");
     console.log(req.body)
     const {
         matricula_aluno, 

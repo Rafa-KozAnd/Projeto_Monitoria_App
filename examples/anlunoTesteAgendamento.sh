@@ -29,7 +29,7 @@ curl -X GET ${MONITORIA_URL}/aluno/agendamento/horarios/${ID_MONITORIA} \
 curl -X POST ${MONITORIA_URL}/aluno/agendar/monitoria \
 -H "Content-Type: application/json" \
 -H "authorization: ${MONITORIA_TOKEN}" \
--d $'{ "id_monitoria":"42", "horario":"12:30", "data": "28/11/2022"}'
+-d $'{ "id_monitoria":"42", "horario":"13:30", "data": "02/12/2022"}'
 
 ## tenta agendar novamente no mesmo horario e não da certo
 

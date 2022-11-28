@@ -1,4 +1,4 @@
 export MONITORIA_TOKEN='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMTAwMTEzIiwic2VjcmV0X2tleSI6IkFTREFTREFTREFBU0RBU0RRV0RBV0QiLCJpYXQiOjE2Njk2MDM3MzIsImV4cCI6MTY2OTkwMzczMn0.ZBgUrjUZESuX1KRv0JQ1k7iO6oCEXOE_X3kcexRJEs4'
-export MONITORIA_URL="localhost:3001"
-#export MONITORIA_URL="https://projeto-monitoria-api.herokuapp.com"
+#export MONITORIA_URL="localhost:3001"
+export MONITORIA_URL="https://projeto-monitoria-api.herokuapp.com"
 export ID_MONITORIA="42"

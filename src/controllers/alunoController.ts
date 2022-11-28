@@ -643,12 +643,14 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
 
     data_entrada.setDate(data.slice(0,2));
     
-    data_entrada.setHours(horario.slice(0, 2));
+    data_entrada.setHours(horario.slice(0, 2) -3);
     
     data_entrada.setMinutes(horario.slice(3, 5));
 
     data_entrada.setSeconds(0);
     data_entrada.setMilliseconds(0);
+    console.log("Data_entrada: " + data_entrada)
+
     const data_hoje = new Date(Date.now());
     
     const dia_entrada = data_entrada.getDay();
@@ -685,12 +687,15 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
     }
     try {
         console.log("Pode agendar")
+        
         const novo_agendamento_data = {
                 horario:  data_entrada,
                 agendamento: "a",
                 id_monitoria: parseInt(id_monitoria),
                 matricula_aluno: my 
         }
+        console.log("novo_agendamento: " + novo_agendamento_data.horario)
+
         const novo_agendamento = await client.agendamento.create({
             data:novo_agendamento_data
         })

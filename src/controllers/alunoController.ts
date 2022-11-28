@@ -38,7 +38,7 @@ function timeBetween(_input_date, _initial_date, _minutes){
     console.log("input_date between: " + input_date)
     console.log("initial_date between: " + initial_date)
     if (
-        input_date >= input_date &&
+        input_date >= initial_date &&
         input_date <= addMinutes(initial_date, _minutes)
     ) {
         return true
@@ -672,14 +672,13 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
             }
         }
     })
-    const horario_solicitado = data_entrada.getHours()
     
     if(agendamentos.length > 0){
         for  ( let agendamento of agendamentos){
             const date = new Date(agendamento.horario);
             console.log(date)
             if (
-                timeBetween(horario_solicitado, date, 30)
+                timeBetween(data_entrada, date, 30)
             ){
                 console.log("horario ja esta reservado");
                 res.status(403).send('{"message": "horario ja esta agendado"}')

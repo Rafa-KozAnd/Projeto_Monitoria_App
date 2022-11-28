@@ -669,7 +669,8 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
         }
     })
     const horario_solicitado = data_entrada.getHours()
-    if(agendamentos){
+    console.log(agendamentos)
+    if(agendamentos.length > 0){
         for  ( let agendamento of agendamentos){
             const date = new Date(agendamento.horario);
             console.log(date)

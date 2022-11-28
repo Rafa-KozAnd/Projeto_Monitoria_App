@@ -356,7 +356,7 @@ const getMonitoria: RequestHandler = async (req, res) => {
 
     const monitoria = await client.monitoria.findFirst({
         where: {
-            id: id_monitoria,
+            id: parseInt(id_monitoria),
             aluno_monitoria: {every: {matricula_aluno: id_monitor}}
         },
         select: {
@@ -564,6 +564,7 @@ const getHorariosDisponiveis: RequestHandler = async(req,res) => {
         if (hora.length < 2){
             hora = "0" + hora; 
         }
+        console.log(hora+":"+ minutos);
         result.forEach(v => {
             if ((hora+":"+ minutos).match(v.horario)) {
                 result[result.indexOf(v)].disponivel = false
@@ -662,29 +663,42 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
     
         // Verifica se o horario da monitoria esta disponivel
         // 1 - Pega os agendamentos da disciplina no dia de hoje
+    console.log("less than:" + addMinutes(data_entrada,29));
+    console.log("gteater than:" + addMinutes(data_entrada,-1));
     const agendamentos = await client.agendamento.findMany({
         where: {
             id_monitoria: parseInt(id_monitoria),
             horario:
             {
-                lte: addMinutes(data_entrada,120),
-                gte: addMinutes(data_entrada,0)
+                lte: addMinutes(data_entrada,0),
+                gte: addMinutes(data_entrada,-29)
             }
         }
     })
     
-    if(agendamentos.length > 0){
-        for  ( let agendamento of agendamentos){
-            const date = new Date(agendamento.horario);
-            console.log(date)
-            if (
-                timeBetween(data_entrada, date, 30)
-            ){
-                console.log("horario ja esta reservado");
-                res.status(403).send('{"message": "horario ja esta agendado"}')
-                return
-            }
-        }    
+    // REMOVE quando der certo
+    // if(agendamentos.length > 0){
+    //     for  ( let agendamento of agendamentos){
+    //         const date = new Date(agendamento.horario);
+    //         console.log(date)
+    //         if (
+    //             timeBetween(data_entrada, date, 30)
+    //         ){
+    //             console.log("horario ja esta reservado");
+    //             res.status(403).send('{"message": "horario ja esta agendado"}')
+    //             return
+    //         }
+    //     }    
+    // }
+    console.log(agendamentos);
+
+    if (agendamentos.length < 1)
+    {
+        console.log("pode agendar")
+    }else{
+        console.log("não pode agendar")
+        res.status(403).send('{"message": "horario ja esta agendado"}')
+        return
     }
     try {
         console.log("Pode agendar")

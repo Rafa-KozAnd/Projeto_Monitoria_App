@@ -1,6 +1,6 @@
 source /workspaces/Projeto_Monitoria_App/examples/config.txt
 
-curl -X GET ${MONITORIA_URL}/aluno/agendamento/horarios/39 \
+curl -X POST ${MONITORIA_URL}/aluno/monitoria \
 -H "Content-Type: application/json" \
 -H "authorization: ${MONITORIA_TOKEN}" \
--d '{ "senha":"99999"}'
+-d '{ "id_monitoria":"42"}'

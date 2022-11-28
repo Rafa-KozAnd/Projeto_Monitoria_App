@@ -35,6 +35,8 @@ function addMinutes(date, minutos) {
 function timeBetween(_input_date, _initial_date, _minutes){
     const input_date = new Date(_input_date);
     const initial_date = new Date(_initial_date);
+    console.log("input_date between: " + input_date)
+    console.log("initial_date between: " + initial_date)
     if (
         input_date >= input_date &&
         input_date <= addMinutes(initial_date, _minutes)

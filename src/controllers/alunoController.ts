@@ -642,11 +642,11 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
     const data_entrada = new Date();
 
     data_entrada.setDate(data.slice(0,2));
-    console.log(data_entrada)
+    
     data_entrada.setHours(horario.slice(0, 2));
-    console.log(data_entrada)
+    
     data_entrada.setMinutes(horario.slice(3, 5));
-    console.log(data_entrada)
+
     data_entrada.setSeconds(0);
     data_entrada.setMilliseconds(0);
     const data_hoje = new Date(Date.now());
@@ -655,7 +655,7 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
     const dia_hoje = data_hoje.getDay();
     // console.log(monitoria);
     // console.log(dia_hoje);
-    console.log(data_entrada);
+    
         // Verifica se o horario da monitoria esta disponivel
         // 1 - Pega os agendamentos da disciplina no dia de hoje
     const agendamentos = await client.agendamento.findMany({
@@ -672,11 +672,12 @@ const agendarMonitoria: RequestHandler = async (req, res) => {
     if(agendamentos){
         for  ( let agendamento of agendamentos){
             const date = new Date(agendamento.horario);
+            console.log(date)
             if (
                 timeBetween(horario_solicitado, date, 30)
             ){
                 console.log("horario ja esta reservado");
-                res.status(404).send('{"message": "horario ja esta agendado"}')
+                res.status(403).send('{"message": "horario ja esta agendado"}')
                 return
             }
         }    

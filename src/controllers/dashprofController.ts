@@ -320,9 +320,14 @@ const abrirVaga : RequestHandler = async (req, res) => {
             }
         })
         
-
         let preRequisito = ""
-        vaga.pre_requisitos.map((e) => preRequisito = preRequisito.concat(`${e}, `))
+        vaga.pre_requisitos.map((e, index) => {
+            if(index == (vaga.pre_requisitos.length -1)) {
+                preRequisito = preRequisito.concat(`${e}`)
+            }else {
+                preRequisito = preRequisito.concat(`${e},`)
+            }
+        })
 
         const abrir_vaga = await client.vaga_monitoria.create({
 

@@ -8,6 +8,6 @@ coordRoutes.post('/solicitacoes',authenticaColaborador, coordController.getSolic
 coordRoutes.put('/solicitacoes/aprovar',authenticaColaborador, coordController.aprovaSolicitacoes)
 coordRoutes.put('/solicitacoes/reprovar',authenticaColaborador, coordController.reprovaSolicitacoes)
 coordRoutes.delete("/:id",authenticaColaborador, coordController.deleteSolicitacoes)
-coordRoutes.post("/solicitacoes/pendentes",authenticaColaborador, coordController.getSolicitacoesPendentes)
+coordRoutes.get("/solicitacoes/pendentes",authenticaColaborador, coordController.getSolicitacoesPendentes)
 
 export default coordRoutes;

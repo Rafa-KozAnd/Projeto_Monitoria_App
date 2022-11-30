@@ -319,16 +319,6 @@ const getPerfil: RequestHandler = async (req, res) => {
 const getMonitorias: RequestHandler = async (req, res) => {
     const {my} = req.body;
     const monitorias = await client.monitoria.findMany({
-        where:{
-            NOT:{
-                
-                    aluno_monitoria:{
-                        some:{
-                        matricula_aluno : my 
-                        }
-                }
-            }
-        },
         select: {
             id: true,
             disciplina: {
@@ -349,6 +339,19 @@ const getMonitorias: RequestHandler = async (req, res) => {
                 }
             } 
         },
+        where: {
+            aluno_monitoria: {
+                some: {}
+            },
+            NOT:{
+                
+                aluno_monitoria:{
+                    some:{
+                    matricula_aluno : my 
+                    }
+            }
+        }
+        }
     }).then((res) => {
         return res.map((monitoria) => {
             return monitoria.aluno_monitoria.map((aluno_monitor) => ({
@@ -361,6 +364,7 @@ const getMonitorias: RequestHandler = async (req, res) => {
             }))[0]
         }) 
     });
+    console.log(monitorias);
     res.status(201).send(monitorias)
 }
 

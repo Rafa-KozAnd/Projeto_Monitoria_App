@@ -319,16 +319,16 @@ const getPerfil: RequestHandler = async (req, res) => {
 const getMonitorias: RequestHandler = async (req, res) => {
     const {my} = req.body;
     const monitorias = await client.monitoria.findMany({
-        // where:{
-        //     NOT:{
+        where:{
+            NOT:{
                 
-        //             aluno_monitoria:{
-        //                 some:{
-        //                 matricula_aluno : my 
-        //                 }
-        //         }
-        //     }
-        // },
+                    aluno_monitoria:{
+                        some:{
+                        matricula_aluno : my 
+                        }
+                }
+            }
+        },
         select: {
             id: true,
             disciplina: {

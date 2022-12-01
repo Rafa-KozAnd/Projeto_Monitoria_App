@@ -57,6 +57,7 @@ model agendamento {
   monitoria       monitoria @relation(fields: [id_monitoria], references: [id])
   id_monitoria    Int // FK
   horario         DateTime
+  status          Status    @default(Pendente)
 }
 
 model aluno_monitoria {
@@ -109,7 +110,7 @@ model disciplina {
   nome                  String
   monitoria             monitoria[]
   vaga_monitoria        vaga_monitoria[]
-  sugestao_monitoria sugestao_monitoria[]
+  sugestao_monitoria    sugestao_monitoria[]
 }
 
 model vaga_monitoria {

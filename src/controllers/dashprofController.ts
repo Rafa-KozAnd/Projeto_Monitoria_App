@@ -56,8 +56,12 @@ const getSolicitacoes: RequestHandler  = async (req, res) => {
 }
 
 const aprovaSolicitacoes: RequestHandler = async (req, res) => {
-    const { solicitacao_id } = req.body;
-
+    const { solicitacao_id, horario, dia } = req.body;
+    const input_date = new Date();
+    input_date.setHours(horario.slice(0,2));
+    input_date.setMinutes(horario.slice(3,5));
+    input_date.setSeconds(0);
+    
     try {
         const aprovaalunosolicit = await client.vaga_aluno_monitoria.update({
             where: {
@@ -80,6 +84,23 @@ const aprovaSolicitacoes: RequestHandler = async (req, res) => {
                 data: {
                     id_monitoria: atualiza_vaga.id_monitoria,
                     matricula_aluno: aprovaalunosolicit.matricula_aluno
+                }
+            })
+            await client.aluno.update({
+                where: {
+                    matricula: aprovaalunosolicit.matricula_aluno
+                },
+                data: {
+                    e_monitor: true
+                }
+            })
+            await client.monitoria.update({
+                where: {
+                    id: atualiza_vaga.id_monitoria
+                },
+                data: {
+                    horario: input_date,
+                    dia: dia
                 }
             })
 
@@ -298,13 +319,24 @@ const abrirVaga : RequestHandler = async (req, res) => {
                 codigo_disciplina: vaga.codigo_disciplina,
             }
         })
+        
+        let preRequisito = ""
+        vaga.pre_requisitos.map((e, index) => {
+            if(index == (vaga.pre_requisitos.length -1)) {
+                preRequisito = preRequisito.concat(`${e}`)
+            }else {
+                preRequisito = preRequisito.concat(`${e},`)
+            }
+        })
+
         const abrir_vaga = await client.vaga_monitoria.create({
+
             data: {
                 aprovado: false,
                 codigo_disciplina: nova_monitoria.codigo_disciplina,
                 professor_requisitante: nova_monitoria.codigo_professor,
                 id_monitoria: nova_monitoria.id,
-                pre_requisito: vaga.pre_requisitos[0],
+                pre_requisito: preRequisito,
             }
         })
         if(abrir_vaga) {

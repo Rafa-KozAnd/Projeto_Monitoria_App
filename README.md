@@ -16,7 +16,7 @@
 </div><br>
 
 ## Documentation related to the Project:
-- Projeto Monitoria App - [`Proposta`]([https://rocketseat.com.br/](https://drive.google.com/file/d/1gakcKUwjK-CNrnLSdA-nyl7p4WEuKEgj/view?usp=sharing))
+- Projeto Monitoria App - [`Proposta`](https://drive.google.com/file/d/1gakcKUwjK-CNrnLSdA-nyl7p4WEuKEgj/view?usp=sharing)
 
 ## Provisionamento
 

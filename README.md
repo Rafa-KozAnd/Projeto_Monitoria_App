@@ -15,6 +15,9 @@
   (Supervisor: Malgarete Costa - Students: João Piovesan, Haissam Fawaz, Rafael Kozlowski, João Manoel)
 </div><br>
 
+## Documentation related to the Project:
+- Projeto Monitoria App - [`Proposta`]([https://rocketseat.com.br/](https://drive.google.com/file/d/1gakcKUwjK-CNrnLSdA-nyl7p4WEuKEgj/view?usp=sharing))
+
 ## Provisionamento
 
 Provisionamento do codigo atualmente se encontra no Heroku, juntamente com o banco de dados e pode ser acessado atravez da url: https://projeto-monitoria-api.herokuapp.com/ 
